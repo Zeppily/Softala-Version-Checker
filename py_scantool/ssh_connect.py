@@ -1,4 +1,9 @@
+# Utilizing Python3 and Paramiko
+# http://www.paramiko.org/installing.html
 import paramiko
+
+# Attempt a SSH connection with previous credentials and execute the given command
+# If unsuccessful, catch error and output error message.
 
 def sshConnect(host, port, username, password, command):
 	try:
