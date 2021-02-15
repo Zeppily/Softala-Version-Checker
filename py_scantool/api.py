@@ -14,8 +14,11 @@ app = Flask(__name__)
 @app.route('/start/', methods=['POST'])
 def start_scan():
     request_data = request.get_json()
-    output = scantool.ssh_scrap(request_data["credentials"])
-    return json.dumps(output)
+    if(request_data):
+        output = scantool.ssh_scrap(request_data["credentials"])
+        return json.dumps(output)
+    else:
+        return 'bad request!', 400
 
 # Example Post Request:
 # Must include credentials list, even for 1 server object.
