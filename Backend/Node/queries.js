@@ -9,6 +9,7 @@ const pool = new Pool({
     port: 5432
 })
 
+// Gets project(servers) names from DB
 const getProjects = (request, response) => {
     pool.query('SELECT * FROM project', (error, results) => {
         if (error) {
@@ -18,6 +19,7 @@ const getProjects = (request, response) => {
     })
 }
 
+// Gets project software info by project name
 const getProjectSoftwareInfo = (request, response) => {
     const project = request.params.project
 
@@ -29,6 +31,7 @@ const getProjectSoftwareInfo = (request, response) => {
     })
 }
 
+// POST function for adding new software to DB
 const createSoftware = (request, response) => {
     const { name, latest_version } = request.body
 
@@ -40,6 +43,24 @@ const createSoftware = (request, response) => {
     })
 }
 
+// PUT function for updating existing software in DB
+const updateSoftware = (request, response) => {
+    const id = parseInt(request.params.id)
+    const { name, latest_version } = request.body
+
+    pool.query(
+        'UPDATE software SET name = $1, latest_version = $2 where software_id = $3',
+        [name, latest_version, id],
+        (error, results) => {
+            if (error) {
+                throw error
+            }
+            response.status(200).send(`User modified with ID: ${id}`)
+        }
+    )
+}
+
+// DELETE function for deleting software from DB
 const deleteSoftware = (request, response) => {
     const id = parseInt(request.params.id)
 
@@ -64,6 +85,7 @@ module.exports = {
     getProjects,
     getProjectSoftwareInfo,
     createSoftware,
+    updateSoftware,
     deleteSoftware,
     testCon
 }
