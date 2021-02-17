@@ -7,6 +7,8 @@ var chaiHttp = require("chai-http");
 
 chai.use(chaiHttp);
 
+var updateId;
+
 describe('Get data from DB', function () {
     describe('Raahe server', function () {
         var url = "http://localhost:8080/info/Raahe";
@@ -53,6 +55,7 @@ describe('Get data from DB', function () {
                 .send(software)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(201)
+                    updateId = res.text
                     done();
                 });
         });
@@ -60,14 +63,18 @@ describe('Get data from DB', function () {
     describe('Test PUT request', function () {
 
         it('Expects status code 200', function (done) {
-            let software = new Software({
+            let software = {
                 name: "java",
                 latest_version: "11(LTS)"
-            })
-
-            software.save((err, software) => {
-
-            })
+            }
+            chai.request(server)
+                .put('/software/' + updateId)
+                .send(software)
+                .end((err, res) => {
+                    expect(res.statusCode).to.equal(200);
+                    console.log(updateId)
+                    done();
+                })
         })
     })
 });

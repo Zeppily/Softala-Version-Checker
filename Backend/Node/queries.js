@@ -35,11 +35,12 @@ const getProjectSoftwareInfo = (request, response) => {
 const createSoftware = (request, response) => {
     const { name, latest_version } = request.body
 
-    pool.query('INSERT INTO software (name, latest_version) VALUES ($1, $2)', [name, latest_version], (error, results) => {
+    pool.query('INSERT INTO software (name, latest_version) VALUES ($1, $2) RETURNING software_id', [name, latest_version], (error, results) => {
         if (error) {
             throw error
         }
-        response.status(201).send(`software added with ID: ${results.insertId}`)
+        console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
+        response.status(201).send(JSON.stringify(results.rows[0].software_id))
     })
 }
 
