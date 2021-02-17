@@ -51,3 +51,5 @@ const server = app.listen(8080, function () {
 
     console.log("Running...", host, port)
 })
+
+module.exports = server
