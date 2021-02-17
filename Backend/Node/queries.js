@@ -39,7 +39,7 @@ const createSoftware = (request, response) => {
         if (error) {
             throw error
         }
-        response.status(201).send(`software added with ID: ${results}`)
+        response.status(201).send(`software added with ID: ${results.insertId}`)
     })
 }
 
