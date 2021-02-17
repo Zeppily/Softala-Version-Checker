@@ -44,6 +44,20 @@ const createSoftware = (request, response) => {
     })
 }
 
+// POST function for adding new software to DB
+const createProjectSoftware = (request, response) => {
+    const {project, software, installed_version} = request.body
+
+    pool.query(`INSERT INTO project_software (project_id, software_id, installed_version) VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3)`, [project, software, installed_version], (error, results) => {
+        if (error) {
+            throw error
+        }
+        console.log(results)
+        // console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
+        // response.status(201).send(JSON.stringify(results.rows[0].software_id))
+    })
+}
+
 // PUT function for updating existing software in DB
 const updateSoftware = (request, response) => {
     const id = parseInt(request.params.id)
@@ -88,5 +102,6 @@ module.exports = {
     createSoftware,
     updateSoftware,
     deleteSoftware,
-    testCon
+    testCon,
+    createProjectSoftware
 }
