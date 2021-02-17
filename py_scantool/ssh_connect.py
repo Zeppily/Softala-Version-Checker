@@ -2,6 +2,7 @@
 # http://www.paramiko.org/installing.html
 import paramiko
 
+# TODO: Clean up exception handling
 # Attempt a SSH connection with previous credentials and execute the given command
 # If unsuccessful, catch error and output error message.
 
@@ -13,9 +14,12 @@ def sshConnect(host, port, username, password, command):
 
 		stdin, stdout, stderr = ssh.exec_command(command)
 		results = stdout.readlines()
-
+		
+	except paramiko.ssh_exception.AuthenticationException as error:
+		return error
 	except paramiko.ssh_exception.SSHException:
 		results = stderr.readlines()
 		return results
+
 
 	return results
