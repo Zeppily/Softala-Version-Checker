@@ -23,13 +23,13 @@ def ssh_scrap(serverList):
 
 		results = ssh_connect.sshConnect(host, port, username, password, command)
 
-		if not results:
-			print(results)
+		if not results["returnCode"]:
+			depList.append(str(results["result"]))
 		else:
-			for result in results:
+			for result in results["result"]:
 				formattedOutput = formatter.format_dpkg(str(result))
 				depList.append(formattedOutput)
 		output = {"serverIp": serverInfo["host"], "depList": depList}
 		softList.append(output)
-	
+
 	return softList

@@ -16,10 +16,10 @@ def sshConnect(host, port, username, password, command):
 		results = stdout.readlines()
 		
 	except paramiko.ssh_exception.AuthenticationException as error:
-		return error
-	except paramiko.ssh_exception.SSHException:
-		results = stderr.readlines()
-		return results
+		return {'returnCode': 0, 'result': error}
+	except paramiko.ssh_exception.SSHException as error:
+		return {'returnCode': 0, 'result': error}
+	except paramiko.ssh_exception.NoValidConnectionsError as error:
+		return {'returnCode': 0, 'result': error}
 
-
-	return results
+	return {'returnCode': 1, 'result': results}
