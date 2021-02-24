@@ -37,7 +37,7 @@ describe('Get data from DB', function () {
         });
         it("check body", function (done) {
             request(url, function (error, response, body) {
-                expect(body).to.equal(`[{"name":"nodejs","installed_version":"10.23.1","latest_version":"15.8.0"},{"name":"postgresql","installed_version":"9.6.20","latest_version":"13.1.0"},{"name":"mysql","installed_version":"7.2.13","latest_version":"8.0.23"},{"name":"debian","installed_version":"9.13","latest_version":"10.8"}]`)
+                expect(body).to.equal(`[{"name":"nodejs","installed_version":"10.23.1","latest_version":"15.8.0"},{"name":"postgresql","installed_version":"9.6.20","latest_version":"13.1.0"},{"name":"debian","installed_version":"9.13","latest_version":"10.8"},{"name":"mysql","installed_version":"7.2.13","latest_version":"8.0.23"}]`)
                 done();
             });
         });
