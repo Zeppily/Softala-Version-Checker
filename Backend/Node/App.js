@@ -1,21 +1,39 @@
+// Imports
 const express = require('express');
-
 const jsonDoc = require('./test.json');
+const bodyParser = require('body-parser')
+const db = require('./queries')
 
 const app = express()
 
-app.get('/', function (req, res) { //function to get data from test.json
+app.use(bodyParser.json())
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    })
+)
+
+app.get('/', function (req, res) { // function to get data from test.json file
     let jsonObj = JSON.stringify(jsonDoc)
     console.log(jsonObj)
 
     res.json({
         message: 'Version data',
-        server_versions: jsonDoc //JSON.parse(jsonObj), needs to be used if parsing data other than JSON
+        server_versions: jsonDoc // JSON.parse(jsonObj), needs to be used if parsing data other than JSON
     })
 })
 
+// app.get('/test', db.testCon)
+app.get('/projects', db.getProjects)
+app.get('/info/:project', db.getProjectSoftwareInfo)
+app.post('/software', db.createSoftware)
+app.post('/projectsoftware', db.createProjectSoftware)
+app.put('/software/:id', db.updateSoftware)
+app.delete('/software/:id', db.deleteSoftware)
+
 
 //At the moment doesn't do anything else but logs the messages to console when using with curl
+/*
 app.post('/', function (req, res) {
     res.send("Hello post");
 })
@@ -26,7 +44,7 @@ app.put('/', function (req, res) {
 
 app.delete('/', function (req, res) {
     res.send("Hello delete");
-})
+})*/
 
 //starts the server on port 8080 at localhost and logs the data
 const server = app.listen(8080, function () {
@@ -35,3 +53,5 @@ const server = app.listen(8080, function () {
 
     console.log("Running...", host, port)
 })
+
+module.exports = server
