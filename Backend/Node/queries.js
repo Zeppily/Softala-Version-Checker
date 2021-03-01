@@ -47,8 +47,23 @@ const createSoftware = (request, response) => {
 // POST function for adding new software to DB
 const createProjectSoftware = (request, response) => {
     const {project, software, installed_version} = request.body
-
-    pool.query(`INSERT INTO project_software (project_id, software_id, installed_version) VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3)`, [project, software, installed_version], (error, results) => {
+    console.log(`this is the project = ${project}`)
+    pool.query(`
+                do $$
+                DECLARE 
+                    $1 varchar(50) := '${project}';
+                    $2 varchar(50) := '${software}';
+                    $3 varchar(50) := '${installed_version}';
+                BEGIN
+                    IF EXISTS (SELECT * FROM software WHERE name = $2) THEN
+                        INSERT INTO project_software (project_id, software_id, installed_version) 
+                            VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3);
+                    ELSE
+                        INSERT INTO software (name, latest_version) VALUES ($2, $3);
+                        INSERT INTO project_software (project_id, software_id, installed_version) 
+                            VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3);
+                    END IF;
+                END $$`, /*[project, software, installed_version],*/ (error, results) => {
         if (error) {
             throw error
         }
