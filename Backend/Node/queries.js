@@ -1,10 +1,5 @@
 const dotenv = require('dotenv/config')
 
-const axios = require('axios')
-const instance = axios.create({
-
-})
-
 const Pool = require("pg").Pool
 const server = require('./App')
 const pool = new Pool({
@@ -53,8 +48,23 @@ const createSoftware = (request, response) => {
 // POST function for adding new software to DB
 const createProjectSoftware = (request, response) => {
     const {project, software, installed_version} = request.body
-
-    pool.query(`INSERT INTO project_software (project_id, software_id, installed_version) VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3)`, [project, software, installed_version], (error, results) => {
+    console.log(`this is the project = ${project}`)
+    pool.query(`
+                do $$
+                DECLARE 
+                    $1 varchar(50) := '${project}';
+                    $2 varchar(50) := '${software}';
+                    $3 varchar(50) := '${installed_version}';
+                BEGIN
+                    IF EXISTS (SELECT * FROM software WHERE name = $2) THEN
+                        INSERT INTO project_software (project_id, software_id, installed_version) 
+                            VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3);
+                    ELSE
+                        INSERT INTO software (name, latest_version) VALUES ($2, $3);
+                        INSERT INTO project_software (project_id, software_id, installed_version) 
+                            VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3);
+                    END IF;
+                END $$`, /*[project, software, installed_version],*/ (error, results) => {
         if (error) {
             throw error
         }
@@ -94,67 +104,68 @@ const deleteSoftware = (request, response) => {
     })
 }
 
-const startScan = (request, response) => {
-    //TODO: This should be broken down into smaller pieces
-    //Frontend posts list of project names
-    //Retrieve credentials and address for the production servers from the db
-    //Post a list of credentials to py scantool Flask endpoint
-    //Process data py scantool sends back
-    //Save data to db
-    //Send message to frontend that contains a list of servers where SSH connecton failed
-    const projectNames = request.body
-    console.log(projectNames)
-    const params = []
-    const dataToScantool = {credentials: ""}
-    for (let i = 1; i <= projectNames.length; i++) {
-        params.push('$' + i)
-    }
+const createEol = (request, response) => {
+    const { software, version, eol } = request.body
 
-    pool.query(`SELECT host, username, password FROM Project WHERE name IN (${params.join(',')})`, projectNames, (error, results) => {
+    let software_name = software.toLowerCase().replace(/\s/g, '')
+    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3)', [software_name, version, eol], (error, results) => {
         if (error) {
             throw error
         }
-        dataToScantool.credentials = results.rows
-        
+        //console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
+        response.status(201).send(JSON.stringify(results.rows[0])
+    
+    )
+    })
+}
+
+const getEol = (request, response) => {
+    // DATA SENT AS A LIST
+    // console.log(request.body)
+    // const softwareList = request.body.softwareList
+    let sqlStatement = `SELECT * FROM eol WHERE`;
+    let softwareList = request.body.softwareList
+    let count = 0;
+    softwareList.forEach(software => {
+        let vers = software.version
+        let version = vers.substr(0, vers.indexOf('.'));
+        if (count == 0) {
+            sqlStatement += ` (software_name LIKE '%${software.name}%' AND version LIKE '${version}%')`
+            count++;
+        } else {
+            sqlStatement += ` OR (software_name LIKE '%${software.name}%' AND version LIKE '${version}%')`
+        }
     })
 
-    axios
-        .post('127.0.0.1:5000/start', {
-            dataToScanTool
-        })
-        .then(res => {
-            console.log(`statusCode: ${res.statusCode}`)
-            console.log(res)
-            serverList = res.data
-        })
-        .catch(error => {
-            console.error(error)
-        })
+    sqlStatement += ';'
+    console.log(sqlStatement)
     
-    errorList =[]
-    const hostname = ""
+    count = 0;
 
-    for (server in serverList) {
-        if (typeof server.depList == "string") {
-            errorList.append(server)
-        } else {
-            hostname = server.serverIp
-            for (dependency in server.depList) {
-                pool.query(`UPDATE Project_Software SET installed_version = $1 
-                            WHERE project_id = SELECT project_id FROM Project WHERE host = $2 AND software_id = SELECT software_id FROM Software WHERE name = $3`,
-                [dependency.depVer, hostname, dependency.depName.toLowerCase()], (error, results) => {
-                    if (error) {
-                        throw error
-                    }
-
-                })
-            }
-
+    pool.query(sqlStatement, (error, results) => {
+        if (error) {
+            console.log(error)
+            throw error
         }
-    }
-
-    response.status(200).send(`Great Success! Except these servers failed: ${errorList}`)
+        console.log(response.status(200).json(results.rows))
+        response.status(200).json(results.rows)
     
+    })
+
+    // BASIC GET RETURNING ONE ROW
+    
+    // const software = request.params.software
+    // const vers = request.params.version
+
+    // let version = vers.substr(0, vers.indexOf('.'));
+
+    // pool.query(`'SELECT * FROM eol WHERE name LIKE '%${software}%' AND version = '${version}%'`), [project], (error, results) => {
+    //     if (error) {
+    //         throw error
+    //     }
+    //     response.status(200).json(results.rows)
+    
+    // }
 }
 
 //For testing that the connection works
@@ -173,5 +184,6 @@ module.exports = {
     deleteSoftware,
     testCon,
     createProjectSoftware,
-    startScan
+    getEol,
+    createEol
 }
