@@ -44,9 +44,22 @@ const createSoftware = (request, response) => {
     })
 }
 
+// Post function for adding new eol to DB
+const createEol = (request, response) => {
+    const { software_name, version, eol_date } = request.body
+
+    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3) RETURNING eol_id', [software_name, version, eol_date], (error, results) => {
+        if (error) {
+            throw error
+        }
+        console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
+        response.status(201).send(JSON.stringify(results.rows[0].software_id))
+    })
+}
+
 // POST function for adding new software to DB
 const createProjectSoftware = (request, response) => {
-    const {project, software, installed_version} = request.body
+    const { project, software, installed_version } = request.body
     console.log(`this is the project = ${project}`)
     pool.query(`
                 do $$
@@ -63,7 +76,7 @@ const createProjectSoftware = (request, response) => {
                         INSERT INTO project_software (project_id, software_id, installed_version) 
                             VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3);
                     END IF;
-                END $$`, /*[project, software, installed_version],*/ (error, results) => {
+                END $$`, /*[project, software, installed_version],*/(error, results) => {
         if (error) {
             throw error
         }
@@ -117,6 +130,7 @@ module.exports = {
     createSoftware,
     updateSoftware,
     deleteSoftware,
+    createEol,
     testCon,
     createProjectSoftware
 }
