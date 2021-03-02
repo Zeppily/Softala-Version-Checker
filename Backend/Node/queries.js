@@ -197,6 +197,15 @@ const getEol = (request, response) => {
     // }
 }
 
+const getAllEol = (request, response) => {
+    pool.query('SELECT * FROM eol', (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    })
+}
+
 const startScan = (request, response) => {
     //TODO: This should be broken down into smaller pieces
     //Frontend posts list of project names
@@ -279,5 +288,6 @@ module.exports = {
     createProjectSoftware,
     getEol,
     createEol,
-    startScan
+    startScan,
+    getAllEol
 }
