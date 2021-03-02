@@ -146,7 +146,6 @@ const getEol = (request, response) => {
     // console.log(request.body)
     // const softwareList = request.body.softwareList
     let sqlStatement = `SELECT * FROM eol WHERE`;
-    console.log(request)
     let softwareList = request.body.softwareList
     let count = 0;
     softwareList.forEach(software => {

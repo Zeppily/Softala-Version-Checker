@@ -1,15 +1,17 @@
 // Imports
 const express = require('express');
 const jsonDoc = require('./test.json');
-const bodyParser = require('body-parser')
-const db = require('./queries')
-const python = require('./startPython')
-const cors = require('cors')
+const bodyParser = require('body-parser');
+const db = require('./queries');
+const cors = require('cors');
 
 const app = express()
 
+app.use(cors())
+
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next()
 }
 )
