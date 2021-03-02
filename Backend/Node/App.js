@@ -44,7 +44,6 @@ app.post('/start_scan', db.startScan)
 app.put('/software/:id', db.updateSoftware)
 app.delete('/software/:id', db.deleteSoftware)
 
-app.js
 // Temporary endpoint to get all eol data for frontend demo
 app.get('/alleol', db.getAllEol)
 
