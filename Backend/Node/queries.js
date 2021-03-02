@@ -45,7 +45,7 @@ const createSoftware = (request, response) => {
 }
 
 // Post function for adding new eol to DB
-const createEol = (request, response) => {
+/*const createEol = (request, response) => {
     const { software_name, version, eol_date } = request.body
 
     pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3) RETURNING eol_id', [software_name, version, eol_date], (error, results) => {
@@ -55,7 +55,7 @@ const createEol = (request, response) => {
         console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
         response.status(201).send(JSON.stringify(results.rows[0].software_id))
     })
-}
+}*/
 
 // POST function for adding new software to DB
 const createProjectSoftware = (request, response) => {
@@ -126,13 +126,14 @@ const createEol = (request, response) => {
         }
         //console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
         response.status(201).send(JSON.stringify(results.rows[0])
-    
-    )
+
+        )
     })
 }
 
 const getEol = (request, response) => {
     const software = request.params.software
+    console.log(request.params)
     const vers = request.params.version
 
     let version = vers.substr(0, vers.indexOf('.'));
@@ -142,10 +143,10 @@ const getEol = (request, response) => {
             throw error
         }
         response.status(200).json(results.rows)
-    
+
     }
 }
-    
+
 //For testing that the connection works
 const testCon = (request, results) => {
     pool.query('SELECT NOW()', (err, res) => {
