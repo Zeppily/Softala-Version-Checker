@@ -21,6 +21,7 @@ const getProjects = (request, response) => {
 
 // Gets project software info by project name
 const getProjectSoftwareInfo = (request, response) => {
+    console.log(request)
     const project = request.params.project
 
     pool.query('SELECT project.name, software.name, project_software.installed_version, software.latest_version FROM project_software INNER JOIN project ON project_software.project_id = project.project_id INNER JOIN software ON project_software.software_id = software.software_id WHERE project_software.project_id = (SELECT project_id FROM project WHERE name = $1)', [project], (error, results) => {
@@ -131,20 +132,63 @@ const createEol = (request, response) => {
     })
 }
 
-const getEol = (request, response) => {
-    const software = request.params.software
-    console.log(request.params)
-    const vers = request.params.version
-
-    let version = vers.substr(0, vers.indexOf('.'));
-
-    pool.query(`'SELECT * FROM eol WHERE name LIKE '%${software}%' AND version = '${version}%'`), [project], (error, results) => {
+const getEolTest = (request, response) => {
+    pool.query('SELECT * FROM eol', (error, results) => {
         if (error) {
             throw error
         }
         response.status(200).json(results.rows)
+    })
+}
 
-    }
+const getEol = (request, response) => {
+    // DATA SENT AS A LIST
+    // console.log(request.body)
+    // const softwareList = request.body.softwareList
+    let sqlStatement = `SELECT * FROM eol WHERE`;
+    console.log(request)
+    let softwareList = request.body.softwareList
+    let count = 0;
+    softwareList.forEach(software => {
+        let vers = software.version
+        let version = vers.substr(0, vers.indexOf('.'));
+        if (count == 0) {
+            sqlStatement += ` (software_name LIKE '%${software.name}%' AND version LIKE '${version}%')`
+            count++;
+        } else {
+            sqlStatement += ` OR (software_name LIKE '%${software.name}%' AND version LIKE '${version}%')`
+        }
+    })
+
+    sqlStatement += ';'
+    console.log(sqlStatement)
+
+    count = 0;
+
+    pool.query(sqlStatement, (error, results) => {
+        if (error) {
+            console.log(error)
+            throw error
+        }
+        console.log(response.status(200).json(results.rows))
+        response.status(200).json(results.rows)
+
+    })
+
+    // BASIC GET RETURNING ONE ROW
+
+    // const software = request.params.software
+    // const vers = request.params.version
+
+    // let version = vers.substr(0, vers.indexOf('.'));
+
+    // pool.query(`'SELECT * FROM eol WHERE name LIKE '%${software}%' AND version = '${version}%'`), [project], (error, results) => {
+    //     if (error) {
+    //         throw error
+    //     }
+    //     response.status(200).json(results.rows)
+
+    // }
 }
 
 //For testing that the connection works
@@ -165,5 +209,6 @@ module.exports = {
     testCon,
     createProjectSoftware,
     getEol,
+    getEolTest,
     createEol
 }
