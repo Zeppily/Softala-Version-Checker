@@ -116,6 +116,36 @@ const deleteSoftware = (request, response) => {
     })
 }
 
+const createEol = (request, response) => {
+    const { software, version, eol } = request.body
+
+    let software_name = software.toLowerCase().replace(/\s/g, '')
+    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3)', [software_name, version, eol], (error, results) => {
+        if (error) {
+            throw error
+        }
+        //console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
+        response.status(201).send(JSON.stringify(results.rows[0])
+    
+    )
+    })
+}
+
+const getEol = (request, response) => {
+    const software = request.params.software
+    const vers = request.params.version
+
+    let version = vers.substr(0, vers.indexOf('.'));
+
+    pool.query(`'SELECT * FROM eol WHERE name LIKE '%${software}%' AND version = '${version}%'`), [project], (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    
+    }
+}
+    
 //For testing that the connection works
 const testCon = (request, results) => {
     pool.query('SELECT NOW()', (err, res) => {
@@ -132,5 +162,7 @@ module.exports = {
     deleteSoftware,
     createEol,
     testCon,
-    createProjectSoftware
+    createProjectSoftware,
+    getEol,
+    createEol
 }
