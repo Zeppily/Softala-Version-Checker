@@ -1,0 +1,76 @@
+import React, { useState, useEffect } from "react";
+import Link from '@material-ui/core/Link';
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Title from './Title';
+
+
+
+function preventDefault(event) {
+  event.preventDefault();
+}
+
+const useStyles = makeStyles((theme) => ({
+  seeMore: {
+    marginTop: theme.spacing(3),
+  },
+}));
+
+export default function Versioninfo() {
+  const classes = useStyles();
+
+  const [servers, setServers] = useState([]);
+    
+      useEffect(() => {
+        fetch('http://localhost:8080/info/Raahe')
+          .then((response) => response.json())
+          .then((data) => setServers(data))
+          .catch((error) => console.error(error))
+      }, []);   
+  
+    
+  // const serverlist = servers.server_versions;
+
+  console.log(servers);
+  //console.log(serverlist);
+
+
+  return (
+    <React.Fragment>
+      <Title>Software Version Information</Title>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Version</TableCell>
+            <TableCell>Latest</TableCell>
+            <TableCell>npm</TableCell>
+            <TableCell>postgreSQL</TableCell>
+            <TableCell>OS</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {servers.map((server) => (
+            <TableRow key={server.name}>
+              <TableCell>{server.name}</TableCell>
+              <TableCell>{server.installed_version}</TableCell>
+              <TableCell>{server.latest_version}</TableCell>
+              <TableCell>{server.npm}</TableCell>
+              <TableCell>{server.postgreSQL}</TableCell>
+              <TableCell>{server.os}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div className={classes.seeMore}>
+        <Link color="primary" href="#" onClick={preventDefault}>
+          Update Software info
+        </Link>
+      </div>
+    </React.Fragment>
+  );
+}
