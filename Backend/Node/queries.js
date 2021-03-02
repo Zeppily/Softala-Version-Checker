@@ -119,30 +119,37 @@ const createEol = (request, response) => {
 }
 
 const getEol = (request, response) => {
-    let sqlStatement = `SELECT eoldate FROM eol WHERE `;
-    const softwareList = request.params.softwareList || request.body
+    // DATA SENT AS A LIST
+    // console.log(request.body)
+    // const softwareList = request.body.softwareList
+    let sqlStatement = `SELECT * FROM eol WHERE`;
+    let softwareList = request.body.softwareList
     let count = 0;
-    
     softwareList.forEach(software => {
         let vers = software.version
         let version = vers.substr(0, vers.indexOf('.'));
         if (count == 0) {
-            query += ` (name LIKE '%${software.name}%' AND version LIKE'${version}%')`
+            sqlStatement += ` (software_name LIKE '%${software.name}%' AND version LIKE '${version}%')`
             count++;
         } else {
-            query += ` OR (name LIKE '%${software.name}%' AND version LIKE'${version}%')`
+            sqlStatement += ` OR (software_name LIKE '%${software.name}%' AND version LIKE '${version}%')`
         }
     })
+
+    sqlStatement += ';'
+    console.log(sqlStatement)
     
     count = 0;
 
-    pool.query(sqlStatement), (error, results) => {
+    pool.query(sqlStatement, (error, results) => {
         if (error) {
+            console.log(error)
             throw error
         }
+        console.log(response.status(200).json(results.rows))
         response.status(200).json(results.rows)
     
-    }
+    })
 
     // BASIC GET RETURNING ONE ROW
     
