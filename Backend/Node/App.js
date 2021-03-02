@@ -34,6 +34,7 @@ app.get('/', function (req, res) { // function to get data from test.json file
 // app.get('/test', db.testCon)
 app.get('/projects', db.getProjects)
 app.get('/info/:project', db.getProjectSoftwareInfo)
+app.get('/eolinfo', db.getEol)
 app.post('/software', db.createSoftware)
 app.post('/projectsoftware', db.createProjectSoftware)
 app.post('/eol', db.createEol)
