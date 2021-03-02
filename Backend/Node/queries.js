@@ -119,18 +119,45 @@ const createEol = (request, response) => {
 }
 
 const getEol = (request, response) => {
-    const software = request.params.software
-    const vers = request.params.version
+    let sqlStatement = `SELECT eoldate FROM eol WHERE `;
+    const softwareList = request.params.softwareList || request.body
+    let count = 0;
+    
+    softwareList.forEach(software => {
+        let vers = software.version
+        let version = vers.substr(0, vers.indexOf('.'));
+        if (count == 0) {
+            query += ` (name LIKE '%${software.name}%' AND version LIKE'${version}%')`
+            count++;
+        } else {
+            query += ` OR (name LIKE '%${software.name}%' AND version LIKE'${version}%')`
+        }
+    })
+    
+    count = 0;
 
-    let version = vers.substr(0, vers.indexOf('.'));
-
-    pool.query(`'SELECT * FROM eol WHERE name LIKE '%${software}%' AND version = '${version}%'`), [project], (error, results) => {
+    pool.query(sqlStatement), (error, results) => {
         if (error) {
             throw error
         }
         response.status(200).json(results.rows)
     
     }
+
+    // BASIC GET RETURNING ONE ROW
+    
+    // const software = request.params.software
+    // const vers = request.params.version
+
+    // let version = vers.substr(0, vers.indexOf('.'));
+
+    // pool.query(`'SELECT * FROM eol WHERE name LIKE '%${software}%' AND version = '${version}%'`), [project], (error, results) => {
+    //     if (error) {
+    //         throw error
+    //     }
+    //     response.status(200).json(results.rows)
+    
+    // }
 }
     
 //For testing that the connection works
