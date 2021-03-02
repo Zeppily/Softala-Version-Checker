@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -8,18 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
-
-const rows = [
-  createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719'),
-  createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574'),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253'),
-  createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000'),
-  createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919'),
-];
 
 
 function preventDefault(event) {
@@ -34,25 +22,46 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Eolinfo() {
   const classes = useStyles();
+
+  const [servers, setServers] = useState([]);
+    
+      useEffect(() => {
+        fetch('http://localhost:8080/info/Raahe')
+          .then((response) => response.json())
+          .then((data) => setServers(data))
+          .catch((error) => console.error(error))
+      }, []);   
+  
+    
+  // const serverlist = servers.server_versions;
+
+  console.log(servers);
+  //console.log(serverlist);
+
+
   return (
     <React.Fragment>
       <Title>End-Of-Life Information</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
             <TableCell>Name</TableCell>
-            <TableCell>Ship To</TableCell>
-            <TableCell>Payment Method</TableCell>
+            <TableCell>Version</TableCell>
+            <TableCell>Latest</TableCell>
+            <TableCell>npm</TableCell>
+            <TableCell>postgreSQL</TableCell>
+            <TableCell>OS</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
+          {servers.map((server) => (
+            <TableRow key={server.name}>
+              <TableCell>{server.name}</TableCell>
+              <TableCell>{server.installed_version}</TableCell>
+              <TableCell>{server.latest_version}</TableCell>
+              <TableCell>{server.npm}</TableCell>
+              <TableCell>{server.postgreSQL}</TableCell>
+              <TableCell>{server.os}</TableCell>
             </TableRow>
           ))}
         </TableBody>
