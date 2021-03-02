@@ -1,6 +1,12 @@
 const dotenv = require('dotenv/config')
 
+const axios = require('axios')
+const instance = axios.create({
+
+})
+
 const Pool = require("pg").Pool
+const server = require('./App')
 const pool = new Pool({
     user: process.env.DB_USER,
     host: 'versionchecker.dev.eficode.fi',
@@ -88,6 +94,69 @@ const deleteSoftware = (request, response) => {
     })
 }
 
+const startScan = (request, response) => {
+    //TODO: This should be broken down into smaller pieces
+    //Frontend posts list of project names
+    //Retrieve credentials and address for the production servers from the db
+    //Post a list of credentials to py scantool Flask endpoint
+    //Process data py scantool sends back
+    //Save data to db
+    //Send message to frontend that contains a list of servers where SSH connecton failed
+    const projectNames = request.body
+    console.log(projectNames)
+    const params = []
+    const dataToScantool = {credentials: ""}
+    for (let i = 1; i <= projectNames.length; i++) {
+        params.push('$' + i)
+    }
+
+    pool.query(`SELECT host, username, password FROM Project WHERE name IN (${params.join(',')})`, projectNames, (error, results) => {
+        if (error) {
+            throw error
+        }
+        dataToScantool.credentials = results.rows
+        
+    })
+
+    axios
+        .post('127.0.0.1:5000/start', {
+            dataToScanTool
+        })
+        .then(res => {
+            console.log(`statusCode: ${res.statusCode}`)
+            console.log(res)
+            serverList = res.data
+        })
+        .catch(error => {
+            console.error(error)
+        })
+    
+    errorList =[]
+    const hostname = ""
+
+    for (server in serverList) {
+        if (typeof server.depList == "string") {
+            errorList.append(server)
+        } else {
+            hostname = server.serverIp
+            for (dependency in server.depList) {
+                pool.query(`UPDATE Project_Software SET installed_version = $1 
+                            WHERE project_id = SELECT project_id FROM Project WHERE host = $2 AND software_id = SELECT software_id FROM Software WHERE name = $3`,
+                [dependency.depVer, hostname, dependency.depName.toLowerCase()], (error, results) => {
+                    if (error) {
+                        throw error
+                    }
+
+                })
+            }
+
+        }
+    }
+
+    response.status(200).send(`Great Success! Except these servers failed: ${errorList}`)
+    
+}
+
 //For testing that the connection works
 const testCon = (request, results) => {
     pool.query('SELECT NOW()', (err, res) => {
@@ -103,5 +172,6 @@ module.exports = {
     updateSoftware,
     deleteSoftware,
     testCon,
-    createProjectSoftware
+    createProjectSoftware,
+    startScan
 }

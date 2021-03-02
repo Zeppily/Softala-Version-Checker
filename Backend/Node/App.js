@@ -28,6 +28,7 @@ app.get('/projects', db.getProjects)
 app.get('/info/:project', db.getProjectSoftwareInfo)
 app.post('/software', db.createSoftware)
 app.post('/projectsoftware', db.createProjectSoftware)
+app.post('/start_scan', db.startScan)
 app.put('/software/:id', db.updateSoftware)
 app.delete('/software/:id', db.deleteSoftware)
 
