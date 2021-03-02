@@ -1,6 +1,10 @@
 const dotenv = require('dotenv/config')
+const pgp = require('pg-promise')({ capSQL: true });
+
+const axios = require('axios')
 
 const Pool = require("pg").Pool
+const server = require('./App')
 const pool = new Pool({
     user: process.env.DB_USER,
     host: 'versionchecker.dev.eficode.fi',
@@ -44,9 +48,22 @@ const createSoftware = (request, response) => {
     })
 }
 
+// Post function for adding new eol to DB
+/*const createEol = (request, response) => {
+    const { software_name, version, eol_date } = request.body
+
+    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3) RETURNING eol_id', [software_name, version, eol_date], (error, results) => {
+        if (error) {
+            throw error
+        }
+        console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
+        response.status(201).send(JSON.stringify(results.rows[0].software_id))
+    })
+}*/
+
 // POST function for adding new software to DB
 const createProjectSoftware = (request, response) => {
-    const {project, software, installed_version} = request.body
+    const { project, software, installed_version } = request.body
     console.log(`this is the project = ${project}`)
     pool.query(`
                 do $$
@@ -63,7 +80,7 @@ const createProjectSoftware = (request, response) => {
                         INSERT INTO project_software (project_id, software_id, installed_version) 
                             VALUES ((SELECT project_id FROM project WHERE name = $1), (SELECT software_id FROM software WHERE name = $2), $3);
                     END IF;
-                END $$`, /*[project, software, installed_version],*/ (error, results) => {
+                END $$`, /*[project, software, installed_version],*/(error, results) => {
         if (error) {
             throw error
         }
@@ -104,17 +121,30 @@ const deleteSoftware = (request, response) => {
 }
 
 const createEol = (request, response) => {
-    const { software, version, eol } = request.body
+    // const { software, version, eol } = request.body
 
-    let software_name = software.toLowerCase().replace(/\s/g, '')
-    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3)', [software_name, version, eol], (error, results) => {
+    // let software_name = software.toLowerCase().replace(/\s/g, '')
+
+    const cs = new pgp.helpers.ColumnSet(['software_name', 'version', 'eol_date'], { table: 'eol' });
+
+    // data input values:
+    let ist = JSON.stringify(request.body.softwareList);
+    let software_list = JSON.parse(ist)
+    // generating a multi-row insert query:
+    console.log(software_list)
+    const sql = pgp.helpers.insert(software_list, cs);
+    // //=> INSERT INTO "tmp"("col_a","col_b") VALUES('a1','b1'),('a2','b2')
+
+    console.log(sql)
+
+    pool.query(sql, (error, results) => {
         if (error) {
             throw error
         }
         //console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
         response.status(201).send(JSON.stringify(results.rows[0])
-    
-    )
+
+        )
     })
 }
 
@@ -138,7 +168,7 @@ const getEol = (request, response) => {
 
     sqlStatement += ';'
     console.log(sqlStatement)
-    
+
     count = 0;
 
     pool.query(sqlStatement, (error, results) => {
@@ -148,11 +178,11 @@ const getEol = (request, response) => {
         }
         console.log(response.status(200).json(results.rows))
         response.status(200).json(results.rows)
-    
+
     })
 
     // BASIC GET RETURNING ONE ROW
-    
+
     // const software = request.params.software
     // const vers = request.params.version
 
@@ -163,10 +193,82 @@ const getEol = (request, response) => {
     //         throw error
     //     }
     //     response.status(200).json(results.rows)
-    
+
     // }
 }
-    
+
+const getAllEol = (request, response) => {
+    pool.query('SELECT * FROM eol', (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+    })
+}
+
+const startScan = (request, response) => {
+    //TODO: This should be broken down into smaller pieces
+    //Frontend posts list of project names
+    //Retrieve credentials and address for the production servers from the db
+    //Post a list of credentials to py scantool Flask endpoint
+    //Process data py scantool sends back
+    //Save data to db
+    //Send message to frontend that contains a list of servers where SSH connecton failed
+    const projectNames = request.body
+    console.log(projectNames)
+    const params = []
+    const dataToScantool = { credentials: "" }
+    for (let i = 1; i <= projectNames.length; i++) {
+        params.push('$' + i)
+    }
+
+    pool.query(`SELECT host, username, password FROM Project WHERE name IN (${params.join(',')})`, projectNames, (error, results) => {
+        if (error) {
+            throw error
+        }
+        dataToScantool.credentials = results.rows
+
+    })
+
+    axios
+        .post('127.0.0.1:5000/start', {
+            dataToScanTool
+        })
+        .then(res => {
+            console.log(`statusCode: ${res.statusCode}`)
+            console.log(res)
+            serverList = res.data
+        })
+        .catch(error => {
+            console.error(error)
+        })
+
+    errorList = []
+    const hostname = ""
+
+    for (server in serverList) {
+        if (typeof server.depList == "string") {
+            errorList.append(server)
+        } else {
+            hostname = server.serverIp
+            for (dependency in server.depList) {
+                pool.query(`UPDATE Project_Software SET installed_version = $1 
+                            WHERE project_id = SELECT project_id FROM Project WHERE host = $2 AND software_id = SELECT software_id FROM Software WHERE name = $3`,
+                    [dependency.depVer, hostname, dependency.depName.toLowerCase()], (error, results) => {
+                        if (error) {
+                            throw error
+                        }
+
+                    })
+            }
+
+        }
+    }
+
+    response.status(200).send(`Great Success! Except these servers failed: ${errorList}`)
+
+}
+
 //For testing that the connection works
 const testCon = (request, results) => {
     pool.query('SELECT NOW()', (err, res) => {
@@ -181,8 +283,11 @@ module.exports = {
     createSoftware,
     updateSoftware,
     deleteSoftware,
+    createEol,
     testCon,
     createProjectSoftware,
     getEol,
-    createEol
+    createEol,
+    startScan,
+    getAllEol
 }
