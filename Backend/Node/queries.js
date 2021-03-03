@@ -285,7 +285,6 @@ module.exports = {
     createSoftware,
     updateSoftware,
     deleteSoftware,
-    createEol,
     testCon,
     createProjectSoftware,
     getEol,
