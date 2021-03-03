@@ -47,8 +47,6 @@ app.delete('/software/:id', db.deleteSoftware)
 
 // Temporary endpoint to get all eol data for frontend demo
 app.get('/alleol', db.getAllEol)
-app.post('/python', python.runPython)
-
 
 //At the moment doesn't do anything else but logs the messages to console when using with curl
 /*

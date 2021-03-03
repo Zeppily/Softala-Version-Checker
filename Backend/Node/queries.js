@@ -1,6 +1,8 @@
 const dotenv = require('dotenv/config')
+const pgp = require('pg-promise')({ capSQL: true });
 
 const axios = require('axios')
+
 
 const Pool = require("pg").Pool
 const server = require('./App')
@@ -121,10 +123,23 @@ const deleteSoftware = (request, response) => {
 }
 
 const createEol = (request, response) => {
-    const { software, version, eol } = request.body
+    // const { software, version, eol } = request.body
 
-    let software_name = software.toLowerCase().replace(/\s/g, '')
-    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3)', [software_name, version, eol], (error, results) => {
+    // let software_name = software.toLowerCase().replace(/\s/g, '')
+
+    const cs = new pgp.helpers.ColumnSet(['software_name', 'version', 'eol_date'], { table: 'eol' });
+
+    // data input values:
+    let ist = JSON.stringify(request.body.softwareList);
+    let software_list = JSON.parse(ist)
+    // generating a multi-row insert query:
+    console.log(software_list)
+    const sql = pgp.helpers.insert(software_list, cs);
+    // //=> INSERT INTO "tmp"("col_a","col_b") VALUES('a1','b1'),('a2','b2')
+
+    console.log(sql)
+
+    pool.query(sql, (error, results) => {
         if (error) {
             throw error
         }
@@ -132,15 +147,6 @@ const createEol = (request, response) => {
         response.status(201).send(JSON.stringify(results.rows[0])
 
         )
-    })
-}
-
-const getEolTest = (request, response) => {
-    pool.query('SELECT * FROM eol', (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(200).json(results.rows)
     })
 }
 
@@ -285,6 +291,5 @@ module.exports = {
     getEol,
     createEol,
     startScan,
-    getAllEol,
-    createEol
+    getAllEol
 }
