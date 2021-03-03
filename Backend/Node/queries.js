@@ -283,12 +283,8 @@ module.exports = {
     testCon,
     createProjectSoftware,
     getEol,
-<<<<<<< HEAD
     createEol,
     startScan,
-    getAllEol
-=======
-    getEolTest,
+    getAllEol,
     createEol
->>>>>>> parent of 84160f4 (delete test added)
 }
