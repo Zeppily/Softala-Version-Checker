@@ -5,6 +5,7 @@ from flask import Flask
 from flask import request
 import scantool
 import json
+import jsonscrape
 
 app = Flask(__name__)
 
@@ -42,3 +43,9 @@ def start_scan():
 #        "password": ""
 #    }
 #]}
+
+# /eols End-point that only accepts GET requests
+# Starts the json scrapper and returns the software list
+@app.route('/eols', methods=['GET'])
+def get_eol():
+    return jsonscrape.scrap_eol()
