@@ -37,6 +37,7 @@ app.get('/', function (req, res) { // function to get data from test.json file
 app.get('/projects', db.getProjects)
 app.get('/info/:project', db.getProjectSoftwareInfo)
 app.get('/eolinfo', db.getEol)
+app.get('/testing', db.getEolTest)
 app.post('/software', db.createSoftware)
 app.post('/projectsoftware', db.createProjectSoftware)
 app.post('/eol', db.createEol)
@@ -44,8 +45,13 @@ app.post('/start_scan', db.startScan)
 app.put('/software/:id', db.updateSoftware)
 app.delete('/software/:id', db.deleteSoftware)
 
+<<<<<<< HEAD
 // Temporary endpoint to get all eol data for frontend demo
 app.get('/alleol', db.getAllEol)
+=======
+app.post('/python', python.runPython)
+
+>>>>>>> parent of 84160f4 (delete test added)
 
 //At the moment doesn't do anything else but logs the messages to console when using with curl
 /*

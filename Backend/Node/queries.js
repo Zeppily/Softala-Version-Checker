@@ -1,5 +1,4 @@
 const dotenv = require('dotenv/config')
-const pgp = require('pg-promise')({ capSQL: true });
 
 const axios = require('axios')
 
@@ -25,6 +24,7 @@ const getProjects = (request, response) => {
 
 // Gets project software info by project name
 const getProjectSoftwareInfo = (request, response) => {
+    console.log(request)
     const project = request.params.project
 
     pool.query('SELECT project.name, software.name, project_software.installed_version, software.latest_version FROM project_software INNER JOIN project ON project_software.project_id = project.project_id INNER JOIN software ON project_software.software_id = software.software_id WHERE project_software.project_id = (SELECT project_id FROM project WHERE name = $1)', [project], (error, results) => {
@@ -121,23 +121,10 @@ const deleteSoftware = (request, response) => {
 }
 
 const createEol = (request, response) => {
-    // const { software, version, eol } = request.body
+    const { software, version, eol } = request.body
 
-    // let software_name = software.toLowerCase().replace(/\s/g, '')
-
-    const cs = new pgp.helpers.ColumnSet(['software_name', 'version', 'eol_date'], { table: 'eol' });
-
-    // data input values:
-    let ist = JSON.stringify(request.body.softwareList);
-    let software_list = JSON.parse(ist)
-    // generating a multi-row insert query:
-    console.log(software_list)
-    const sql = pgp.helpers.insert(software_list, cs);
-    // //=> INSERT INTO "tmp"("col_a","col_b") VALUES('a1','b1'),('a2','b2')
-
-    console.log(sql)
-
-    pool.query(sql, (error, results) => {
+    let software_name = software.toLowerCase().replace(/\s/g, '')
+    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3)', [software_name, version, eol], (error, results) => {
         if (error) {
             throw error
         }
@@ -145,6 +132,15 @@ const createEol = (request, response) => {
         response.status(201).send(JSON.stringify(results.rows[0])
 
         )
+    })
+}
+
+const getEolTest = (request, response) => {
+    pool.query('SELECT * FROM eol', (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
     })
 }
 
@@ -287,7 +283,12 @@ module.exports = {
     testCon,
     createProjectSoftware,
     getEol,
+<<<<<<< HEAD
     createEol,
     startScan,
     getAllEol
+=======
+    getEolTest,
+    createEol
+>>>>>>> parent of 84160f4 (delete test added)
 }
