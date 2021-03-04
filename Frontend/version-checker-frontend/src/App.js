@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
+    paddingRight: 24,
   },
   toolbarIcon: {
     display: 'flex',
@@ -118,7 +118,8 @@ export default function App() {
 
 
   return (
-    <div className={classes.root}>  
+    <div className={classes.root}>
+      {/* Toolbar/Banner */}
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
@@ -129,7 +130,7 @@ export default function App() {
         </Toolbar>
       </AppBar>
     
-      
+      {/* Main elements in the dashboard */}
 
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

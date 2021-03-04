@@ -5,6 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
 
+//Information on this component is still generic since there is no actual data to use.
+//Developement of the FrontEnd continues along the way while other parts get developed more.
+
 function preventDefault(event) {
   event.preventDefault();
 }

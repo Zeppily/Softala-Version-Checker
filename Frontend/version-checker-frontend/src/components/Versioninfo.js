@@ -8,8 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-
-
 function preventDefault(event) {
   event.preventDefault();
 }
@@ -32,12 +30,7 @@ export default function Versioninfo() {
           .catch((error) => console.error(error))
       }, []);   
   
-    
-  // const serverlist = servers.server_versions;
-
   console.log(servers);
-  //console.log(serverlist);
-
 
   return (
     <React.Fragment>

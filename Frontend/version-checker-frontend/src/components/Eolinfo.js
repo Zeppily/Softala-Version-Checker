@@ -8,7 +8,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-
+// At the moment this is same as the Versioninfo.js 
+// When we have more specific info about the Eol-dates this will be updated.
 
 function preventDefault(event) {
   event.preventDefault();
@@ -31,13 +32,8 @@ export default function Eolinfo() {
           .then((data) => setServers(data))
           .catch((error) => console.error(error))
       }, []);   
-  
-    
-  // const serverlist = servers.server_versions;
 
   console.log(servers);
-  //console.log(serverlist);
-
 
   return (
     <React.Fragment>
