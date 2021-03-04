@@ -182,7 +182,7 @@ const getEol = (request, response) => {
     let count = 0;
     softwareList.forEach(software => {
         let vers = software.version
-        let version = vers.substr(0, vers.indexOf('.'));
+        let version = vers.substr(0, (vers.indexOf('.') + 1));
         if (count == 0) {
             sqlStatement += ` (software_name LIKE '%${software.name}%' AND version LIKE '${version}%')`
             count++;
