@@ -113,7 +113,7 @@ describe('Get data from DB', function () {
 
     describe('Test POST eol dates', function () {
 
-        it('Expects status code 200', function (done) {
+        it('Expects status code 201', function (done) {
             let softwareList = {
                 "softwareList": [
                     {
