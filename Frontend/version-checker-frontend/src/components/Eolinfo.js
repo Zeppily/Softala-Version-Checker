@@ -6,6 +6,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Button from '@material-ui/core/Button';
 import Title from './Title';
 
 // At the moment this is same as the Versioninfo.js 
@@ -20,6 +21,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
 }));
+
+const handleClick = (event) => {
+
+};
 
 export default function Eolinfo() {
   const classes = useStyles();
@@ -63,9 +68,15 @@ export default function Eolinfo() {
         </TableBody>
       </Table>
       <div className={classes.seeMore}>
-        <Link color="primary" href="#" onClick={preventDefault}>
-          Update EOL info
-        </Link>
+        <Button
+            aria-controls="customized-menu"
+            aria-haspopup="true"
+            variant="contained"
+            color="primary"
+            onClick={handleClick}
+            >
+          Update
+        </Button>
       </div>
     </React.Fragment>
   );
