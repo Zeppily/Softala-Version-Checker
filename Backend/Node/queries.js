@@ -3,6 +3,7 @@ const pgp = require('pg-promise')({ capSQL: true });
 
 const axios = require('axios')
 
+
 const Pool = require("pg").Pool
 const server = require('./App')
 const pool = new Pool({
@@ -25,6 +26,7 @@ const getProjects = (request, response) => {
 
 // Gets project software info by project name
 const getProjectSoftwareInfo = (request, response) => {
+    console.log(request)
     const project = request.params.project
 
     pool.query('SELECT project.name, software.name, project_software.installed_version, software.latest_version FROM project_software INNER JOIN project ON project_software.project_id = project.project_id INNER JOIN software ON project_software.software_id = software.software_id WHERE project_software.project_id = (SELECT project_id FROM project WHERE name = $1)', [project], (error, results) => {
@@ -145,6 +147,15 @@ const createEol = (request, response) => {
         response.status(201).send(JSON.stringify(results.rows[0])
 
         )
+    })
+}
+
+const getEolTest = (request, response) => {
+    pool.query('SELECT * FROM eol', (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
     })
 }
 
