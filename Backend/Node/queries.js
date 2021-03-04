@@ -123,6 +123,20 @@ const deleteSoftware = (request, response) => {
 }
 
 const createEol = (request, response) => {
+    // using axios to get the data from the python webscraper 
+    // let software_list
+    // axios
+    //     .get('127.0.0.1:5000/eols')
+    //     .then(res => {
+    //         // console.log(`statusCode: ${res.statusCode}`)
+    //         console.log(res)
+    //         software_list = res.body.softwareList
+    //     })
+    //     .catch(error => {
+    //         console.error(error)
+    //     })
+
+    // console.log(software_list)
     // const { software, version, eol } = request.body
 
     // let software_name = software.toLowerCase().replace(/\s/g, '')
