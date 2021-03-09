@@ -150,7 +150,8 @@ const createEol = (request, response) => {
     })
 }
 
-const createEol = (request, response) => {
+// Might be useless check and remove if it is
+/*const createEol = (request, response) => {
     // const { software, version, eol } = request.body
 
     // let software_name = software.toLowerCase().replace(/\s/g, '')
@@ -176,7 +177,7 @@ const createEol = (request, response) => {
 
         )
     })
-}
+}*/
 
 
 const getEol = (request, response) => {
