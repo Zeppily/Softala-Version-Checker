@@ -3,10 +3,6 @@ const pgp = require('pg-promise')({ capSQL: true });
 
 const axios = require('axios');
 
-const pgp = require('pg-promise')({
-    capSQL: true
-});
-
 const Pool = require("pg").Pool
 const server = require('./App')
 const pool = new Pool({
