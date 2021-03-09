@@ -24,6 +24,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PSWD: ${{ secrets.DB_PSWD }}
     - run: |
         cd Backend/Node
         npm ci
