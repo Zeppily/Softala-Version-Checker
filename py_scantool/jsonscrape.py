@@ -3,6 +3,9 @@ import json
 import re
 import datetime
 
+#TODO: Split logic
+#TODO: delete softlist, retrieve ALL software within the sheet.
+
 def scrap_eol():
     eolList = {"softwareList": []}
 
