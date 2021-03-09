@@ -21,6 +21,12 @@ jobs:
       with:
         python-version: 3.9
     - name: Install and test
+      env: 
+        USERNAME: ${{ secrets.USERNAME }}
+        IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
+        IP_LIST: ${{ secrets.IP_LIST }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        PORT: ${{ secrets.PORT }}
       run: |
         cd py_scantool
         python -m pip install --upgrade pip
