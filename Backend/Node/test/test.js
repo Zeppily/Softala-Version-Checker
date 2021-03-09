@@ -88,6 +88,52 @@ describe('Get data from DB', function () {
                 .delete('/software/' + updateId)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(200);
+                    done()
+                })
+        })
+    })
+    describe('Test for GET eol dates', function () {
+
+        it('Expects status code 200', function (done) {
+            let softwareList = {
+                "softwareList": [
+                    { "name": "test", "version": "1.2.3" },
+                    { "name": "test", "version": "3.2.1" }
+                ]
+            }
+            chai.request(server)
+                .get('/eolinfo/')
+                .send(softwareList)
+                .end((err, res) => {
+                    expect(res.statusCode).to.equal(200);
+                    done();
+                })
+        })
+    })
+
+    describe('Test POST eol dates', function () {
+
+        it('Expects status code 200', function (done) {
+            let softwareList = {
+                "softwareList": [
+                    {
+                        "software_name": "testsoftware",
+                        "version": "13.0.5",
+                        "eol_date": "2021-07-1"
+                    },
+                    {
+                        "software_name": "testos",
+                        "version": "14.0.5",
+                        "eol_date": "2021-07-1"
+                    }
+                ]
+
+            }
+            chai.request(server)
+                .post('/eol')
+                .send(softwareList)
+                .end((err, res) => {
+                    expect(res.statusCode).to.equal(201);
                     done();
                 })
         })

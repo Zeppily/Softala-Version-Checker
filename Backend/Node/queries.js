@@ -1,8 +1,11 @@
 const dotenv = require('dotenv/config')
 const pgp = require('pg-promise')({ capSQL: true });
 
-const axios = require('axios')
+const axios = require('axios');
 
+const pgp = require('pg-promise')({
+    capSQL: true
+});
 
 const Pool = require("pg").Pool
 const server = require('./App')
@@ -26,7 +29,7 @@ const getProjects = (request, response) => {
 
 // Gets project software info by project name
 const getProjectSoftwareInfo = (request, response) => {
-    console.log(request)
+    //console.log(request)
     const project = request.params.project
 
     pool.query('SELECT project.name, software.name, project_software.installed_version, software.latest_version FROM project_software INNER JOIN project ON project_software.project_id = project.project_id INNER JOIN software ON project_software.software_id = software.software_id WHERE project_software.project_id = (SELECT project_id FROM project WHERE name = $1)', [project], (error, results) => {
@@ -49,19 +52,6 @@ const createSoftware = (request, response) => {
         response.status(201).send(JSON.stringify(results.rows[0].software_id))
     })
 }
-
-// Post function for adding new eol to DB
-/*const createEol = (request, response) => {
-    const { software_name, version, eol_date } = request.body
-
-    pool.query('INSERT INTO eol (software_name, version, eol_date) VALUES ($1, $2, $3) RETURNING eol_id', [software_name, version, eol_date], (error, results) => {
-        if (error) {
-            throw error
-        }
-        console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
-        response.status(201).send(JSON.stringify(results.rows[0].software_id))
-    })
-}*/
 
 // POST function for adding new software to DB
 const createProjectSoftware = (request, response) => {
@@ -164,14 +154,34 @@ const createEol = (request, response) => {
     })
 }
 
-const getEolTest = (request, response) => {
-    pool.query('SELECT * FROM eol', (error, results) => {
+const createEol = (request, response) => {
+    // const { software, version, eol } = request.body
+
+    // let software_name = software.toLowerCase().replace(/\s/g, '')
+
+    const cs = new pgp.helpers.ColumnSet(['software_name', 'version', 'eol_date'], { table: 'eol' });
+
+    // data input values:
+    let ist = JSON.stringify(request.body.softwareList);
+    let software_list = JSON.parse(ist)
+    // generating a multi-row insert query:
+    console.log(software_list)
+    const sql = pgp.helpers.insert(software_list, cs);
+    // //=> INSERT INTO "tmp"("col_a","col_b") VALUES('a1','b1'),('a2','b2')
+
+    console.log(sql)
+
+    pool.query(sql, (error, results) => {
         if (error) {
             throw error
         }
-        response.status(200).json(results.rows)
+        //console.log("This is the insert id : " + JSON.stringify(results.rows[0].software_id))
+        response.status(201).send(JSON.stringify(results.rows[0])
+
+        )
     })
 }
+
 
 const getEol = (request, response) => {
     // DATA SENT AS A LIST
@@ -192,7 +202,7 @@ const getEol = (request, response) => {
     })
 
     sqlStatement += ';'
-    console.log(sqlStatement)
+    //console.log(sqlStatement)
 
     count = 0;
 
@@ -201,7 +211,7 @@ const getEol = (request, response) => {
             console.log(error)
             throw error
         }
-        console.log(response.status(200).json(results.rows))
+        //console.log(response.status(200).json(results.rows))
         response.status(200).json(results.rows)
 
     })
