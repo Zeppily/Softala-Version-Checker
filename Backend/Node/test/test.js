@@ -76,7 +76,7 @@ describe('Get data from DB', function () {
                 .send(software)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(200);
-                    console.log(updateId)
+                    console.log(updateId);
                     done();
                 })
         })
@@ -118,12 +118,12 @@ describe('Get data from DB', function () {
                 "softwareList": [
                     {
                         "software_name": "testing",
-                        "version": "1.2.3",
+                        "version": "5.3",
                         "eol_date": "2021-07-1"
                     },
                     {
                         "software_name": "this",
-                        "version": "3.2.1",
+                        "version": "3.5",
                         "eol_date": "2021-07-1"
                     }
                 ]
