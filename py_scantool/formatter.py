@@ -11,3 +11,22 @@ def format_dpkg(commandResult):
 		"depName": parts[1],
 		"depVer": parts[2]
 	}
+
+def formatManual(manualInstalled):
+	manualFormatted = []
+	for installed in manualInstalled:
+		formatted = re.sub(r"\n+", "", installed)
+		manualFormatted.append(formatted)
+	return manualFormatted
+
+def streamline(data, manualFormatted):
+	print(manualFormatted)
+	print(data)
+	for installed in manualFormatted:
+		if data["depName"] == installed:
+			usefulDepName = data["depName"]
+			streamlinedVersion = str(re.split(r'[^0-9.-]', data["depVer"])[0])
+			return {
+				"depName": usefulDepName,
+				"depVer": streamlinedVersion
+			}
