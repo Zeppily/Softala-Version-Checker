@@ -40,6 +40,7 @@ import Button from '@material-ui/core/Button';
         variant="contained"
         color="primary"
         onClick={handleClick}
+        style={{marginLeft: 30}}
       >
         Servers
       </Button>
@@ -54,6 +55,10 @@ import Button from '@material-ui/core/Button';
               maxHeight: ITEM_HEIGHT * 4.5,
               width: '20ch',
             },
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
           }}
         >
           {projects.map((option) => (

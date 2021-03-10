@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbar: {
     paddingRight: 24,
+    display: 'flex',
   },
   toolbarIcon: {
     display: 'flex',
@@ -68,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'none',
   },
   title: {
-    flexGrow: 1,
+    flexGrow: 0,
   },
   drawerPaper: {
     position: 'relative',
@@ -94,6 +95,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
+    alignItems: 'left'
   },
   container: {
     paddingTop: theme.spacing(4),
