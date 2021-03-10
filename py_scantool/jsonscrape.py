@@ -4,17 +4,12 @@ import re
 import datetime
 
 #TODO: Split logic
-#TODO: delete softlist, retrieve ALL software within the sheet.
 
 def scrap_eol():
     eolList = {"softwareList": []}
 
     JSON_URL = "https://spreadsheets.google.com/feeds/list/1sufF_TnsBvdVRQq8j77SsFr_0q_6yDtCkMAJWcM2kQ4/od6/public/basic?alt=json"
-    date = datetime.datetime.now()
-    str_date = str(date.month) + "/" + str(date.day) + "/" + str(date.year)
 
-    software_list = ["MySQL Database", "PostgreSQL",
-                    "Node.js", "Python", "Ruby", "Debian Linux", "Ubuntu", "npm"]
 
     with urllib.request.urlopen(JSON_URL) as url:
         data = json.loads(url.read().decode())
@@ -35,10 +30,11 @@ def scrap_eol():
         if e:
             eol = e.group(1)
 
-        if software in software_list and eol[-2:] >= str_date[-2:]:
-            eol_date = datetime.datetime.strptime(eol, "%m/%d/%Y").strftime("%Y-%m-%d")
-            eolList["softwareList"].append({"software_name": software, "version": version, "eol_date": str(eol_date) })
-        else:
-            pass
+        if software and eol:
+            try:
+                eol_date = datetime.datetime.strptime(eol, "%m/%d/%Y").strftime("%Y-%m-%d")
+                eolList["softwareList"].append({"software_name": software, "version": version, "eol_date": eol_date })
+            except:
+                pass
 
     return eolList
