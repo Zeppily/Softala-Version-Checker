@@ -4,6 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
+import Versioninfo from "./Versioninfo";
 
 
   
@@ -17,6 +18,11 @@ import Button from '@material-ui/core/Button';
       setAnchorEl(event.currentTarget);
     };
   
+    const sendName = (servername) => {
+      handleClose()
+      Versioninfo(servername)
+    }
+
     const handleClose = () => {
       setAnchorEl(null);
     };
@@ -31,6 +37,10 @@ import Button from '@material-ui/core/Button';
       }, []);
 
     console.log(projects);
+
+    const handleUpdate = (event) => {
+      
+    };
   
     return (
       <div>
@@ -62,11 +72,20 @@ import Button from '@material-ui/core/Button';
           }}
         >
           {projects.map((option) => (
-            <MenuItem key={option.name} onClick={handleClose}>
+            <MenuItem key={option.name} onClick={() => sendName(option.name)}>
               {option.name}
             </MenuItem>
           ))}
         </Menu>
-      </div>
+        <Button
+            aria-controls="customized-menu"
+            aria-haspopup="true"
+            variant="contained"
+            color="primary"
+            onClick={handleUpdate}
+            >
+          Update
+        </Button>
+        </div>
     );
   }

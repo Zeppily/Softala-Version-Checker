@@ -30,6 +30,7 @@ import Overview from './components/Overview';
 import Eolinfo from './components/Eolinfo';
 import Listbutton from './components/Listbutton';
 import id from './test.json'
+import AddServerForm from "./components/AddServerForm";
 
 
 
@@ -129,8 +130,13 @@ export default function App() {
             Version checker
           </Typography>
           <Listbutton />
+          <AddServerForm />
         </Toolbar>
       </AppBar>
+
+      <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+            projectName
+      </Typography>
     
       {/* Main elements in the dashboard */}
 
@@ -138,27 +144,27 @@ export default function App() {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={2}>
+            {/* Overview */}
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper className={classes.paper}>
+                <Overview />
+              </Paper>
+            </Grid>
 
             {/* Software Version Information */}
-            <Grid item xs={12} md={4} lg={4}>
+            <Grid item xs={12} md={12} lg={12}>
               <Paper className={classes.paper}>
                 <Versioninfo />
               </Paper>
             </Grid>
 
             {/* End-Of-Life Information */}
-            <Grid item xs={12} md={4} lg={4}>
+            <Grid item xs={12} md={12} lg={12}>
               <Paper className={classes.paper}>
                 <Eolinfo />
               </Paper>
             </Grid>
 
-            {/* Overview */}
-            <Grid item xs={12} md={4} lg={4}>
-              <Paper className={classes.paper}>
-                <Overview />
-              </Paper>
-            </Grid>
           </Grid>
         </Container>
       </main>

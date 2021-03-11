@@ -67,17 +67,6 @@ export default function Eolinfo() {
           ))}
         </TableBody>
       </Table>
-      <div className={classes.seeMore}>
-        <Button
-            aria-controls="customized-menu"
-            aria-haspopup="true"
-            variant="contained"
-            color="primary"
-            onClick={handleClick}
-            >
-          Update
-        </Button>
-      </div>
     </React.Fragment>
   );
 }

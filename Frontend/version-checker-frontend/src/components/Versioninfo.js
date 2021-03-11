@@ -8,6 +8,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import Title from './Title';
+import Listbutton from './Listbutton';
+
 
 function preventDefault(event) {
   event.preventDefault();
@@ -19,23 +21,24 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const handleClick = (event) => {
 
-};
-
-export default function Versioninfo() {
+export default function Versioninfo(props) {
   const classes = useStyles();
 
   const [servers, setServers] = useState([]);
+
+  const projectName = props.servername;
     
-      useEffect(() => {
-        fetch('http://localhost:8080/info/Raahe')
+  const getProjectData = (projectName) => {
+    fetch(`http://localhost:8080/info/${projectName}`)
           .then((response) => response.json())
           .then((data) => setServers(data))
           .catch((error) => console.error(error))
+  }
+
+      useEffect(() => {
+        getProjectData(projectName)
       }, []);   
-  
-  console.log(servers);
 
   return (
     <React.Fragment>
@@ -64,17 +67,6 @@ export default function Versioninfo() {
           ))}
         </TableBody>
       </Table>
-      <div className={classes.seeMore}>
-        <Button
-            aria-controls="customized-menu"
-            aria-haspopup="true"
-            variant="contained"
-            color="primary"
-            onClick={handleClick}
-            >
-          Update
-        </Button>
-      </div>
     </React.Fragment>
   );
 }
