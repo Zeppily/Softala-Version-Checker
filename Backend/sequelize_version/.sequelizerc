@@ -1,4 +1,6 @@
-const path = require('path')
+require('dotenv').config();
+require("@babel/register");
+const path = require('path');
 
 module.exports = {
     "config": path.resolve('./api/server/src/config', 'config.js'),

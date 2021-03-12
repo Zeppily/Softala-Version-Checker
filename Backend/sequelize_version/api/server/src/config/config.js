@@ -1,21 +1,20 @@
-const dotenv = require("dotenv");
+require('dotenv').config();
 // dotenv.config({ path: "config.env" });
 
-module.exports = 
-{
+module.exports = {
   "development": {
     "database": 'version_checker',
     "username": 'postgres',
     "password": process.env.TEST_DB_PSWD,
     "host": '127.0.0.1',
     "dialect": 'postgres',
-    // "dialectOptions": {
-    //   "ssl": {
-    //       require: true,
-    //       rejectUnauthorized: true
-    //   }
-    // }
-    // port: 5432
+    // // "dialectOptions": {
+    // //   "ssl": {
+    // //       require: true,
+    // //       rejectUnauthorized: true
+    // //   }
+    // // }
+    // // port: 5432
   },
   "test" : {
     "database": 'version_checker',
@@ -34,5 +33,3 @@ module.exports =
     "port": process.env.DB_PORT
   }
 };
-// Below link is fix to env variable problem
-// https://stackoverflow.com/questions/62975561/sequelize-cli-postgres-heroku-production-typeerror-err-invalid-arg-type-the
