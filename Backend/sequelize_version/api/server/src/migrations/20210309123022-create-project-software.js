@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Project_Software', {
+    return queryInterface.createTable('project_software', {
       project_id: {
         type: Sequelize.INTEGER,
         references: {
@@ -23,6 +23,6 @@ module.exports = {
     })
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('Project_Software');
+    return queryInterface.dropTable('project_software');
   }
 };

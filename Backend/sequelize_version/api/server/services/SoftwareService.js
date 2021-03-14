@@ -3,7 +3,7 @@ import database from '../src/models';
 class SoftwareService {
     static async getAllSoftwares() {
         try {
-            return await database.Software.findAll();
+            return await database.software.findAll();
         } catch (error) {
             throw error;
         }
@@ -12,7 +12,7 @@ class SoftwareService {
     static async addSoftware(newSoftware) {
         console.log(newSoftware);
         try {
-            return await database.Software.create(newSoftware);
+            return await database.software.create(newSoftware);
         } catch (error) {
             throw error;
         }
@@ -20,12 +20,12 @@ class SoftwareService {
 
     static async updateSoftware(id, updateSoftware) {
         try {
-            const softwareToUpdate = await database.Software.findOne({
-                where: {software_id: Number(id) }
+            const softwareToUpdate = await database.software.findOne({
+                where: { software_id: Number(id) }
             });
 
             if (softwareToUpdate) {
-                await database.Software.update(updateSoftware, { where: { software_id: Number(id) } });
+                await database.software.update(updateSoftware, { where: { software_id: Number(id) } });
 
                 return updateSoftware;
             }
@@ -37,11 +37,11 @@ class SoftwareService {
 
     static async deleteSoftware(id) {
         try {
-            const softwareToDelete = await database.Software.findOne({ where: { software_id: Number(id) } });
+            const softwareToDelete = await database.software.findOne({ where: { software_id: Number(id) } });
 
             if (softwareToDelete) {
-                const deletedSoftware = await database.Software.destroy({
-                    where: {software_id: Number(id) }
+                const deletedSoftware = await database.software.destroy({
+                    where: { software_id: Number(id) }
                 });
                 return deletedSoftware;
             }

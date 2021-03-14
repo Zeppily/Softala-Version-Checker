@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Project_Software = sequelize.define('Project_Software', {
+  const Project_Software = sequelize.define('project_software', {
     // project_id: {
     //   type: DataTypes.INTEGER,
     //   references: 'Project',
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-  },  {
+  }, {
     createdAt: false,
     updatedAt: false,
     id: false,
@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Project_Software.associate = models => {
-    Project_Software.belongsTo(models.Project, {foreignKey: 'project_id', as: 'project'})
-    Project_Software.belongsTo(models.Software, {foreignKey: 'software_id', as: 'software'})
+    Project_Software.belongsTo(models.project, { foreignKey: 'project_id', as: 'project' })
+    Project_Software.belongsTo(models.software, { foreignKey: 'software_id', as: 'software' })
   }
   return Project_Software;
 };

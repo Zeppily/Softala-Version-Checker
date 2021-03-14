@@ -1,10 +1,10 @@
 import database from '../src/models';
-import software from '../src/models/software';
+//import software from '../src/models/software';
 
 class ProjectSoftwareService {
     static async getAllProjectSoftware() {
         try {
-            return await database.Project.findAll();
+            return await database.project.findAll();
         } catch (error) {
             throw error;
         }
@@ -15,7 +15,7 @@ class ProjectSoftwareService {
         const projName = project.project
 
         try {
-            const projId = await database.Project.findOne({
+            const projId = await database.project.findOne({
                 attributes: ['project_id'],
                 where: {
                     name: projName
@@ -43,58 +43,58 @@ class ProjectSoftwareService {
             //         where: {
             //             project_id: projectId
             //         },   
-                    // include: [
-                    //     {
-                    //         model: database.Software, 
-                    //         as: 'software', 
-                    //         through: {
-                    //             model: database.Project_Software, 
-                    //             attributes: ['installed_version']
-                    //         },
-                    //         // attributes: []
-                    //         attributes: ['name', 'latest_version']          
-                    //     }
-                    // ],
-                    // attributes: ['name', 
-                    //                 // [Sequelize.literal('"software->Project_Software"."installed_version"'), 'installed_version'],
-                    //                 // [Sequelize.literal('"software"."name"'), 'softwareName'],
-                    //                 // [Sequelize.literal('"software"."latest_version"'), 'latest_version'],
-                    //             ],
-                    // //raw: true 
-                    //         });                
-                //     include: [
-                //         {
-                //             model: database.Software, 
-                //             as: 'software', 
-                //             // through: {
-                //             //     model: database.Project, 
-                //             //     attributes: ['installed_version']
-                //             // },
-                //             // attributes: []
-                //             attributes: ['name', 'latest_version']          
-                //         },
-                //         {
-                //             model: database.Project,
-                //             as: 'project',
-                //             attributes: ['name']
-                //         }
-                //     ],
-                //     attributes: ['name'],
-                //     // raw: true
-                // });
-            
-            return await database.Project_Software.findAll({
+            // include: [
+            //     {
+            //         model: database.Software, 
+            //         as: 'software', 
+            //         through: {
+            //             model: database.Project_Software, 
+            //             attributes: ['installed_version']
+            //         },
+            //         // attributes: []
+            //         attributes: ['name', 'latest_version']          
+            //     }
+            // ],
+            // attributes: ['name', 
+            //                 // [Sequelize.literal('"software->Project_Software"."installed_version"'), 'installed_version'],
+            //                 // [Sequelize.literal('"software"."name"'), 'softwareName'],
+            //                 // [Sequelize.literal('"software"."latest_version"'), 'latest_version'],
+            //             ],
+            // //raw: true 
+            //         });                
+            //     include: [
+            //         {
+            //             model: database.Software, 
+            //             as: 'software', 
+            //             // through: {
+            //             //     model: database.Project, 
+            //             //     attributes: ['installed_version']
+            //             // },
+            //             // attributes: []
+            //             attributes: ['name', 'latest_version']          
+            //         },
+            //         {
+            //             model: database.Project,
+            //             as: 'project',
+            //             attributes: ['name']
+            //         }
+            //     ],
+            //     attributes: ['name'],
+            //     // raw: true
+            // });
+
+            return await database.project_software.findAll({
                 where: {
                     project_id: projectId
                 },
                 include: [
                     {
-                        model: database.Software,
+                        model: database.software,
                         as: 'software',
                         attributes: ['name', 'latest_version']
                     },
                     {
-                        model: database.Project,
+                        model: database.project,
                         as: 'project',
                         attributes: []
                     }
@@ -109,7 +109,7 @@ class ProjectSoftwareService {
 
     static async getProjectSoftwareVersionInfo(req, res) {
         try {
-            return 
+            return
         } catch (error) {
             throw error;
         }
@@ -128,7 +128,7 @@ class ProjectSoftwareService {
                     name: projectName
                 }
             })
-            
+
             const softId = await database.Software.findOne({
                 attributes: ['software_id'],
                 where: {
@@ -140,10 +140,10 @@ class ProjectSoftwareService {
             console.log(`this is the projectID ${projectId}`)
             console.log(`this is the softwareID ${softwareId}`)
             console.log(`this is the installedVersion ${installedVersion}`)
-            
+
             return await database.Project_Software.create({
-                'project_id': projectId, 
-                'software_id': softwareId, 
+                'project_id': projectId,
+                'software_id': softwareId,
                 'installed_version': installedVersion
             });
 
@@ -162,15 +162,15 @@ class ProjectSoftwareService {
         let softwareName = updateProjectSoftware.software_name;
 
         try {
-            const projectSoftwareToUpdate = await database.ProjectSoftware.findOne({
+            const projectSoftwareToUpdate = await database.project_software.findOne({
                 where: {
-                    project_id: (database.Project.findOne({
+                    project_id: (database.project.findOne({
                         attributes: [project_id],
                         where: {
                             name: projectName
                         }
                     })),
-                    software_id: (database.Software.findOne({
+                    software_id: (database.software.findOne({
                         attributes: [software_id],
                         where: {
                             name: softwareName
@@ -180,21 +180,21 @@ class ProjectSoftwareService {
             });
 
             if (projectSoftwareToUpdate) {
-                await database.ProjectSoftware.update(updateProjectSoftware, { 
-                    where: { 
-                        project_id: (database.Project.findOne({
+                await database.ProjectSoftware.update(updateProjectSoftware, {
+                    where: {
+                        project_id: (database.project.findOne({
                             attributes: [project_id],
                             where: {
                                 name: projectName
                             }
                         })),
-                        software_id: (database.Software.findOne({
+                        software_id: (database.software.findOne({
                             attributes: [software_id],
                             where: {
                                 name: softwareName
                             }
                         }))
-                    } 
+                    }
                 });
 
                 return updateProjectSoftware;
@@ -210,33 +210,33 @@ class ProjectSoftwareService {
         let softwareName = updateProjectSoftware.software_name;
 
         try {
-            const projectSoftwareToDelete = await database.ProjectSoftware.findOne({ 
-                 where: {
-                    project_id: (database.Project.findOne({
+            const projectSoftwareToDelete = await database.project_software.findOne({
+                where: {
+                    project_id: (database.project.findOne({
                         attributes: [project_id],
                         where: {
                             name: projectName
                         }
                     })),
-                    software_id: (database.Software.findOne({
+                    software_id: (database.software.findOne({
                         attributes: [software_id],
                         where: {
                             name: softwareName
                         }
                     }))
-                } 
+                }
             });
 
             if (projectSoftwareToDelete) {
-                const deletedProjectSoftware = await database.ProjectSoftware.destroy({
+                const deletedProjectSoftware = await database.project_software.destroy({
                     where: {
-                        project_id: (database.Project.findOne({
+                        project_id: (database.project.findOne({
                             attributes: [project_id],
                             where: {
                                 name: projectName
                             }
                         })),
-                        software_id: (database.Software.findOne({
+                        software_id: (database.software.findOne({
                             attributes: [software_id],
                             where: {
                                 name: softwareName

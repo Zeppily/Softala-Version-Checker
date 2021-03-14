@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const EOL = sequelize.define('EOL', {
+  const EOL = sequelize.define('eol', {
     software_name: {
       type: DataTypes.STRING,
       primaryKey: true,

@@ -3,7 +3,7 @@ import database from '../src/models';
 class EOLService {
     static async getAllEOLs() {
         try {
-            return await database.EOL.findAll();
+            return await database.eol.findAll();
         } catch (error) {
             throw error;
         }
@@ -12,7 +12,7 @@ class EOLService {
     static async addEOL(newEOL) {
         console.log(newEOL)
         try {
-            return await database.EOL.create(newEOL);
+            return await database.eol.create(newEOL);
         } catch (error) {
             throw error;
         }
@@ -23,7 +23,7 @@ class EOLService {
         let name = updateEOL.software_name;
         let version = updateEOL.version
         try {
-            const eolToUpdate = await database.EOL.findOne({
+            const eolToUpdate = await database.eol.findOne({
                 where: {
                     software_name: name,
                     version: version
@@ -32,11 +32,11 @@ class EOLService {
             console.log(eolToUpdate)
 
             if (eolToUpdate) {
-                await database.EOL.update(updateEOL, { 
+                await database.eol.update(updateEOL, {
                     where: {
                         software_name: name,
                         version: version
-                    } 
+                    }
                 });
 
                 return updateEOL;
@@ -50,10 +50,10 @@ class EOLService {
     static async deleteEOL(deleteEOL) {
         let name = deleteEOL.software_name;
         let version = deleteEOL.version
-        
+
         console.log(`This is the name: ${name} and this is the version ${version}`)
         try {
-            const eolToDelete = await database.EOL.findOne({
+            const eolToDelete = await database.eol.findOne({
                 where: {
                     software_name: name,
                     version: version
@@ -61,7 +61,7 @@ class EOLService {
             });
             console.log(`this is the eol to delete ${eolToDelete}`)
             if (eolToDelete) {
-                const deletedEOL = await database.EOL.destroy({
+                const deletedEOL = await database.eol.destroy({
                     where: {
                         software_name: name,
                         version: version

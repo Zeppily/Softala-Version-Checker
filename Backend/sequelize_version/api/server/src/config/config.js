@@ -3,10 +3,10 @@ require('dotenv').config();
 
 module.exports = {
   "development": {
-    "database": 'version_checker',
-    "username": 'postgres',
-    "password": process.env.TEST_DB_PSWD,
-    "host": '127.0.0.1',
+    "database": 'postgres',
+    "username": process.env.DB_USER,
+    "password": process.env.DB_PSWD,
+    "host": process.env.DB_URL,
     "dialect": 'postgres',
     // // "dialectOptions": {
     // //   "ssl": {
@@ -16,20 +16,19 @@ module.exports = {
     // // }
     // // port: 5432
   },
-  "test" : {
-    "database": 'version_checker',
-    "username": 'postgres',
+  "test": {
+    "database": 'postgers',
+    "username": process.env.DB_USER,
     "password": process.env.TEST_DB_PSWD,
-    "host": '127.0.0.1',
+    "host": process.env.DB_URL,
     "dialect": 'postgres',
     // port: 5432
   },
   "production": {
-    "database": process.env.DB_NAME,
+    "database": 'postgres',
     "username": process.env.DB_USER,
     "password": process.env.DB_PSWD,
-    "host": process.env.DB_HOST,
+    "host": process.env.DB_URL,
     "dialect": 'postgres',
-    "port": process.env.DB_PORT
   }
 };

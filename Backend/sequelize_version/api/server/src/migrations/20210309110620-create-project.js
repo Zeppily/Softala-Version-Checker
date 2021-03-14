@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Project', {
+    return queryInterface.createTable('project', {
       project_id: {
         allowNull: false,
         autoIncrement: true,
@@ -8,7 +8,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       host: {
-        type: Sequelize.STRING, 
+        type: Sequelize.STRING,
         allowNull: false,
       },
       name: {
@@ -25,6 +25,6 @@ module.exports = {
     });
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('Project');
+    return queryInterface.dropTable('project');
   }
 };

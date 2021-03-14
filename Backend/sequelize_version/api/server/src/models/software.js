@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Software = sequelize.define('Software', {
+  const Software = sequelize.define('software', {
     software_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Software.associate = models => {
-    Software.belongsToMany(models.Project, { foreignKey: 'project_id', as: 'project', through: models.Project_Software})
+    Software.belongsToMany(models.project, { foreignKey: 'project_id', as: 'project', through: models.project_software })
   }
 
   return Software;

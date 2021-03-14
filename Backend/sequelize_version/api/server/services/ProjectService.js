@@ -3,7 +3,7 @@ import database from '../src/models';
 class ProjectService {
     static async getAllProjects() {
         try {
-            return await database.Project.findAll();
+            return await database.project.findAll();
         } catch (error) {
             throw error;
         }
@@ -12,7 +12,7 @@ class ProjectService {
     static async addProject(newProject) {
         console.log(newProject);
         try {
-            return await database.Project.create(newProject);
+            return await database.project.create(newProject);
         } catch (error) {
             throw error;
         }
@@ -20,12 +20,12 @@ class ProjectService {
 
     static async updateProject(id, updateProject) {
         try {
-            const projectToUpdate = await database.Project.findOne({
-                where: {project_id: Number(id) }
+            const projectToUpdate = await database.project.findOne({
+                where: { project_id: Number(id) }
             });
 
             if (projectToUpdate) {
-                await database.Project.update(updateProject, { where: { project_id: Number(id) } });
+                await database.project.update(updateProject, { where: { project_id: Number(id) } });
 
                 return updateProject;
             }
@@ -37,11 +37,11 @@ class ProjectService {
 
     static async deleteProject(id) {
         try {
-            const projectToDelete = await database.Project.findOne({ where: { project_id: Number(id) } });
+            const projectToDelete = await database.project.findOne({ where: { project_id: Number(id) } });
 
             if (projectToDelete) {
-                const deletedProject = await database.Project.destroy({
-                    where: {project_id: Number(id) }
+                const deletedProject = await database.project.destroy({
+                    where: { project_id: Number(id) }
                 });
                 return deletedProject;
             }

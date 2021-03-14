@@ -7,7 +7,7 @@ class SoftwareController {
     static async getAllSoftwares(req, res) {
         try {
             const allSoftwares = await SoftwareService.getAllSoftwares();
-            if(allSoftwares.length > 0) {
+            if (allSoftwares.length > 0) {
                 util.setSuccess(200, 'Software retrieved', allSoftwares);
             } else {
                 util.setSucess(200, 'No software found');
@@ -39,15 +39,15 @@ class SoftwareController {
 
     static async updatedSoftware(req, res) {
         const alteredSoftware = req.body;
-        //const { id } = req.params;
-        // if (!Number(id)) {
-        //     util.setError(400, ' Please input a valid id');
-        //     return util.send(res);
-        // }
+        const { software_id } = req.params;
+        if (!Number(software_id)) {
+            util.setError(400, ' Please input a valid id');
+            return util.send(res);
+        }
         try {
-            const updateSoftware = await SoftwareService.updateSoftware(alteredSoftware);
-            if(!updateSoftware) {
-                util.setError(404, `Cannot find software with the name: ${alteredSoftware.name}`);
+            const updateSoftware = await SoftwareService.updateSoftware(software_id, alteredSoftware);
+            if (!updateSoftware) {
+                util.setError(404, `Cannot find software with the id: ${alteredSoftware.software_id}`);
             } else {
                 util.setSuccess(200, 'Software updated', updateSoftware);
             }
@@ -59,20 +59,20 @@ class SoftwareController {
     }
 
     static async deleteSoftware(req, res) {
-        const deletedSoftware = req.body;
+        const { software_id } = req.params;
 
-        // if (!Number(id)) {
-        //     util.setError(400, 'Please provide a numeric value for id');
-        //     return util.send(res);
-        // }
+        if (!Number(software_id)) {
+            util.setError(400, 'Please provide a numeric value for id');
+            return util.send(res);
+        }
 
         try {
-            const softwareToDelete = await SoftwareService.deleteSoftware(deletedSoftware);
+            const softwareToDelete = await SoftwareService.deleteSoftware(software_id);
 
             if (softwareToDelete) {
                 util.setSuccess(200, 'Software deleted');
             } else {
-                util.setError(404, `Software with the name ${deletedSoftware.name} cannot be found`);
+                util.setError(404, `Software with the id: ${software_id} cannot be found`);
             }
             return util.send(res);
         } catch (error) {

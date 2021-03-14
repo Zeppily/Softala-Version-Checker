@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('EOL', {
+    return queryInterface.createTable('eol', {
       software_name: {
         allowNull: false,
         primaryKey: true,
@@ -18,6 +18,6 @@ module.exports = {
     });
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('EOL');
+    return queryInterface.dropTable('eol');
   }
 };

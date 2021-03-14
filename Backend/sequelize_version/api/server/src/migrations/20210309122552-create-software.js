@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Software', {
+    return queryInterface.createTable('software', {
       software_id: {
         allowNull: false,
         autoIncrement: true,
@@ -8,7 +8,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       name: {
-        type: Sequelize.STRING, 
+        type: Sequelize.STRING,
         allowNull: false,
       },
       latest_version: {
@@ -18,6 +18,6 @@ module.exports = {
     });
   },
   down: (queryInterface) => {
-    return queryInterface.dropTable('Software');
+    return queryInterface.dropTable('software');
   }
 };
