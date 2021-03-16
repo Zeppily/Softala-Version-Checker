@@ -6,21 +6,26 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
 
-
-  
   const ITEM_HEIGHT = 48;
   
   export default function LongMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-  
+    //Gets the default value set for Redux for useState
+    const [currentProject, setCurrentProject] = useState(props.obj.selectedServername);
+
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
   
+    //When a project is changed from the dropdown menu
+    //Closes the menu
+    //Uses the handlechange function from the App.js file to update selectedServer
+    //Changes the const that determines what is on the button
     const handleProjectChange = (servername) => {
       handleClose()
-      props.handleChange(servername)
+      props.obj.handleChange(servername)
+      setCurrentProject(servername)
     }
 
     const handleClose = () => {
@@ -29,6 +34,7 @@ import PropTypes from 'prop-types'
 
     const [projects, setProjects] = useState([]);
 
+    //Gets project names for the dropdown menu
     useEffect(() => {
         fetch('http://localhost:8080/projects')
           .then((response) => response.json())
@@ -36,8 +42,7 @@ import PropTypes from 'prop-types'
           .catch((error) => console.error(error))
       }, []);
 
-    console.log(projects);
-
+    //TODO: Finish handle update so it calls a function that starts server scan and updates the EoL info to the database  
     const handleUpdate = (event) => {
       
     };
@@ -52,7 +57,7 @@ import PropTypes from 'prop-types'
         onClick={handleClick}
         style={{marginLeft: 30}}
       >
-        Servers
+        {currentProject}
       </Button>
         <Menu
           id="long-menu"
@@ -93,5 +98,5 @@ import PropTypes from 'prop-types'
   }
 
   LongMenu.propTypes = {
-    handleChange: PropTypes.func.isRequired
+    obj: PropTypes.object.isRequired
   }

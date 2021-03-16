@@ -25,21 +25,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Versioninfo(props) {
   const classes = useStyles();
 
-  const [servers, setServers] = useState([]);
-
-  const projectName = props.servername;
-    
-  const getProjectData = (projectName) => {
-    fetch(`http://localhost:8080/info/${projectName}`)
-          .then((response) => response.json())
-          .then((data) => setServers(data))
-          .catch((error) => console.error(error))
-  }
-
-      useEffect(() => {
-        getProjectData(projectName)
-      }, []);   
-
   return (
     <React.Fragment>
       <Title>Software Version Information</Title>
@@ -55,7 +40,7 @@ export default function Versioninfo(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {servers.map((server) => (
+          {props.serverSoftware.map((server) => (
             <TableRow key={server.name}>
               <TableCell>{server.name}</TableCell>
               <TableCell>{server.installed_version}</TableCell>

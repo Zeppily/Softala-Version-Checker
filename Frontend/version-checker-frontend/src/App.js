@@ -33,7 +33,7 @@ import id from './test.json'
 import AddServerForm from "./components/AddServerForm";
 
 import { connect } from "react-redux";
-import { selectServername, fetchEolsIfNeeded, invalidateEols } from './actions'
+import { selectServername, fetchEolsIfNeeded, invalidateEols, fetchServerSoftwareIfNeeded, invalidateServerSoftware } from './actions'
 import PropTypes from 'prop-types'
 
 class App extends Component {
@@ -41,6 +41,7 @@ class App extends Component {
   static propTypes = {
     selectedServername: PropTypes.string.isRequired,
     eols: PropTypes.array.isRequired,
+    serverSoftware: PropTypes.array.isRequired,
     isFetching: PropTypes.bool.isRequired,
     lastUpdated: PropTypes.number,
     dispatch: PropTypes.func.isRequired
@@ -49,12 +50,14 @@ class App extends Component {
   componentDidMount() {
     const { dispatch, selectedServername } = this.props
     dispatch(fetchEolsIfNeeded(selectedServername))
+    dispatch(fetchServerSoftwareIfNeeded(selectedServername))
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.selectedServername !== this.props.selectedServername) {
       const { dispatch, selectedServername } = this.props
       dispatch(fetchEolsIfNeeded(selectedServername))
+      dispatch(fetchServerSoftwareIfNeeded(selectedServername))
     }
   }
 
@@ -68,11 +71,16 @@ class App extends Component {
     const { dispatch, selectedServername } = this.props
     dispatch(invalidateEols(selectedServername))
     dispatch(fetchEolsIfNeeded(selectedServername))
+    dispatch(invalidateServerSoftware(selectedServername))
+    dispatch(fetchServerSoftwareIfNeeded(selectedServername))
   }
 
+  //TODO: Conditional rendering for empty arrays or when fetch doesnt return any rows
+  //TODO: Show when the table data has been last updated (lastUpdated for EoL, serverSoftwareLastUpdated for versioninfo)
   render() {
-    const { selectedServername, eols, isFetching, lastUpdated } = this.props
+    const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching } = this.props
     const isEmpty = eols.length === 0
+    const serverSoftwareIsEmpty = serverSoftware.length === 0
     return(
       <div className={classes.root}>
         {/* Toolbar/Banner */}
@@ -82,7 +90,7 @@ class App extends Component {
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Version checker
             </Typography>
-            <Listbutton handleChange={this.handleChange}/>
+            <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername}}/>
             <AddServerForm />
           </Toolbar>
         </AppBar>
@@ -107,7 +115,7 @@ class App extends Component {
               {/* Software Version Information */}
               <Grid item xs={12} md={12} lg={12}>
                 <Paper className={classes.paper}>
-                  <Versioninfo />
+                  <Versioninfo serverSoftware={serverSoftware}/>
                 </Paper>
               </Grid>
 
@@ -127,7 +135,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  const { selectedServername, eolsByServername } = state
+  const { selectedServername, eolsByServername, serverSoftwareByServername } = state
   const {
     isFetching,
     lastUpdated,
@@ -137,11 +145,23 @@ const mapStateToProps = state => {
     items: []
   }
 
+  const {
+    serverSoftwareIsFetching,
+    serverSoftwareLastUpdated,
+    serverSoftwareItems: serverSoftware
+  } = serverSoftwareByServername [selectedServername] || {
+    serverSoftwareIsFetching: true,
+    serverSoftwareItems: []
+  }
+
   return {
     selectedServername,
     eols,
     isFetching,
-    lastUpdated
+    lastUpdated,
+    serverSoftware,
+    serverSoftwareIsFetching,
+    serverSoftwareLastUpdated
   }
 }
 

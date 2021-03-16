@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Eolinfo(props) {
   const classes = useStyles();
-  console.log(props)
 
   return (
     <React.Fragment>
