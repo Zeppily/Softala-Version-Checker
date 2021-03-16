@@ -5,6 +5,7 @@ const router = Router();
 
 router.get('/', EOLController.getAllEOLs);
 router.post('/', EOLController.addEOL);
+router.post('/list', EOLController.addEOLList);
 router.put('/', EOLController.updatedEOL);
 router.delete('/', EOLController.deleteEOL);
 

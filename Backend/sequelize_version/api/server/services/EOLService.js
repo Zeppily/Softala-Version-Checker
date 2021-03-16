@@ -1,3 +1,4 @@
+import db from '../src/models';
 import database from '../src/models';
 
 class EOLService {
@@ -16,6 +17,32 @@ class EOLService {
         } catch (error) {
             throw error;
         }
+    }
+
+    static async addEOLList(eolList, req, res) {
+        console.log(eolList)
+        try {
+            return await database.eol.bulkCreate(eolList, { returning: true, individualHooks: true })
+                .then(eols => {
+                    //res.json(eols)
+                    console.log(eols)
+                })
+        } catch (error) {
+            throw error;
+        }
+        /*
+        db.eol.create({
+            software_name: sof_name,
+            version: ver,
+            eol_date: eoldate,
+            activate: true
+        }).then(function (dbEol) {
+            let eolList = [];
+
+            db.eol.bulkCreate(eolList, {
+                returning: true
+            }).then(function ())
+        })*/
     }
 
     static async updateEOL(updateEOL) {
