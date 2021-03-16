@@ -32,143 +32,204 @@ import Listbutton from './components/Listbutton';
 import id from './test.json'
 import AddServerForm from "./components/AddServerForm";
 
+import { connect } from "react-redux";
+import { selectServername, fetchEolsIfNeeded, invalidateEols } from './actions'
+import PropTypes from 'prop-types'
 
+class App extends Component {
+  
+  static propTypes = {
+    selectedServername: PropTypes.string.isRequired,
+    eols: PropTypes.array.isRequired,
+    isFetching: PropTypes.bool.isRequired,
+    lastUpdated: PropTypes.number,
+    dispatch: PropTypes.func.isRequired
+  }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-  },
-  toolbar: {
-    paddingRight: 24,
-    display: 'flex',
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    width: `100%`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 0,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-    alignItems: 'left'
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
-}));
+  componentDidMount() {
+    const { dispatch, selectedServername } = this.props
+    dispatch(fetchEolsIfNeeded(selectedServername))
+  }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.selectedServername !== this.props.selectedServername) {
+      const { dispatch, selectedServername } = this.props
+      dispatch(fetchEolsIfNeeded(selectedServername))
+    }
+  }
 
+  handleChange = nextServername => {
+    this.props.dispatch(selectServername(nextServername))
+  }
 
-export default function App() {
-  const classes = useStyles();
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  handleRefreshClick = e => {
+    e.preventDefault()
 
+    const { dispatch, selectedServername } = this.props
+    dispatch(invalidateEols(selectedServername))
+    dispatch(fetchEolsIfNeeded(selectedServername))
+  }
 
-  return (
-    <div className={classes.root}>
-      {/* Toolbar/Banner */}
-      <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Version checker
-          </Typography>
-          <Listbutton />
-          <AddServerForm />
-        </Toolbar>
-      </AppBar>
+  render() {
+    const { selectedServername, eols, isFetching, lastUpdated } = this.props
+    const isEmpty = eols.length === 0
+    return(
+      <div className={classes.root}>
+        {/* Toolbar/Banner */}
+        <CssBaseline />
+        <AppBar position="absolute" className={clsx(classes.appBar, classes.appBarShift)}>
+          <Toolbar className={classes.toolbar}>
+            <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+              Version checker
+            </Typography>
+            <Listbutton handleChange={this.handleChange}/>
+            <AddServerForm />
+          </Toolbar>
+        </AppBar>
 
-      <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            projectName
-      </Typography>
-    
-      {/* Main elements in the dashboard */}
+        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+              projectName
+        </Typography>
+      
+        {/* Main elements in the dashboard */}
 
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={2}>
-            {/* Overview */}
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={classes.paper}>
-                <Overview />
-              </Paper>
+        <main className={classes.content}>
+          <div className={classes.appBarSpacer} />
+          <Container maxWidth="lg" className={classes.container}>
+            <Grid container spacing={2}>
+              {/* Overview */}
+              <Grid item xs={12} md={12} lg={12}>
+                <Paper className={classes.paper}>
+                  <Overview />
+                </Paper>
+              </Grid>
+
+              {/* Software Version Information */}
+              <Grid item xs={12} md={12} lg={12}>
+                <Paper className={classes.paper}>
+                  <Versioninfo />
+                </Paper>
+              </Grid>
+
+              {/* End-Of-Life Information */}
+              <Grid item xs={12} md={12} lg={12}>
+                <Paper className={classes.paper}>
+                  <Eolinfo eols={eols}/>
+                </Paper>
+              </Grid>
+
             </Grid>
-
-            {/* Software Version Information */}
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={classes.paper}>
-                <Versioninfo />
-              </Paper>
-            </Grid>
-
-            {/* End-Of-Life Information */}
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={classes.paper}>
-                <Eolinfo />
-              </Paper>
-            </Grid>
-
-          </Grid>
-        </Container>
-      </main>
-    </div>
-  );
+          </Container>
+        </main>
+      </div>
+    )
+  }
 }
 
+const mapStateToProps = state => {
+  const { selectedServername, eolsByServername } = state
+  const {
+    isFetching,
+    lastUpdated,
+    items: eols
+  } = eolsByServername [selectedServername] || {
+    isFetching: true,
+    items: []
+  }
+
+  return {
+    selectedServername,
+    eols,
+    isFetching,
+    lastUpdated
+  }
+}
+
+export default connect(mapStateToProps)(App)
+
+function createStyling() {
+  const myStyles = makeStyles((theme) => ({
+    root: {
+      display: 'flex',
+    },
+    toolbar: {
+      paddingRight: 24,
+      display: 'flex',
+    },
+    toolbarIcon: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      padding: '0 8px',
+      ...theme.mixins.toolbar,
+    },
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+    },
+    appBarShift: {
+      width: `100%`,
+      transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    menuButton: {
+      marginRight: 36,
+    },
+    menuButtonHidden: {
+      display: 'none',
+    },
+    title: {
+      flexGrow: 0,
+    },
+    drawerPaper: {
+      position: 'relative',
+      whiteSpace: 'nowrap',
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    drawerPaperClose: {
+      overflowX: 'hidden',
+      transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      width: theme.spacing(7),
+      [theme.breakpoints.up('sm')]: {
+        width: theme.spacing(9),
+      },
+    },
+    appBarSpacer: theme.mixins.toolbar,
+    content: {
+      flexGrow: 1,
+      height: '100vh',
+      overflow: 'auto',
+      alignItems: 'left'
+    },
+    container: {
+      paddingTop: theme.spacing(4),
+      paddingBottom: theme.spacing(4),
+    },
+    paper: {
+      padding: theme.spacing(2),
+      display: 'flex',
+      overflow: 'auto',
+      flexDirection: 'column',
+    },
+    fixedHeight: {
+      height: 240,
+    },
+  }));
+
+  return myStyles
+}
+
+
+const classes = createStyling();
+const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);

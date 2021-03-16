@@ -22,23 +22,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const handleClick = (event) => {
-
-};
-
-export default function Eolinfo() {
+export default function Eolinfo(props) {
   const classes = useStyles();
-
-  const [servers, setServers] = useState([]);
-    
-      useEffect(() => {
-        fetch('http://localhost:8080/info/Raahe')
-          .then((response) => response.json())
-          .then((data) => setServers(data))
-          .catch((error) => console.error(error))
-      }, []);   
-
-  console.log(servers);
+  console.log(props)
 
   return (
     <React.Fragment>
@@ -55,7 +41,7 @@ export default function Eolinfo() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {servers.map((server) => (
+          {props.eols.map((server) => (
             <TableRow key={server.name}>
               <TableCell>{server.name}</TableCell>
               <TableCell>{server.installed_version}</TableCell>

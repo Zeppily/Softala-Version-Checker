@@ -4,13 +4,13 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
-import Versioninfo from "./Versioninfo";
+import PropTypes from 'prop-types'
 
 
   
   const ITEM_HEIGHT = 48;
   
-  export default function LongMenu() {
+  export default function LongMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
   
@@ -18,9 +18,9 @@ import Versioninfo from "./Versioninfo";
       setAnchorEl(event.currentTarget);
     };
   
-    const sendName = (servername) => {
+    const handleProjectChange = (servername) => {
       handleClose()
-      Versioninfo(servername)
+      props.handleChange(servername)
     }
 
     const handleClose = () => {
@@ -72,7 +72,7 @@ import Versioninfo from "./Versioninfo";
           }}
         >
           {projects.map((option) => (
-            <MenuItem key={option.name} onClick={() => sendName(option.name)}>
+            <MenuItem key={option.name} onClick={() => handleProjectChange(option.name)}>
               {option.name}
             </MenuItem>
           ))}
@@ -88,4 +88,10 @@ import Versioninfo from "./Versioninfo";
         </Button>
         </div>
     );
+
+    
+  }
+
+  LongMenu.propTypes = {
+    handleChange: PropTypes.func.isRequired
   }
