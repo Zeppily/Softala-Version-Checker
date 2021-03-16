@@ -42,8 +42,8 @@ import PropTypes from 'prop-types'
           .catch((error) => console.error(error))
       }, []);
 
-    //TODO: Finish handle update so it calls a function that starts server scan and updates the EoL info to the database  
-    const handleUpdate = (event) => {
+    //TODO: Finish "initiate scan" so it calls a function that starts server scan and updates the EoL info to the database  
+    const initiateScan = (event) => {
       
     };
   
@@ -87,9 +87,8 @@ import PropTypes from 'prop-types'
             aria-haspopup="true"
             variant="contained"
             color="primary"
-            onClick={handleUpdate}
-            >
-          Update
+            onClick={initiateScan}>
+          Start server scan
         </Button>
         </div>
     );
