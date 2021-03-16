@@ -4,23 +4,28 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
-import Versioninfo from "./Versioninfo";
+import PropTypes from 'prop-types'
 
-
-  
   const ITEM_HEIGHT = 48;
   
-  export default function LongMenu() {
+  export default function LongMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-  
+    //Gets the default value set for Redux for useState
+    const [currentProject, setCurrentProject] = useState(props.obj.selectedServername);
+
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
   
-    const sendName = (servername) => {
+    //When a project is changed from the dropdown menu
+    //Closes the menu
+    //Uses the handlechange function from the App.js file to update selectedServer
+    //Changes the const that determines what is on the button
+    const handleProjectChange = (servername) => {
       handleClose()
-      Versioninfo(servername)
+      props.obj.handleChange(servername)
+      setCurrentProject(servername)
     }
 
     const handleClose = () => {
@@ -29,6 +34,7 @@ import Versioninfo from "./Versioninfo";
 
     const [projects, setProjects] = useState([]);
 
+    //Gets project names for the dropdown menu
     useEffect(() => {
         fetch('http://localhost:8080/projects')
           .then((response) => response.json())
@@ -36,8 +42,7 @@ import Versioninfo from "./Versioninfo";
           .catch((error) => console.error(error))
       }, []);
 
-    console.log(projects);
-
+    //TODO: Finish handle update so it calls a function that starts server scan and updates the EoL info to the database  
     const handleUpdate = (event) => {
       
     };
@@ -52,7 +57,7 @@ import Versioninfo from "./Versioninfo";
         onClick={handleClick}
         style={{marginLeft: 30}}
       >
-        Servers
+        {currentProject}
       </Button>
         <Menu
           id="long-menu"
@@ -72,7 +77,7 @@ import Versioninfo from "./Versioninfo";
           }}
         >
           {projects.map((option) => (
-            <MenuItem key={option.name} onClick={() => sendName(option.name)}>
+            <MenuItem key={option.name} onClick={() => handleProjectChange(option.name)}>
               {option.name}
             </MenuItem>
           ))}
@@ -88,4 +93,10 @@ import Versioninfo from "./Versioninfo";
         </Button>
         </div>
     );
+
+    
+  }
+
+  LongMenu.propTypes = {
+    obj: PropTypes.object.isRequired
   }
