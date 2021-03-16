@@ -26,11 +26,9 @@ export default function Versioninfo(props) {
   const classes = useStyles();
 
   const [servers, setServers] = useState([]);
-
-  const projectName = props.servername;
-    
-  const getProjectData = (projectName) => {
-    fetch(`http://localhost:8080/info/${projectName}`)
+   /*  
+      useEffect(() => {
+        fetch('http://localhost:8080/info/Raahe')
           .then((response) => response.json())
           .then((data) => setServers(data))
           .catch((error) => console.error(error))
@@ -39,6 +37,26 @@ export default function Versioninfo(props) {
       useEffect(() => {
         getProjectData(projectName)
       }, []);   
+
+  useEffect(() => {
+    getProjectInfo()
+}, []);
+
+const getProjectInfo = (projectName) => {
+   fetch
+} */
+       
+        const getProjectData = (projectName) => {
+          fetch(`http://localhost:8080/info/${projectName}`)
+                  .then((response) => response.json())
+                  .then((data) => setServers(data))
+                  .catch((error) => console.error(error))
+        }
+              useEffect(() => {
+                        getProjectData('Polarbears')
+                      }, []);   
+                
+
 
   return (
     <React.Fragment>
