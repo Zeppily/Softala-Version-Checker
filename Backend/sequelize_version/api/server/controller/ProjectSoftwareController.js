@@ -9,7 +9,7 @@ class ProjectSoftwareController {
     static async getAllProjectSoftwares(req, res) {
         try {
             const allProjectSoftwares = await ProjectSoftwareService.getAllProjectSoftwares();
-            if(allProjectSoftwares.length > 0) {
+            if (allProjectSoftwares.length > 0) {
                 util.setSuccess(200, 'Softwares for all projects retrieved', allProjectSoftwares);
             } else {
                 util.setSucess(200, 'No Software found for any project');
@@ -27,7 +27,7 @@ class ProjectSoftwareController {
         console.log(project)
         try {
             const allProjectSpecificSoftware = await ProjectSoftwareService.getAllProjectSpecificSoftware(project);
-            if(allProjectSpecificSoftware.length > 0) {
+            if (allProjectSpecificSoftware.length > 0) {
                 util.setSuccess(200, `Software for ${project} project retrieved`, allProjectSpecificSoftware);
             } else {
                 util.setSuccess(200, `No software for for ${project} project`);
@@ -98,7 +98,7 @@ class ProjectSoftwareController {
         // }
         try {
             const updateProjectSoftware = await ProjectSoftwareService.updateProjectSoftware(alteredProjectSoftware);
-            if(!updateProjectSoftware) {
+            if (!updateProjectSoftware) {
                 util.setError(404, `Cannot find software: ${alteredProjectSoftware.software_name} in project: ${alteredProjectSoftware.project_name}`);
             } else {
                 util.setSuccess(200, 'Software in project updated', updateProjectSoftware);
@@ -136,16 +136,15 @@ class ProjectSoftwareController {
     }
 
     static async startScan(req, res) {
-        const projectNames = req.body.projects;
-        console.log(projectNames);
+        const projectNames = req.body.name;
         try {
             const startScan = await ProjectSoftwareService.startScan(projectNames);
-
             if (startScan) {
-                util.setSuccess(200, `Great Success! Except these servers failed: ${startScan}`);
+                util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)}`);
             } else {
                 util.setError(404, 'Scan was unsuccessful');
             }
+            //console.log(res)
             return util.send(res);
         } catch (error) {
             util.setError(400, error);
