@@ -26,9 +26,9 @@ class ProjectSoftwareService {
                     name: projName
                 }
             })
-            
+
             let projectId = JSON.stringify(projId.project_id)
-            
+
             // Find all software associated with the specified project
             return await database.project_software.findAll({
                 where: {
@@ -59,13 +59,13 @@ class ProjectSoftwareService {
         let projectName = newProjectSoftware.project_name;
         let softwareName = newProjectSoftware.software_name;
         let installedVersion = newProjectSoftware.installed_version;
-        
+        console.log("in add prsfw")
         try {
             // Find the project id
             const projId = await database.project.findOne({
                 attributes: ['project_id'],
                 where: {
-                    name: projectName
+                    host: projectName
                 }
             })
 
@@ -78,7 +78,7 @@ class ProjectSoftwareService {
             })
 
             // Check if the software exists on the software table and add it if it does not
-            if (softId === null){
+            if (softId === null) {
                 console.log(`softId = ${softId}! should = null`)
                 await database.software.create({
                     'name': softwareName,
@@ -95,7 +95,7 @@ class ProjectSoftwareService {
 
             let projectId = JSON.stringify(projId.project_id)
             let softwareId = JSON.stringify(softId.software_id)
-            
+
             // Add the software for the project to the project_software table
             return await database.project_software.create({
                 'project_id': projectId,
@@ -110,7 +110,7 @@ class ProjectSoftwareService {
 
     // Add a list of softwares to the project_software table
     static async addListProjectSoftware(projectSoftwareList) {
-        
+
         // Loop through the software list for the project
         for (let proj_software of projectSoftwareList) {
             let projectName = proj_software.project_name;
@@ -125,7 +125,7 @@ class ProjectSoftwareService {
                         name: projectName
                     }
                 })
-                
+
                 // Find the software id
                 let softId = await database.software.findOne({
                     attributes: ['software_id'],
@@ -133,15 +133,15 @@ class ProjectSoftwareService {
                         name: softwareName
                     }
                 })
-                
+
                 // Check if the software exists on the software table and add it if it does not
-                if (softId === null){
+                if (softId === null) {
                     console.log(`softId = ${softId}! should = null`)
                     await database.software.create({
                         'name': softwareName,
                         'latest_version': installedVersion
                     });
-    
+
                     softId = await database.software.findOne({
                         attributes: ['software_id'],
                         where: {
@@ -149,10 +149,10 @@ class ProjectSoftwareService {
                         }
                     })
                 }
-    
+
                 let projectId = JSON.stringify(projId.project_id)
                 let softwareId = JSON.stringify(softId.software_id)
-                
+
                 // Add the software for the project to the project_software table
                 await database.project_software.create({
                     'project_id': projectId,
@@ -160,12 +160,12 @@ class ProjectSoftwareService {
                     'installed_version': installedVersion
                 });
 
-                
-    
+
+
             } catch (error) {
                 throw error;
             }
-            
+
         }
         return;
     }
@@ -273,12 +273,9 @@ class ProjectSoftwareService {
 
     // Start the scan tool to check the software that is installed on the projects
     static async startScan(projectNames) {
-       
-        const dataToScantool = { credentials: "" };
-        let serverList;
-        let errorList = [];
-        let hostname = "";
 
+        let credentials = {};
+        let scan = [];
         try {
             // Get project credentials
             await database.project.findAll({
@@ -288,61 +285,100 @@ class ProjectSoftwareService {
                 },
                 raw: true
             })
-            .then(result => {
-                dataToScantool.credentials = result;
-            });
+                .then(result => {
+                    result.forEach(function (element) {
+                        element.port = 22
+                    })
+                    //console.log("printing results:", result)
+                    credentials = result;
 
-            // Send credentials to the scan tool and set results to serverList variable
-            axios
-                .post('127.0.0.1:5000/start', {
-                    dataToScanTool
+                });
+
+            await axios
+                .post('http://localhost:5000/start', {
+                    credentials,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 })
                 .then(res => {
-                    console.log(`statusCode: ${res.statusCode}`)
-                    console.log(res)
-                    serverList = res.data
+                    console.log(`statusCode: ${res.status}`)
+                    //console.log("printing res:", res)
+                    scan = res.data
                 })
                 .catch(error => {
                     console.error(error)
                 });
-            
-            // Loop through the servers in the server list
-            for (server in serverList) {
-                // Catch any servers where the scan did not work
-                if (typeof server.depList == "string") {
-                    errorList.append(server)
-                } else {
-                    hostname = server.serverIp
-                    // Loop through the dependencies in the server and update the installed version if needed.
-                    for (dependency in server.depList) {
-                        await database.project_software.update({installed_version: dependency.deVer}, {
-                            where: {
-                                project_id: (database.project.findOne({
-                                    attributes: [project_id],
-                                    where: {
-                                        name: hostName
-                                    }
-                                })),
-                                software_id: (database.software.findOne({
-                                    attributes: [software_id],
-                                    where: {
-                                        name: dependency.depName
-                                    }
-                                }))
-                            }
-                        })                        
-                    }
-        
-                }
-            };
 
+            // Send credentials to the scan tool and set results to serverList variable
+
+            // Loop through the servers in the server list
+            await serverListToDb(scan)
         } catch (error) {
             throw error;
         }
-        
-        return errorList;
-
+        return scan
     }
+
+}
+
+const serverListToDb = async (data) => {
+    let errorList = [];
+    const serverList = data;
+    for (let server in serverList) {
+        // Catch any servers where the scan did not work
+        if (typeof serverList[server].depList == "string") {
+            errorList.append(server)
+        } else {
+            const hostname = serverList[server].serverIp
+            // Loop through the dependencies in the server and update the installed version if needed.
+            const srvDeps = serverList[server].depList
+            for (let dependency in srvDeps) {
+                let proj_id = await database.project.findOne({
+                    attributes: ['project_id'],
+                    where: {
+                        host: hostname
+                    }
+                })
+                let soft_id = await database.software.findOne({
+                    attributes: ['software_id'],
+                    where: {
+                        name: srvDeps[dependency].depName
+                    }
+                })
+                if (soft_id && proj_id) {
+                    let found = await database.project_software.findOne({
+                        where: {
+                            project_id: proj_id.dataValues.project_id,
+                            software_id: soft_id.dataValues.software_id
+                        }
+                    })
+                    if (found) {
+                        let res = await database.project_software.update({ installed_version: srvDeps[dependency].depVer }, {
+                            where: {
+                                project_id: proj_id.dataValues.project_id,
+                                software_id: soft_id.dataValues.software_id
+                            }
+                        })
+                        data.push(res)
+                    } else {
+                        let res = await database.project_software.create({
+                            'project_id': proj_id.dataValues.project_id,
+                            'software_id': soft_id.dataValues.software_id,
+                            'installed_version': srvDeps[dependency].depVer
+                        });
+                        data.push(res)
+                    }
+                } else {
+                    let objectToSend = { project_name: hostname, software_name: srvDeps[dependency].depName, installed_version: srvDeps[dependency].depVer }
+                    ProjectSoftwareService.addProjectSoftware(objectToSend)
+                }
+
+            }
+
+        }
+    };
+    return data
 }
 
 export default ProjectSoftwareService;

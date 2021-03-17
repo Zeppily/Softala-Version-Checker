@@ -81,19 +81,6 @@ class EOLService {
         } catch (error) {
             throw error;
         }
-        /*
-        db.eol.create({
-            software_name: sof_name,
-            version: ver,
-            eol_date: eoldate,
-            activate: true
-        }).then(function (dbEol) {
-            let eolList = [];
-
-            db.eol.bulkCreate(eolList, {
-                returning: true
-            }).then(function ())
-        })*/
     }
 
     // Update a single EOL record
