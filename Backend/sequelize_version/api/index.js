@@ -17,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 8000;
 
+// API endpoints being used
 app.use('/api/projects', projectRoutes);
 app.use('/api/eols', eolRoutes);
 app.use('/api/softwares', softwareRoutes);

@@ -4,6 +4,7 @@ import Util from '../utils/Utils';
 const util = new Util();
 
 class EOLController {
+    // Return all information on the EOL table
     static async getAllEOLs(req, res) {
         try {
             const allEOLs = await EOLService.getAllEOLs();
@@ -19,6 +20,27 @@ class EOLController {
         }
     }
 
+    // Return all EOL information for software installed on a project
+    static async getProjectSpecificEOLs(req, res) {
+        const project = req.params;
+
+        try {
+            const allProjectSpecificEOLS = await EOLService.getProjectSpecificEOLs(project);
+            console.log(allProjectSpecificEOLS);
+            if(allProjectSpecificEOLS.length > 0) {
+                util.setSuccess(200, `EOL information for software installed on ${project.project} project`, allProjectSpecificEOLS);
+            } else {
+                util.setSuccess(200, `No eol information available for ${project.project} project`)
+            }
+            return util.send(res);
+        } catch (error) {
+            console.log(error)
+            util.setError(400, error);
+            return util.send(res);
+        }
+    }
+
+    // Add a single EOL record
     static async addEOL(req, res) {
         console.log(req.body)
         if (!req.body.software_name || !req.body.version || !req.body.eol_date) {
@@ -37,6 +59,7 @@ class EOLController {
         }
     }
 
+    // Add a list of EOL information
     static async addEOLList(req, res) {
         console.log(req.body)
         /*if (!req.body.software_name || !req.body.version || !req.body.eol_date) {
@@ -56,6 +79,7 @@ class EOLController {
         }
     }
 
+    // Update a single EOL record
     static async updatedEOL(req, res) {
         const alteredEOL = req.body;
         //const { id } = req.params;
@@ -77,6 +101,7 @@ class EOLController {
         }
     }
 
+    // Delete a single EOL record
     static async deleteEOL(req, res) {
         const deletedEOL = req.body;
         //const { id } = req.params;
