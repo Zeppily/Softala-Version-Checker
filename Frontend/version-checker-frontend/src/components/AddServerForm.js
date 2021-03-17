@@ -42,7 +42,7 @@ export default function AddServerForm(props) {
 
     return (
         <div>
-            <Button variant="outlined" size="small" style={{color: "#37bd7a", border:"1px solid", borderColor:"#37bd7a", margin: 10}} onClick={handleClickOpen}>
+            <Button variant="contained" color="primary" style={{border:"1px solid", margin: 10}} onClick={handleClickOpen}>
                 Add new server
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">

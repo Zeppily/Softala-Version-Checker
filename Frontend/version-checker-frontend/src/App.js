@@ -22,6 +22,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
@@ -76,9 +77,9 @@ class App extends Component {
   }
 
   //TODO: Conditional rendering for empty arrays or when fetch doesnt return any rows
-  //TODO: Show when the table data has been last updated (lastUpdated for EoL, serverSoftwareLastUpdated for versioninfo)
+  //TODO: Show when the table data has been last updated (Done but needs styling and stuff)
   render() {
-    const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching } = this.props
+    const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching, handleRefreshClick } = this.props
     const isEmpty = eols.length === 0
     const serverSoftwareIsEmpty = serverSoftware.length === 0
     return(
@@ -91,10 +92,14 @@ class App extends Component {
               Version checker
             </Typography>
             <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername}}/>
+            <Button variant="contained" color="primary" onClick={this.handleRefreshClick}>
+              Update forms
+            </Button>
             <AddServerForm />
           </Toolbar>
         </AppBar>
 
+        {/* This is under the topbar for some reason and if taken away cards go under the bar. should be fixed at some point. */}
         <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               projectName
         </Typography>
@@ -116,6 +121,7 @@ class App extends Component {
               <Grid item xs={12} md={12} lg={12}>
                 <Paper className={classes.paper}>
                   <Versioninfo serverSoftware={serverSoftware}/>
+                  <text><h3>Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '} </h3></text>
                 </Paper>
               </Grid>
 
@@ -123,6 +129,7 @@ class App extends Component {
               <Grid item xs={12} md={12} lg={12}>
                 <Paper className={classes.paper}>
                   <Eolinfo eols={eols}/>
+                  <text><h3>Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '} </h3></text>
                 </Paper>
               </Grid>
 
