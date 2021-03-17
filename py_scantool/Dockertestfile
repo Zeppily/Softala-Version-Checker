@@ -1,0 +1,13 @@
+# Base image
+FROM python:3.8-slim-buster
+WORKDIR /py_test
+
+# Installing python3 modules
+COPY requirements.txt requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Copying over all the python files in order to run
+COPY . .
+
+# Running the tests
+CMD python3 -m pytest tests/  
