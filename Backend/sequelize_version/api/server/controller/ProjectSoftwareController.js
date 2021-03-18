@@ -1,3 +1,4 @@
+import EOLService from '../services/EOLService';
 import ProjectSoftwareService from '../services/ProjectSoftwareService';
 import Util from '../utils/Utils';
 
@@ -137,10 +138,14 @@ class ProjectSoftwareController {
 
     static async startScan(req, res) {
         const projectNames = req.body.name;
+        console.log("req.body: ", req.body)
+        console.log("projectnames: ", projectNames)
         try {
             const startScan = await ProjectSoftwareService.startScan(projectNames);
+            const scanEols = await EOLService.scanEOLs();
+            console.log("startScan: ", startScan, "scanEols: ", scanEols)
             if (startScan) {
-                util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)}`);
+                util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}`);
             } else {
                 util.setError(404, 'Scan was unsuccessful');
             }

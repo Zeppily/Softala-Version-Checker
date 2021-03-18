@@ -2,6 +2,7 @@ import database from '../src/models';
 import service from './ProjectSoftwareService'
 import db from '../src/models/index'
 const { Op, Sequelize } = require("sequelize");
+const axios = require('axios');
 
 class EOLService {
     // Return all EOLs from the EOL table
@@ -71,15 +72,32 @@ class EOLService {
 
     // Add a list of new EOLs
     static async addEOLList(eolList, req, res) {
-        console.log(eolList)
+        console.log("eollist in addEollist:", eolList)
         try {
-            return await database.eol.bulkCreate(eolList, { returning: true, individualHooks: true })
-                .then(eols => {
-                    //res.json(eols)
-                    console.log(eols)
-                })
+            await database.eol.bulkCreate(eolList, { ignoreDuplicates: true})
+            return "Eols Added Successfully"
         } catch (error) {
             throw error;
+        }
+    }
+
+    //Calling the python EoL fetcher
+    static async scanEOLs() {
+        let software_list = [];
+        console.log("scanEols")
+        try {
+            await axios
+                    .get('http://127.0.0.1:5000/eols')
+                    .then(res => software_list = res.data.softwareList)
+                    .catch(error => {
+                        console.error(error)
+                    })
+
+            const addEols = await EOLService.addEOLList(software_list)
+            return addEols
+        } catch (error) {
+            console.error(error)
+            throw error
         }
     }
 
