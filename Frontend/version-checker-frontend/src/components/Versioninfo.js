@@ -25,39 +25,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Versioninfo(props) {
   const classes = useStyles();
 
-  const [servers, setServers] = useState([]);
-   /*  
-      useEffect(() => {
-        fetch('http://localhost:8080/info/Raahe')
-          .then((response) => response.json())
-          .then((data) => setServers(data))
-          .catch((error) => console.error(error))
-  }
-
-      useEffect(() => {
-        getProjectData(projectName)
-      }, []);   
-
-  useEffect(() => {
-    getProjectInfo()
-}, []);
-
-const getProjectInfo = (projectName) => {
-   fetch
-} */
-       
-        const getProjectData = (projectName) => {
-          fetch(`http://localhost:8080/info/${projectName}`)
-                  .then((response) => response.json())
-                  .then((data) => setServers(data))
-                  .catch((error) => console.error(error))
-        }
-              useEffect(() => {
-                        getProjectData('Polarbears')
-                      }, []);   
-                
-
-
   return (
     <React.Fragment>
       <Title>Software Version Information</Title>
@@ -67,20 +34,14 @@ const getProjectInfo = (projectName) => {
             <TableCell>Name</TableCell>
             <TableCell>Version</TableCell>
             <TableCell>Latest</TableCell>
-            <TableCell>npm</TableCell>
-            <TableCell>postgreSQL</TableCell>
-            <TableCell>OS</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {servers.map((server) => (
-            <TableRow key={server.name}>
-              <TableCell>{server.name}</TableCell>
+          {props.serverSoftware.map((server) => (
+            <TableRow key={server["software.name"]}>
+              <TableCell>{server["software.name"]}</TableCell>
               <TableCell>{server.installed_version}</TableCell>
-              <TableCell>{server.latest_version}</TableCell>
-              <TableCell>{server.npm}</TableCell>
-              <TableCell>{server.postgreSQL}</TableCell>
-              <TableCell>{server.os}</TableCell>
+              <TableCell>{server["software.latest_version"]}</TableCell>
             </TableRow>
           ))}
         </TableBody>

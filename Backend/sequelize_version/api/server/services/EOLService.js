@@ -1,6 +1,10 @@
 import database from '../src/models';
+import service from './ProjectSoftwareService'
+import db from '../src/models/index'
+const { Op, Sequelize } = require("sequelize");
 
 class EOLService {
+    // Return all EOLs from the EOL table
     static async getAllEOLs() {
         try {
             return await database.eol.findAll();
@@ -9,6 +13,53 @@ class EOLService {
         }
     }
 
+    // Get project specific eol information
+    static async getProjectSpecificEOLs(project) {
+        
+        let eols = []
+
+        try {
+            // Get a list of softwares used in the project
+            const softwares = await service.getAllProjectSpecificSoftware(project);
+            
+            // Loop through the individual software on the project
+            for (let i in softwares) {
+                
+                // Get the relevant information we need for the search
+                let name = softwares[i]['software.name'];
+                let vers = softwares[i].installed_version
+                
+                // Format the version number so it only takes the first number of the version ('12.3.6' becomes '12.')
+                let version = vers.substr(0, (vers.indexOf('.') + 1));
+
+                // Find the eol information for the software
+                let eolInfo = await database.eol.findOne({
+                    where: {
+                        [Op.and]: {
+                            software_name : {
+                                [Op.like] : `%${name}%`
+                            },
+                            version: {
+                                [Op.like] : `${version}%`
+                            }
+                        }
+                        
+                    }
+                });
+                
+                // if eol info found add it to the eol list
+                if(eolInfo != null) {
+                    eols.push(eolInfo.dataValues)
+                }
+            }
+            
+            return eols
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Add a single new EOL
     static async addEOL(newEOL) {
         console.log(newEOL)
         try {
@@ -18,6 +69,21 @@ class EOLService {
         }
     }
 
+    // Add a list of new EOLs
+    static async addEOLList(eolList, req, res) {
+        console.log(eolList)
+        try {
+            return await database.eol.bulkCreate(eolList, { returning: true, individualHooks: true })
+                .then(eols => {
+                    //res.json(eols)
+                    console.log(eols)
+                })
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Update a single EOL record
     static async updateEOL(updateEOL) {
         console.log(updateEOL);
         let name = updateEOL.software_name;
@@ -47,6 +113,7 @@ class EOLService {
         }
     }
 
+    // Delete a single EOL record
     static async deleteEOL(deleteEOL) {
         let name = deleteEOL.software_name;
         let version = deleteEOL.version

@@ -6,26 +6,27 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
 
-
-  
   const ITEM_HEIGHT = 48;
   
   export default function LongMenu(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-  
+    //Gets the default value set for Redux for useState
+    const [currentProject, setCurrentProject] = useState(props.obj.selectedServername);
+
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
-
-   
-    const [buttonText, setButtonText] = useState("Raahe");  // Shows the selected project name
-    
+  
+    //When a project is changed from the dropdown menu
+    //Closes the menu
+    //Uses the handlechange function from the App.js file to update selectedServer
+    //Changes the const that determines what is on the button
     const handleProjectChange = (servername) => {
       setButtonText(servername) // Shows the selected project name
       handleClose()
-      props.handleChange(servername)
-      
+      props.obj.handleChange(servername)
+      setCurrentProject(servername)
     }
 
     const handleClose = () => {
@@ -35,16 +36,17 @@ import PropTypes from 'prop-types'
 
     const [projects, setProjects] = useState([]);
 
+    //Gets project names for the dropdown menu
     useEffect(() => {
-        fetch('http://localhost:8080/projects')
+        fetch('http://localhost:8000/api/projects')
           .then((response) => response.json())
-          .then((data) => setProjects(data))
+          .then((data) => setProjects(data.data))
           .catch((error) => console.error(error))
+          
       }, []);
 
-    console.log(projects);
-
-    const handleUpdate = (event) => {
+    //TODO: Finish "initiate scan" so it calls a function that starts server scan and updates the EoL info to the database  
+    const initiateScan = (event) => {
       
     };
   
@@ -58,7 +60,7 @@ import PropTypes from 'prop-types'
         onClick={handleClick}
         style={{marginLeft: 30}}
       >
-       {buttonText} {/* Changes the selected project name, Default is "useState("Raahe");""  */}
+        {currentProject}
       </Button>
         <Menu
           id="long-menu"
@@ -88,9 +90,8 @@ import PropTypes from 'prop-types'
             aria-haspopup="true"
             variant="contained"
             color="primary"
-            onClick={handleUpdate}
-            >
-          Update
+            onClick={initiateScan}>
+          Start server scan
         </Button>
         </div>
     );
@@ -99,5 +100,5 @@ import PropTypes from 'prop-types'
   }
 
   LongMenu.propTypes = {
-    handleChange: PropTypes.func.isRequired
+    obj: PropTypes.object.isRequired
   }

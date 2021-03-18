@@ -10,7 +10,7 @@ import reportWebVitals from './reportWebVitals';
 
 const middleware = [ thunk ]
 
-
+//Creating a store for the Redux so we can access required resources from other components
 const store = createStore(
   reducer, 
   applyMiddleware(...middleware)

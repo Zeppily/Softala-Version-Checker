@@ -22,6 +22,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
@@ -33,7 +34,7 @@ import id from './test.json'
 import AddServerForm from "./components/AddServerForm";
 
 import { connect } from "react-redux";
-import { selectServername, fetchEolsIfNeeded, invalidateEols } from './actions'
+import { selectServername, fetchEolsIfNeeded, invalidateEols, fetchServerSoftwareIfNeeded, invalidateServerSoftware } from './actions'
 import PropTypes from 'prop-types'
 
 class App extends Component {
@@ -41,6 +42,7 @@ class App extends Component {
   static propTypes = {
     selectedServername: PropTypes.string.isRequired,
     eols: PropTypes.array.isRequired,
+    serverSoftware: PropTypes.array.isRequired,
     isFetching: PropTypes.bool.isRequired,
     lastUpdated: PropTypes.number,
     dispatch: PropTypes.func.isRequired
@@ -49,12 +51,14 @@ class App extends Component {
   componentDidMount() {
     const { dispatch, selectedServername } = this.props
     dispatch(fetchEolsIfNeeded(selectedServername))
+    dispatch(fetchServerSoftwareIfNeeded(selectedServername))
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.selectedServername !== this.props.selectedServername) {
       const { dispatch, selectedServername } = this.props
       dispatch(fetchEolsIfNeeded(selectedServername))
+      dispatch(fetchServerSoftwareIfNeeded(selectedServername))
     }
   }
 
@@ -68,13 +72,24 @@ class App extends Component {
     const { dispatch, selectedServername } = this.props
     dispatch(invalidateEols(selectedServername))
     dispatch(fetchEolsIfNeeded(selectedServername))
+    dispatch(invalidateServerSoftware(selectedServername))
+    dispatch(fetchServerSoftwareIfNeeded(selectedServername))
   }
 
+  //TODO: Conditional rendering (Done but logic could be better)
+  //TODO: Show the data has been last updated (Done but needs styling and stuff)
   render() {
-    const { selectedServername, eols, isFetching, lastUpdated } = this.props
-    const isEmpty = eols.length === 0
+    
+    const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching, handleRefreshClick } = this.props
+    console.log(eols)
+    const isEmptySoft = serverSoftware.length === 0
+    let isEmptyEol = eols.length === 0
+    if(typeof eols == 'string'){
+       isEmptyEol = true
+      }
     return(
       <div className={classes.root}>
+      <div>
         {/* Toolbar/Banner */}
         <CssBaseline />
         <AppBar position="absolute" className={clsx(classes.appBar, classes.appBarShift)}>
@@ -82,19 +97,23 @@ class App extends Component {
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Version checker
             </Typography>
-            <Listbutton handleChange={this.handleChange}/>
+            <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername}}/>
+            <Button variant="contained" color="primary" onClick={this.handleRefreshClick}>
+              Update forms
+            </Button>
             <AddServerForm />
           </Toolbar>
         </AppBar>
+      </div>
 
+        {/*NEEDS FIXING: This is under the topbar for some reason and if taken away cards go under the bar.*/}
         <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               projectName
         </Typography>
-      
-        {/* Main elements in the dashboard */}
 
+        {/* Main elements in the dashboard */}
         <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
+          <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
           <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={2}>
               {/* Overview */}
@@ -104,19 +123,24 @@ class App extends Component {
                 </Paper>
               </Grid>
 
-              {/* Software Version Information */}
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  <Versioninfo />
-                </Paper>
-              </Grid>
-
+            {/* Software Version Information */}
+            {isEmptySoft ? (isFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
+            :   <Grid item xs={12} md={12} lg={12}>
+                  <Paper className={classes.paper}>
+                    <Versioninfo serverSoftware={serverSoftware}/>
+                    <text><h3>Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '} </h3></text>
+                  </Paper>
+                </Grid>
+            }
               {/* End-Of-Life Information */}
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  <Eolinfo eols={eols}/>
-                </Paper>
-              </Grid>
+            {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
+            :   <Grid item xs={12} md={12} lg={12}>
+                  <Paper className={classes.paper}>
+                    <Eolinfo eols={eols}/>
+                    <text><h3>Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '} </h3></text>
+                  </Paper>
+                </Grid>
+            }
 
             </Grid>
           </Container>
@@ -127,7 +151,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  const { selectedServername, eolsByServername } = state
+  const { selectedServername, eolsByServername, serverSoftwareByServername } = state
   const {
     isFetching,
     lastUpdated,
@@ -137,11 +161,23 @@ const mapStateToProps = state => {
     items: []
   }
 
+  const {
+    serverSoftwareIsFetching,
+    serverSoftwareLastUpdated,
+    serverSoftwareItems: serverSoftware
+  } = serverSoftwareByServername [selectedServername] || {
+    serverSoftwareIsFetching: true,
+    serverSoftwareItems: []
+  }
+
   return {
     selectedServername,
     eols,
     isFetching,
-    lastUpdated
+    lastUpdated,
+    serverSoftware,
+    serverSoftwareIsFetching,
+    serverSoftwareLastUpdated
   }
 }
 

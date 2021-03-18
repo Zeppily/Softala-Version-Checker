@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Eolinfo(props) {
   const classes = useStyles();
-  console.log(props)
 
   return (
     <React.Fragment>
@@ -32,23 +31,17 @@ export default function Eolinfo(props) {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Software name</TableCell>
             <TableCell>Version</TableCell>
-            <TableCell>Latest</TableCell>
-            <TableCell>npm</TableCell>
-            <TableCell>postgreSQL</TableCell>
-            <TableCell>OS</TableCell>
+            <TableCell>Eol date</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {props.eols.map((server) => (
-            <TableRow key={server.name}>
-              <TableCell>{server.name}</TableCell>
-              <TableCell>{server.installed_version}</TableCell>
-              <TableCell>{server.latest_version}</TableCell>
-              <TableCell>{server.npm}</TableCell>
-              <TableCell>{server.postgreSQL}</TableCell>
-              <TableCell>{server.os}</TableCell>
+            <TableRow key={server.software_name}>
+              <TableCell>{server.software_name}</TableCell>
+              <TableCell>{server.version}</TableCell>
+              <TableCell>{server.eol_date}</TableCell>
             </TableRow>
           ))}
         </TableBody>
