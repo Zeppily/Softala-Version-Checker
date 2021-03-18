@@ -31,7 +31,7 @@ class EOLService {
                 let vers = softwares[i].installed_version
                 
                 // Format the version number so it only takes the first number of the version ('12.3.6' becomes '12.')
-                let version = vers.substr(0, (vers.indexOf('.') + 1));
+                let version = vers.substr(0, (vers.indexOf('.')));
 
                 // Find the eol information for the software
                 let eolInfo = await database.eol.findOne({

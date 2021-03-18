@@ -5,9 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
 
-//Information on this component is still generic since there is no actual data to use.
-//Developement of the FrontEnd continues along the way while other parts get developed more.
-
 function preventDefault(event) {
   event.preventDefault();
 }
@@ -18,8 +15,41 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Overview() {
+export default function Overview(props) {
   const classes = useStyles();
+  const data = props.obj.serverSoftware;
+  const eols = props.obj.eols;
+  const currentDate = new Date();
+  const currDateString = currentDate.toString();
+
+  let totalprograms = 0;
+  let updateable = 0; 
+  let eolapproaching = 0; 
+  let unsupported = 0;
+
+  console.log(data);
+
+  if (Array.isArray(data)) {
+    totalprograms = data.length;
+    data.forEach(software => {
+      if(software.installed_version != software["software.latest_version"]){
+        updateable++;
+      }
+    })
+  }
+
+  if (Array.isArray(eols)) {
+    eols.forEach(eol => {
+      if ((new Date(eol.eol_date) - currentDate) < 0) {
+        unsupported++;
+      } else if (((new Date(eol.eol_date) - currentDate) < 90 )) {
+        eolapproaching++;
+      }
+    })
+  }
+  
+  console.log("totalprograms:", totalprograms, "updateable:", updateable, "eolapproaching:", eolapproaching, "unsuported:", unsupported);
+
 
   return (
     <React.Fragment>
@@ -28,10 +58,10 @@ export default function Overview() {
         <Grid item xs={6}>
           <Title>Total Programs</Title>
           <Typography component="p" variant="h4">
-            Total programs
+            {totalprograms}
           </Typography>
           <Typography color="textSecondary" className={classes.depositContext}>
-            on 15 March, 2019
+            {currDateString}
           </Typography>
           <div>
             <Link color="primary" href="#" onClick={preventDefault}>
@@ -43,10 +73,10 @@ export default function Overview() {
         <Grid item xs={6}>
           <Title>Updateable</Title>
           <Typography component="p" variant="h4">
-            3
+            {updateable}
           </Typography>
           <Typography color="textSecondary" className={classes.depositContext}>
-            on 15 March, 2019
+            {currDateString}
           </Typography>
           <div>
             <Link color="primary" href="#" onClick={preventDefault}>
@@ -58,10 +88,10 @@ export default function Overview() {
         <Grid item xs={6}>
           <Title>EOL Approaching</Title>
           <Typography component="p" variant="h4">
-            7
+            {eolapproaching}
           </Typography>
           <Typography color="textSecondary" className={classes.depositContext}>
-            on 15 March, 2019
+            {currDateString}
           </Typography>
           <div>
             <Link color="primary" href="#" onClick={preventDefault}>
@@ -73,10 +103,10 @@ export default function Overview() {
         <Grid item xs={6}>
           <Title>Unsupported</Title>
           <Typography component="p" variant="h4">
-            1
+            {unsupported.toString()}
           </Typography>
           <Typography color="textSecondary" className={classes.depositContext}>
-            on 15 March, 2019
+            {currDateString}
           </Typography>
           <div>
             <Link color="primary" href="#" onClick={preventDefault}>
