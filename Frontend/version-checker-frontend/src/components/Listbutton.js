@@ -17,14 +17,20 @@ import PropTypes from 'prop-types'
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
-  
+
+   
+    const [buttonText, setButtonText] = useState("Raahe");  // Shows the selected project name
+    
     const handleProjectChange = (servername) => {
+      setButtonText(servername) // Shows the selected project name
       handleClose()
       props.handleChange(servername)
+      
     }
 
     const handleClose = () => {
       setAnchorEl(null);
+      
     };
 
     const [projects, setProjects] = useState([]);
@@ -52,7 +58,7 @@ import PropTypes from 'prop-types'
         onClick={handleClick}
         style={{marginLeft: 30}}
       >
-        Servers
+       {buttonText} {/* Changes the selected project name, Default is "useState("Raahe");""  */}
       </Button>
         <Menu
           id="long-menu"
