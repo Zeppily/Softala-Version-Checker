@@ -20,7 +20,7 @@ export default function AddServerForm(props) {
         setOpen(true);
     }
 
-    const handleClose = () => {
+    const submitData = () => {
         props.addServer(newserver);
         setNewserver({
             host: "",
@@ -45,7 +45,7 @@ export default function AddServerForm(props) {
             <Button variant="contained" color="primary" style={{border:"1px solid", margin: 10}} onClick={handleClickOpen}>
                 Add new server
             </Button>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog open={open} onClose={handleCancelClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Add new server</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -104,7 +104,7 @@ export default function AddServerForm(props) {
                     <Button onClick={handleCancelClose} color="secondary">
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={submitData} color="primary">
                         Save
                     </Button>
                 </DialogActions>

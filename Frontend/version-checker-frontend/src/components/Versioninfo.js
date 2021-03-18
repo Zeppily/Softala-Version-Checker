@@ -34,20 +34,14 @@ export default function Versioninfo(props) {
             <TableCell>Name</TableCell>
             <TableCell>Version</TableCell>
             <TableCell>Latest</TableCell>
-            <TableCell>npm</TableCell>
-            <TableCell>postgreSQL</TableCell>
-            <TableCell>OS</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {props.serverSoftware.map((server) => (
-            <TableRow key={server.name}>
-              <TableCell>{server.name}</TableCell>
+            <TableRow key={server["software.name"]}>
+              <TableCell>{server["software.name"]}</TableCell>
               <TableCell>{server.installed_version}</TableCell>
-              <TableCell>{server.latest_version}</TableCell>
-              <TableCell>{server.npm}</TableCell>
-              <TableCell>{server.postgreSQL}</TableCell>
-              <TableCell>{server.os}</TableCell>
+              <TableCell>{server["software.latest_version"]}</TableCell>
             </TableRow>
           ))}
         </TableBody>

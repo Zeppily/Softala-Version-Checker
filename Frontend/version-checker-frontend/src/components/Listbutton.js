@@ -36,10 +36,11 @@ import PropTypes from 'prop-types'
 
     //Gets project names for the dropdown menu
     useEffect(() => {
-        fetch('http://localhost:8080/projects')
+        fetch('http://localhost:8000/api/projects')
           .then((response) => response.json())
-          .then((data) => setProjects(data))
+          .then((data) => setProjects(data.data))
           .catch((error) => console.error(error))
+          
       }, []);
 
     //TODO: Finish "initiate scan" so it calls a function that starts server scan and updates the EoL info to the database  

@@ -25,7 +25,9 @@ export const requestEols = servername => ({
   servername
 })
 
-export const receiveEols = (servername, json) => ({
+
+
+export const receiveEols =    (servername, json) => ({
   type: RECEIVE_EOLS,
   servername,
   eols: json,
@@ -54,18 +56,22 @@ export const receiveServerSoftware = (servername, json) => ({
 const fetchEols = servername => dispatch => {
   dispatch(requestEols(servername))
   //Endpoint needs to be changed to the correct one when it is ready on the Sequelize backend
-  return fetch(`http://localhost:8080/info/${servername}`)
+  return fetch(`http://localhost:8000/api/eols/${servername}`)
     .then(response => response.json())
-    .then(json => dispatch(receiveEols(servername, json)))
+    .then(json => {if(json.data){
+                      dispatch(receiveEols(servername, json.data))}
+                    else {
+                      dispatch(receiveEols(servername, json.message))}
+                  })
     .catch((error) => console.error(error))
 }
 
 const fetchServerSoftware = servername => dispatch => {
   dispatch(requestServerSoftware(servername))
   //Endpoint needs to be changed to the correct one when it is ready on the Sequelize backend
-  return fetch(`http://localhost:8080/info/${servername}`)
+  return fetch(`http://localhost:8000/api/projectsoftwares/${servername}`)
     .then(response => response.json())
-    .then(json => dispatch(receiveServerSoftware(servername, json)))
+    .then(json => dispatch(receiveServerSoftware(servername, json.data)))
     .catch((error) => console.error(error))
 }
 

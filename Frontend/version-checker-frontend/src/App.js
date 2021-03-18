@@ -76,14 +76,20 @@ class App extends Component {
     dispatch(fetchServerSoftwareIfNeeded(selectedServername))
   }
 
-  //TODO: Conditional rendering for empty arrays or when fetch doesnt return any rows
-  //TODO: Show when the table data has been last updated (Done but needs styling and stuff)
+  //TODO: Conditional rendering (Done but logic could be better)
+  //TODO: Show the data has been last updated (Done but needs styling and stuff)
   render() {
+    
     const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching, handleRefreshClick } = this.props
-    const isEmpty = eols.length === 0
-    const serverSoftwareIsEmpty = serverSoftware.length === 0
+    console.log(eols)
+    const isEmptySoft = serverSoftware.length === 0
+    let isEmptyEol = eols.length === 0
+    if(typeof eols == 'string'){
+       isEmptyEol = true
+      }
     return(
       <div className={classes.root}>
+      <div>
         {/* Toolbar/Banner */}
         <CssBaseline />
         <AppBar position="absolute" className={clsx(classes.appBar, classes.appBarShift)}>
@@ -98,16 +104,16 @@ class App extends Component {
             <AddServerForm />
           </Toolbar>
         </AppBar>
+      </div>
 
-        {/* This is under the topbar for some reason and if taken away cards go under the bar. should be fixed at some point. */}
+        {/*NEEDS FIXING: This is under the topbar for some reason and if taken away cards go under the bar.*/}
         <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               projectName
         </Typography>
-      
-        {/* Main elements in the dashboard */}
 
+        {/* Main elements in the dashboard */}
         <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
+          <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
           <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={2}>
               {/* Overview */}
@@ -117,21 +123,24 @@ class App extends Component {
                 </Paper>
               </Grid>
 
-              {/* Software Version Information */}
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  <Versioninfo serverSoftware={serverSoftware}/>
-                  <text><h3>Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '} </h3></text>
-                </Paper>
-              </Grid>
-
+            {/* Software Version Information */}
+            {isEmptySoft ? (isFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
+            :   <Grid item xs={12} md={12} lg={12}>
+                  <Paper className={classes.paper}>
+                    <Versioninfo serverSoftware={serverSoftware}/>
+                    <text><h3>Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '} </h3></text>
+                  </Paper>
+                </Grid>
+            }
               {/* End-Of-Life Information */}
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  <Eolinfo eols={eols}/>
-                  <text><h3>Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '} </h3></text>
-                </Paper>
-              </Grid>
+            {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
+            :   <Grid item xs={12} md={12} lg={12}>
+                  <Paper className={classes.paper}>
+                    <Eolinfo eols={eols}/>
+                    <text><h3>Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '} </h3></text>
+                  </Paper>
+                </Grid>
+            }
 
             </Grid>
           </Container>
