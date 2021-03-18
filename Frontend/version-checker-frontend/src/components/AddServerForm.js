@@ -12,8 +12,7 @@ export default function AddServerForm(props) {
        host: "",
        name: "",
        username: "",
-       password: "",
-       port: ""
+       password: ""
     })
 
     const handleClickOpen = () => {
@@ -21,13 +20,12 @@ export default function AddServerForm(props) {
     }
 
     const submitData = () => {
-        props.addServer(newserver);
+        addServer(newserver);
         setNewserver({
             host: "",
             name: "",
             username: "",
-            password: "",
-            port: ""
+            password: ""
         })
         setOpen(false);
     }
@@ -38,6 +36,20 @@ export default function AddServerForm(props) {
 
     const inputChanged = event => {
         setNewserver({...newserver, [event.target.name]: event.target.value});
+    }
+
+    const addServer = (newserver) => {
+        fetch("http://localhost:8000/api/projects",
+        {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(newserver)
+        })
+        .then(_ => {
+            alert("New Server added");
+            setOpen(false)
+        })
+        .catch(err => console.error(err))
     }
 
     return (
@@ -85,16 +97,6 @@ export default function AddServerForm(props) {
                         label="Password"
                         name="password"
                         value={newserver.password}
-                        onChange={e => inputChanged(e)}
-                        fullWidth
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="port"
-                        label="Port"
-                        name="port"
-                        value={newserver.port}
                         onChange={e => inputChanged(e)}
                         fullWidth
                     />

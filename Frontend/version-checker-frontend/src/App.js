@@ -82,7 +82,13 @@ class App extends Component {
     
     const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching, handleRefreshClick } = this.props
     console.log(eols)
-    const isEmptySoft = serverSoftware.length === 0
+    let isEmptySoft = false
+    if(typeof serverSoftware != 'object'){
+      isEmptySoft = true
+    } else {
+      isEmptySoft = serverSoftware.length === 0
+    }
+
     let isEmptyEol = eols.length === 0
     if(typeof eols == 'string'){
        isEmptyEol = true
@@ -114,33 +120,42 @@ class App extends Component {
         {/* Main elements in the dashboard */}
         <main className={classes.content}>
           <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
+          
           <Container maxWidth="lg" className={classes.container}>
+          
             <Grid container spacing={2}>
               {/* Overview */}
               <Grid item xs={12} md={12} lg={12}>
                 <Paper className={classes.paper}>
-                  <Overview />
+                  <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
                 </Paper>
               </Grid>
 
             {/* Software Version Information */}
-            {isEmptySoft ? (isFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
-            :   <Grid item xs={12} md={12} lg={12}>
-                  <Paper className={classes.paper}>
-                    <Versioninfo serverSoftware={serverSoftware}/>
-                    <Typography variant="h6">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                  </Paper>
-                </Grid>
-            }
-              {/* End-Of-Life Information */}
-            {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
-            :   <Grid item xs={12} md={12} lg={12}>
-                  <Paper className={classes.paper}>
-                    <Eolinfo eols={eols}/>
-                    <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                  </Paper>
-                </Grid>
-            }
+            
+            <Grid item xs={12} md={12} lg={12}>
+              {isEmptySoft ? (isFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
+                :  
+              <Paper className={classes.paper}>
+                <Typography variant="h6">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                <Versioninfo serverSoftware={serverSoftware}/>
+              </Paper>
+              }
+              </Grid>
+            
+
+            {/* End-Of-Life Information */}
+            
+            <Grid item xs={12} md={12} lg={12}>
+              {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
+                :  
+              <Paper className={classes.paper}>
+                <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                <Eolinfo eols={eols}/>
+              </Paper>
+              }
+              </Grid>
+            
 
             </Grid>
           </Container>

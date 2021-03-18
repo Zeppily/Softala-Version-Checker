@@ -5,9 +5,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
 
-//Information on this component is still generic since there is no actual data to use.
-//Developement of the FrontEnd continues along the way while other parts get developed more.
-
 function preventDefault(event) {
   event.preventDefault();
 }
@@ -18,8 +15,45 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Overview() {
+function countTotal() {
+
+}
+
+function countUpdateable() {
+
+}
+
+function countApproaching() {
+
+}
+
+function countUnsupported() {
+
+}
+
+export default function Overview(props) {
   const classes = useStyles();
+  const data = props.obj.serverSoftware;
+
+  let totalprograms = 0;
+  let updateable = 0; 
+  let eolapproaching = 0; 
+  let unsupported = 0;
+
+  console.log(data);
+
+  if (Array.isArray(data)) {
+    totalprograms = data.length;
+    data.forEach(software => {
+      if(software.installed_version != software["software.latest_version"]){
+        updateable++;
+      }
+    })
+  }
+
+  console.log(props.obj.eols);
+
+
   return (
     <React.Fragment>
       <Title>Overview</Title>
