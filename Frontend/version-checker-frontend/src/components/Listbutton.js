@@ -67,15 +67,15 @@ import PropTypes from 'prop-types'
     return (
       <div>
         <Button
-        aria-controls="customized-menu"
-        aria-haspopup="true"
-        variant="contained"
-        color="primary"
-        onClick={handleClick}
-        style={{marginLeft: 30}}
-      >
-        {currentProject}
-      </Button>
+          aria-controls="customized-menu"
+          aria-haspopup="true"
+          variant="contained"
+          color="primary"
+          onClick={handleClick}
+          style={{marginLeft: 30}}
+        >
+          {currentProject}
+        </Button>
         <Menu
           id="long-menu"
           anchorEl={anchorEl}
@@ -99,16 +99,20 @@ import PropTypes from 'prop-types'
             </MenuItem>
           ))}
         </Menu>
-        { loading? <Button>Scan in progress</Button> :
-        <Button
-            aria-controls="customized-menu"
-            aria-haspopup="true"
-            variant="contained"
-            color="primary"
-            onClick={initiateScan}>
-          Start server scan
-        </Button>}
-        </div>
+
+        { loading? 
+          <Button>Scan in progress</Button> 
+          :
+          <Button
+              aria-controls="customized-menu"
+              aria-haspopup="true"
+              variant="contained"
+              color="primary"
+              onClick={initiateScan}>
+            Start server scan
+          </Button>
+        }
+      </div>
     );
 
     

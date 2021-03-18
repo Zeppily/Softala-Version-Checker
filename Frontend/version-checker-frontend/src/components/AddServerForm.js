@@ -14,7 +14,7 @@ export default function AddServerForm(props) {
        username: "",
        password: "",
        port: ""
-    })
+    });
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -28,7 +28,7 @@ export default function AddServerForm(props) {
             username: "",
             password: "",
             port: ""
-        })
+        });
         setOpen(false);
     }
 

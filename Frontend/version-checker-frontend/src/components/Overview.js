@@ -20,6 +20,7 @@ const useStyles = makeStyles({
 
 export default function Overview() {
   const classes = useStyles();
+
   return (
     <React.Fragment>
       <Title>Overview</Title>
@@ -27,7 +28,7 @@ export default function Overview() {
         <Grid item xs={6}>
           <Title>Total Programs</Title>
           <Typography component="p" variant="h4">
-            15
+            Total programs
           </Typography>
           <Typography color="textSecondary" className={classes.depositContext}>
             on 15 March, 2019
