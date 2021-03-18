@@ -45,7 +45,21 @@ import PropTypes from 'prop-types'
 
     //TODO: Finish "initiate scan" so it calls a function that starts server scan and updates the EoL info to the database  
     const initiateScan = (event) => {
-      
+      const projectnames = projects.map(project => project.name);
+      const projectnamesObj = {projects: projectnames}
+      console.log(JSON.stringify(projectnamesObj))
+      fetch("http://localhost:8000/startscan",
+      {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(projectnamesObj)
+      })
+      .then(response => response.json())
+      .then((data) => console.log(data))
+      .then(_ => {
+        props.obj.handleRefreshClick();
+      })
+      .catch(err => console.error(err))
     };
   
     return (
