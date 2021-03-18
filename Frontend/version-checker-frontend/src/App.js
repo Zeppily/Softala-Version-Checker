@@ -129,7 +129,7 @@ class App extends Component {
             :   <Grid item xs={12} md={12} lg={12}>
                   <Paper className={classes.paper}>
                     <Versioninfo serverSoftware={serverSoftware}/>
-                    <Text><h3>Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '} </h3></Text>
+                    <Typography variant="h3">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
                   </Paper>
                 </Grid>
             }
@@ -138,7 +138,7 @@ class App extends Component {
             :   <Grid item xs={12} md={12} lg={12}>
                   <Paper className={classes.paper}>
                     <Eolinfo eols={eols}/>
-                    <text><h3>Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '} </h3></text>
+                    <Typography variant="h3">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
                   </Paper>
                 </Grid>
             }
