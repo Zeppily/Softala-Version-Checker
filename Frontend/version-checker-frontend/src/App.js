@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import Table from '@material-ui/core/Table';
+import Text from '@material-ui/core/Text';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -97,7 +98,7 @@ class App extends Component {
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               Version checker
             </Typography>
-            <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername}}/>
+            <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername, handleRefreshClick: this.handleRefreshClick}}/>
             <Button variant="contained" color="primary" onClick={this.handleRefreshClick}>
               Update forms
             </Button>
@@ -128,7 +129,7 @@ class App extends Component {
             :   <Grid item xs={12} md={12} lg={12}>
                   <Paper className={classes.paper}>
                     <Versioninfo serverSoftware={serverSoftware}/>
-                    <text><h3>Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '} </h3></text>
+                    <Text><h3>Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '} </h3></Text>
                   </Paper>
                 </Grid>
             }
