@@ -33,7 +33,7 @@ def scrap_eol():
         if software and eol:
             try:
                 eol_date = datetime.datetime.strptime(eol, "%m/%d/%Y").strftime("%Y-%m-%d")
-                eolList["softwareList"].append({"software_name": software, "version": version, "eol_date": eol_date })
+                eolList["softwareList"].append({"software_name": re.sub(r'[^ A-Za-z0-9]', "", software.lower()), "version": version, "eol_date": eol_date })
             except:
                 pass
 
