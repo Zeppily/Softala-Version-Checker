@@ -273,9 +273,10 @@ class ProjectSoftwareService {
 
     // Start the scan tool to check the software that is installed on the projects
     static async startScan(projectNames) {
-
+        console.log(projectNames)
         let credentials = {};
         let scan = [];
+        let failedServers = []
         try {
             // Get project credentials
             await database.project.findAll({
@@ -313,11 +314,12 @@ class ProjectSoftwareService {
             // Send credentials to the scan tool and set results to serverList variable
 
             // Loop through the servers in the server list
-            await serverListToDb(scan)
+            failedServers = await serverListToDb(scan)
         } catch (error) {
             throw error;
         }
-        return scan
+        console.log(failedServers)
+        return failedServers
     }
 
 }
@@ -378,7 +380,8 @@ const serverListToDb = async (data) => {
 
         }
     };
-    return data
+    console.log("errorlist:",errorList)
+    return errorList
 }
 
 export default ProjectSoftwareService;

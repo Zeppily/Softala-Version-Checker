@@ -13,6 +13,7 @@ import PropTypes from 'prop-types'
     const open = Boolean(anchorEl);
     //Gets the default value set for Redux for useState
     const [currentProject, setCurrentProject] = useState(props.obj.selectedServername);
+    const [loading, setLoading] = useState(false)
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -52,8 +53,8 @@ import PropTypes from 'prop-types'
   
     const initiateScan = (event) => {
       const projectnames = projects.map(project => project.name);
-      const projectnamesObj = {projects: projectnames}
-      console.log(JSON.stringify(projectnamesObj))
+      const projectnamesObj = {name: projectnames};
+      setLoading(true);
       fetch("http://localhost:8000/startscan",
       {
         method: "POST",
@@ -61,9 +62,10 @@ import PropTypes from 'prop-types'
         body: JSON.stringify(projectnamesObj)
       })
       .then(response => response.json())
-      .then((data) => console.log(data))
+      .then((data) => alert(data.message))
       .then(_ => {
-        props.obj.handleRefreshClick();
+        props.obj.handleRefreshClick(event);
+        setLoading(false)
       })
       .catch(err => console.error(err))
     };
@@ -73,15 +75,15 @@ import PropTypes from 'prop-types'
     return (
       <div>
         <Button
-        aria-controls="customized-menu"
-        aria-haspopup="true"
-        variant="contained"
-        color="primary"
-        onClick={handleClick}
-        style={{marginLeft: 30}}
-      >
-        {currentProject}
-      </Button>
+          aria-controls="customized-menu"
+          aria-haspopup="true"
+          variant="contained"
+          color="primary"
+          onClick={handleClick}
+          style={{marginLeft: 30}}
+        >
+          {currentProject}
+        </Button>
         <Menu
           id="long-menu"
           anchorEl={anchorEl}
@@ -105,15 +107,20 @@ import PropTypes from 'prop-types'
             </MenuItem>
           ))}
         </Menu>
-        <Button
-            aria-controls="customized-menu"
-            aria-haspopup="true"
-            variant="contained"
-            color="primary"
-            onClick={initiateScan}>
-          Start server scan
-        </Button>
-        </div>
+
+        { loading? 
+          <Button>Scan in progress</Button> 
+          :
+          <Button
+              aria-controls="customized-menu"
+              aria-haspopup="true"
+              variant="contained"
+              color="primary"
+              onClick={initiateScan}>
+            Start server scan
+          </Button>
+        }
+      </div>
     );
 
     
