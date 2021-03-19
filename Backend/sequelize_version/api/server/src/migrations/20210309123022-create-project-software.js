@@ -4,7 +4,7 @@ module.exports = {
       project_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Project',
+          model: 'project',
           key: 'project_id'
         },
         primaryKey: true
@@ -12,7 +12,7 @@ module.exports = {
       software_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Software',
+          model: 'software',
           key: 'software_id'
         },
         primaryKey: true
