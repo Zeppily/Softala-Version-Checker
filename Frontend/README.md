@@ -61,9 +61,9 @@ Folder / file structure explained below
 	- When StartScan button is pressed conditional rendering prevents a user from pressing the button again
 
 ## - Actions/index.js
-	- Contains necessary actions for Redux to work (fetch functions for software and EoL data, handling server change etc.)
-	- Utilizes reducers to simplify the code
+- Contains necessary actions for Redux to work (fetch functions for software and EoL data, handling server change etc.)
+- Utilizes reducers to simplify the code
 
 ## - Reducers/index.js
-	- Contains switch statements that actions/index.js can utilize to operate properly whilst reducing the amount of code in one file
-	- Creates the rootReducer that the root file index.js uses so Redux can be utilized in the App.js file
+- Contains switch statements that actions/index.js can utilize to operate properly whilst reducing the amount of code in one file
+- Creates the rootReducer that the root file index.js uses so Redux can be utilized in the App.js file
