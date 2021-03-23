@@ -52,6 +52,7 @@ export default function AddServerForm(props) {
         .catch(err => console.error(err))
     }
 
+    //TODO: Add validation and encruption to form
     return (
         <div>
             <Button variant="contained" color="primary" style={{border:"1px solid", margin: 10}} onClick={handleClickOpen}>

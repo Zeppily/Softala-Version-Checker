@@ -10,7 +10,6 @@ import Button from '@material-ui/core/Button';
 import Title from './Title';
 import Listbutton from './Listbutton';
 
-
 function preventDefault(event) {
   event.preventDefault();
 }
@@ -20,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
 }));
-
 
 export default function Versioninfo(props) {
   const classes = useStyles();
