@@ -46,7 +46,8 @@ import PropTypes from 'prop-types'
           
       }, []);
 
-  
+    
+    //Calls the backend to start the whole scan process
     const initiateScan = (event) => {
       const projectnames = projects.map(project => project.name);
       const projectnamesObj = {name: projectnames};

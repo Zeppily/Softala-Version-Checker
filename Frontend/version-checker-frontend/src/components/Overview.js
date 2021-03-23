@@ -54,20 +54,15 @@ export default function Overview(props) {
   return (
     <React.Fragment>
       <Title>Overview</Title>
+      <Typography color="textSecondary" className={classes.depositContext}>
+          Last updated:  {currDateString}
+      </Typography>
       <Grid container>
         <Grid item xs={6}>
           <Title>Total Programs</Title>
           <Typography component="p" variant="h4">
             {totalprograms}
           </Typography>
-          <Typography color="textSecondary" className={classes.depositContext}>
-            {currDateString}
-          </Typography>
-          <div>
-            <Link color="primary" href="#" onClick={preventDefault}>
-              More info
-            </Link>
-          </div>
         </Grid>
 
         <Grid item xs={6}>
@@ -75,14 +70,6 @@ export default function Overview(props) {
           <Typography component="p" variant="h4">
             {updateable}
           </Typography>
-          <Typography color="textSecondary" className={classes.depositContext}>
-            {currDateString}
-          </Typography>
-          <div>
-            <Link color="primary" href="#" onClick={preventDefault}>
-              More info
-            </Link>
-          </div>
         </Grid>
 
         <Grid item xs={6}>
@@ -90,14 +77,6 @@ export default function Overview(props) {
           <Typography component="p" variant="h4">
             {eolapproaching}
           </Typography>
-          <Typography color="textSecondary" className={classes.depositContext}>
-            {currDateString}
-          </Typography>
-          <div>
-            <Link color="primary" href="#" onClick={preventDefault}>
-              More info
-            </Link>
-          </div>
         </Grid>
 
         <Grid item xs={6}>
@@ -105,14 +84,6 @@ export default function Overview(props) {
           <Typography component="p" variant="h4">
             {unsupported.toString()}
           </Typography>
-          <Typography color="textSecondary" className={classes.depositContext}>
-            {currDateString}
-          </Typography>
-          <div>
-            <Link color="primary" href="#" onClick={preventDefault}>
-              More info
-            </Link>
-          </div>
         </Grid>
       </Grid>
     </React.Fragment>
