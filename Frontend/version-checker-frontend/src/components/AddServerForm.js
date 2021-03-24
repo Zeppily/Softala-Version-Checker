@@ -20,14 +20,23 @@ export default function AddServerForm(props) {
     }
 
     const submitData = () => {
-        addServer(newserver);
-        setNewserver({
-            host: "",
-            name: "",
-            username: "",
-            password: ""
-        })
-        setOpen(false);
+        let trimhost = newserver.host.trim()
+        let trimname = newserver.name.trim()
+        let trimusername = newserver.username.trim()
+        
+        if(trimhost && trimname && trimusername){
+            let trimmedserver = {host: trimhost, name: trimname, username: trimusername, password: newserver.password}
+            addServer(trimmedserver);
+            setNewserver({
+                host: "",
+                name: "",
+                username: "",
+                password: ""
+            })
+            setOpen(false);
+        }else{
+            alert("You must provide Host, Projectname and Username.");
+        }
     }
 
     const handleCancelClose = () => {
@@ -52,7 +61,6 @@ export default function AddServerForm(props) {
         .catch(err => console.error(err))
     }
 
-    //TODO: Add validation and encruption to form
     return (
         <div>
             <Button variant="contained" color="primary" style={{border:"1px solid", margin: 10}} onClick={handleClickOpen}>
@@ -72,7 +80,6 @@ export default function AddServerForm(props) {
                         fullWidth
                     />
                     <TextField
-                        autoFocus
                         margin="dense"
                         id="name"
                         label="Name"
@@ -82,7 +89,6 @@ export default function AddServerForm(props) {
                         fullWidth
                     />
                     <TextField
-                        autoFocus
                         margin="dense"
                         id="username"
                         label="Username"
@@ -92,7 +98,6 @@ export default function AddServerForm(props) {
                         fullWidth
                     />
                     <TextField
-                        autoFocus
                         margin="dense"
                         id="password"
                         label="Password"
