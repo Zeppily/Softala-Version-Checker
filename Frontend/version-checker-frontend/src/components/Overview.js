@@ -27,29 +27,29 @@ export default function Overview(props) {
   let eolapproaching = 0; 
   let unsupported = 0;
 
-  console.log(data);
-
-  if (Array.isArray(data)) {
-    totalprograms = data.length;
-    data.forEach(software => {
-      if(software.installed_version != software["software.latest_version"]){
-        updateable++;
-      }
-    })
-  }
-
-  if (Array.isArray(eols)) {
-    eols.forEach(eol => {
-      if ((new Date(eol.eol_date) - currentDate) < 0) {
-        unsupported++;
-      } else if (((new Date(eol.eol_date) - currentDate) < 90 )) {
-        eolapproaching++;
-      }
-    })
+  const createOverviewData = (data, eols) => {
+    
+    if (Array.isArray(data)) {
+      totalprograms = data.length;
+      data.forEach(software => {
+        if(software.installed_version != software["software.latest_version"]){
+          updateable++;
+        }
+      })
+    }
+  
+    if (Array.isArray(eols)) {
+      eols.forEach(eol => {
+        if ((new Date(eol.eol_date) - currentDate) < 0) {
+          unsupported++;
+        } else if (((new Date(eol.eol_date) - currentDate) / 1000 / 60 / 60 / 24) < 90 ) {
+          eolapproaching++;
+        }
+      })
+    }
   }
   
-  console.log("totalprograms:", totalprograms, "updateable:", updateable, "eolapproaching:", eolapproaching, "unsuported:", unsupported);
-
+  createOverviewData(data, eols);
 
   return (
     <React.Fragment>
@@ -82,7 +82,7 @@ export default function Overview(props) {
         <Grid item xs={6}>
           <Title>Unsupported</Title>
           <Typography component="p" variant="h4">
-            {unsupported.toString()}
+            {unsupported}
           </Typography>
         </Grid>
       </Grid>
