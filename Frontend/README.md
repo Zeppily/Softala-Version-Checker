@@ -1,3 +1,5 @@
+
+![React Tests](https://github.com/Zeppily/Softala-Version-Checker/actions/workflows/reactapp.js.yml/badge.svg)
 # Version Checker Frontend
 
 For the code navigate: 
