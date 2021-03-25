@@ -17,10 +17,15 @@ const useStyles = makeStyles({
 
 export default function Overview(props) {
   const classes = useStyles();
-  const data = props.obj.serverSoftware;
-  const eols = props.obj.eols;
   const currentDate = new Date();
   const currDateString = currentDate.toString();
+  let data = []
+  let eols = []
+
+  if (props.obj) {
+    data = props.obj.serverSoftware;
+    eols = props.obj.eols;
+  }
 
   let totalprograms = 0;
   let updateable = 0; 
