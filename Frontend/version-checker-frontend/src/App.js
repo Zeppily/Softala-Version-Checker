@@ -114,7 +114,7 @@ class App extends Component {
             {/* Software Version Information */}
             
             <Grid item xs={12} md={12} lg={12}>
-              {isEmptySoft ? (isFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
+              {isEmptySoft ? (serverSoftwareIsFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
                 :  
               <Paper className={classes.paper}>
                 <Typography variant="h6">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
