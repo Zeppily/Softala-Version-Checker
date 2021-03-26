@@ -3,19 +3,16 @@ const axios = require('axios');
 // This is used for WHERE IN statements and stuff like that.
 // const { Op } = require("sequelize");
 
-class ProjectSoftwareService {
-    // Get a list of all information in the project_software table
-    static async getAllProjectSoftware() {
-        try {
-            return await database.project.findAll();
-        } catch (error) {
-            throw error;
-        }
+const getAllProjectSoftware = async() => {
+    try {
+        return await database.project.findAll();
+    } catch (error) {
+        throw error;
     }
+}
 
-    // Get a list of software that is installed on a specific project
-    static async getAllProjectSpecificSoftware(project) {
-        console.log(project.project)
+const getAllProjectSpecificSoftware = async() => {
+    console.log(project.project)
         const projName = project.project
 
         try {
@@ -52,11 +49,10 @@ class ProjectSoftwareService {
         } catch (error) {
             throw error;
         }
-    }
+}
 
-    // Add a single software to the project
-    static async addProjectSoftware(newProjectSoftware) {
-        let projectName = newProjectSoftware.project_name;
+const addProjectSoftware = async() => {
+    let projectName = newProjectSoftware.project_name;
         let softwareName = newProjectSoftware.software_name;
         let installedVersion = newProjectSoftware.installed_version;
         console.log("in add prsfw")
@@ -106,73 +102,70 @@ class ProjectSoftwareService {
         } catch (error) {
             throw error;
         }
-    }
+}
 
-    // Add a list of softwares to the project_software table
-    static async addListProjectSoftware(projectSoftwareList) {
+const addListProjectSoftware = async() => {
+    // Loop through the software list for the project
+    for (let proj_software of projectSoftwareList) {
+        let projectName = proj_software.project_name;
+        let softwareName = proj_software.software_name;
+        let installedVersion = proj_software.installed_version;
 
-        // Loop through the software list for the project
-        for (let proj_software of projectSoftwareList) {
-            let projectName = proj_software.project_name;
-            let softwareName = proj_software.software_name;
-            let installedVersion = proj_software.installed_version;
+        try {
+            // Find the project id
+            const projId = await database.project.findOne({
+                attributes: ['project_id'],
+                where: {
+                    name: projectName
+                }
+            })
 
-            try {
-                // Find the project id
-                const projId = await database.project.findOne({
-                    attributes: ['project_id'],
-                    where: {
-                        name: projectName
-                    }
-                })
+            // Find the software id
+            let softId = await database.software.findOne({
+                attributes: ['software_id'],
+                where: {
+                    name: softwareName
+                }
+            })
 
-                // Find the software id
-                let softId = await database.software.findOne({
+            // Check if the software exists on the software table and add it if it does not
+            if (softId === null) {
+                console.log(`softId = ${softId}! should = null`)
+                await database.software.create({
+                    'name': softwareName,
+                    'latest_version': installedVersion
+                });
+
+                softId = await database.software.findOne({
                     attributes: ['software_id'],
                     where: {
                         name: softwareName
                     }
                 })
-
-                // Check if the software exists on the software table and add it if it does not
-                if (softId === null) {
-                    console.log(`softId = ${softId}! should = null`)
-                    await database.software.create({
-                        'name': softwareName,
-                        'latest_version': installedVersion
-                    });
-
-                    softId = await database.software.findOne({
-                        attributes: ['software_id'],
-                        where: {
-                            name: softwareName
-                        }
-                    })
-                }
-
-                let projectId = JSON.stringify(projId.project_id)
-                let softwareId = JSON.stringify(softId.software_id)
-
-                // Add the software for the project to the project_software table
-                await database.project_software.create({
-                    'project_id': projectId,
-                    'software_id': softwareId,
-                    'installed_version': installedVersion
-                });
-
-
-
-            } catch (error) {
-                throw error;
             }
 
-        }
-        return;
-    }
+            let projectId = JSON.stringify(projId.project_id)
+            let softwareId = JSON.stringify(softId.software_id)
 
-    // Update the installed version of a software on the project_software table
-    static async updateProjectSoftware(updateProjectSoftware) {
-        let projectName = updateProjectSoftware.project_name;
+            // Add the software for the project to the project_software table
+            await database.project_software.create({
+                'project_id': projectId,
+                'software_id': softwareId,
+                'installed_version': installedVersion
+            });
+
+
+
+        } catch (error) {
+            throw error;
+        }
+
+    }
+    return;
+}
+
+const updateProjectSoftware = async() => {
+    let projectName = updateProjectSoftware.project_name;
         let softwareName = updateProjectSoftware.software_name;
 
         try {
@@ -219,11 +212,10 @@ class ProjectSoftwareService {
         } catch (error) {
             throw error;
         }
-    }
+}
 
-    // Delete a software from a project
-    static async deleteProjectSoftware(deleteProjectSoftware) {
-        let projectName = updateProjectSoftware.project_name;
+const deleteProjectSoftware = async() => {
+    let projectName = updateProjectSoftware.project_name;
         let softwareName = updateProjectSoftware.software_name;
 
         try {
@@ -269,11 +261,10 @@ class ProjectSoftwareService {
         } catch (error) {
             throw error;
         }
-    }
+}
 
-    // Start the scan tool to check the software that is installed on the projects
-    static async startScan(projectNames) {
-        console.log(projectNames)
+const startScan = async(projectNames) => {
+    console.log(projectNames)
         let credentials = {};
         let scan = [];
         let failedServers = []
@@ -320,8 +311,6 @@ class ProjectSoftwareService {
         }
         console.log(failedServers)
         return failedServers
-    }
-
 }
 
 const serverListToDb = async (data) => {
@@ -384,4 +373,12 @@ const serverListToDb = async (data) => {
     return errorList
 }
 
-export default ProjectSoftwareService;
+module.exports = {
+    getAllProjectSoftware,
+    getAllProjectSpecificSoftware,
+    addProjectSoftware,
+    addListProjectSoftware,
+    updateProjectSoftware,
+    deleteProjectSoftware,
+    startScan
+}
