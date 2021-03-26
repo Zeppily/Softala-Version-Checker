@@ -1,7 +1,6 @@
 {
   "name": "test-v-c",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec babel-node ./api/index.js",
@@ -31,5 +30,6 @@
     "@babel/register": "^7.13.8",
     "@babel/runtime": "^7.13.10",
     "babel-loader": "^8.2.2"
-  }
+  },
+  "description": ""
 }

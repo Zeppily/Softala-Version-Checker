@@ -24,6 +24,7 @@ import PropTypes from 'prop-types'
     //Uses the handlechange function from the App.js file to update selectedServer
     //Changes the const that determines what is on the button
     const handleProjectChange = (servername) => {
+     
       handleClose()
       props.obj.handleChange(servername)
       setCurrentProject(servername)
@@ -31,6 +32,7 @@ import PropTypes from 'prop-types'
 
     const handleClose = () => {
       setAnchorEl(null);
+      
     };
 
     const [projects, setProjects] = useState([]);
@@ -44,7 +46,8 @@ import PropTypes from 'prop-types'
           
       }, []);
 
-    //TODO: Finish "initiate scan" so it calls a function that starts server scan and updates the EoL info to the database  
+    
+    //Calls the backend to start the whole scan process
     const initiateScan = (event) => {
       const projectnames = projects.map(project => project.name);
       const projectnamesObj = {name: projectnames};
@@ -64,6 +67,8 @@ import PropTypes from 'prop-types'
       .catch(err => console.error(err))
     };
   
+
+
     return (
       <div>
         <Button
