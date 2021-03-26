@@ -1,0 +1,27 @@
+# This workflow will do a clean install of all the react depencies, build the source and runs the tests
+
+name: React App CI
+ 
+on:
+  push:
+    branches: [ backend-dev ]
+  pull_request:
+    branches: [ backend-dev ]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install and test
+        run: |
+          cd Frontend/version-checker-frontend
+          npm install
+          npm test
