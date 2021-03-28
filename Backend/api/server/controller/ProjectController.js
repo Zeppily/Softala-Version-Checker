@@ -39,7 +39,7 @@ const updatedProject = async(req, res) => {
     const alteredProject = req.body;
     const { id } = req.params;
     if (!Number(id)) {
-        util.setError(400, ' Please input a valid id');
+        util.setError(400, 'Please input a valid id');
         return util.send(res);
     }
     try {

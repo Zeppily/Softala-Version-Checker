@@ -118,7 +118,7 @@ const deleteProjectSoftware = async(req, res) => {
         //     util.setError(400, 'Please provide a numeric value for id');
         //     return util.send(res);
         // }
-
+    console.log(deletedProjectSoftware);
         try {
             const projectSoftwareToDelete = await ProjectSoftwareService.deleteProjectSoftware(deletedProjectSoftware);
 

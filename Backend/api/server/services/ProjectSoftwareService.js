@@ -12,50 +12,53 @@ const getAllProjectSoftware = async() => {
 }
 
 const getAllProjectSpecificSoftware = async(project) => {
+<<<<<<< HEAD
     console.log(project.project)
         const projName = project.project
+=======
+    const projName = project.project
+>>>>>>> 9631dda285afd957248d1a32f764fcb00e003f6f
 
-        try {
-            // Find the project id
-            const projId = await database.project.findOne({
-                attributes: ['project_id'],
-                where: {
-                    name: projName
-                }
-            })
+    try {
+        // Find the project id
+        const projId = await database.project.findOne({
+            attributes: ['project_id'],
+            where: {
+                name: projName
+            }
+        })
 
-            let projectId = JSON.stringify(projId.project_id)
+        let projectId = JSON.stringify(projId.project_id)
 
-            // Find all software associated with the specified project
-            return await database.project_software.findAll({
-                where: {
-                    project_id: projectId
+        // Find all software associated with the specified project
+        return await database.project_software.findAll({
+            where: {
+                project_id: projectId
+            },
+            include: [
+                {
+                    model: database.software,
+                    as: 'software',
+                    attributes: ['name', 'latest_version']
                 },
-                include: [
-                    {
-                        model: database.software,
-                        as: 'software',
-                        attributes: ['name', 'latest_version']
-                    },
-                    {
-                        model: database.project,
-                        as: 'project',
-                        attributes: []
-                    }
-                ],
-                attributes: ['installed_version'],
-                raw: true
-            });
-        } catch (error) {
-            throw error;
-        }
+                {
+                    model: database.project,
+                    as: 'project',
+                    attributes: []
+                }
+            ],
+            attributes: ['installed_version'],
+            raw: true
+        });
+    } catch (error) {
+        throw error;
+    }
 }
 
 const addProjectSoftware = async() => {
     let projectName = newProjectSoftware.project_name;
         let softwareName = newProjectSoftware.software_name;
         let installedVersion = newProjectSoftware.installed_version;
-        console.log("in add prsfw")
         try {
             // Find the project id
             const projId = await database.project.findOne({
@@ -75,7 +78,6 @@ const addProjectSoftware = async() => {
 
             // Check if the software exists on the software table and add it if it does not
             if (softId === null) {
-                console.log(`softId = ${softId}! should = null`)
                 await database.software.create({
                     'name': softwareName,
                     'latest_version': installedVersion
@@ -104,7 +106,7 @@ const addProjectSoftware = async() => {
         }
 }
 
-const addListProjectSoftware = async() => {
+const addListProjectSoftware = async(projectSoftwareList) => {
     // Loop through the software list for the project
     for (let proj_software of projectSoftwareList) {
         let projectName = proj_software.project_name;
@@ -130,7 +132,6 @@ const addListProjectSoftware = async() => {
 
             // Check if the software exists on the software table and add it if it does not
             if (softId === null) {
-                console.log(`softId = ${softId}! should = null`)
                 await database.software.create({
                     'name': softwareName,
                     'latest_version': installedVersion
@@ -164,103 +165,102 @@ const addListProjectSoftware = async() => {
     return;
 }
 
-const updateProjectSoftware = async() => {
+const updateProjectSoftware = async(updateProjectSoftware) => {
     let projectName = updateProjectSoftware.project_name;
-        let softwareName = updateProjectSoftware.software_name;
+    let softwareName = updateProjectSoftware.software_name;
 
-        try {
-            // Find the software to update on the project_software table
-            const projectSoftwareToUpdate = await database.project_software.findOne({
+    try {
+        // Get the project id
+        let projectID = await database.project.findOne({
+            attributes: ['project_id'],
+            where: {
+                name: projectName
+            }
+        })
+        
+        // Get the software id
+        let softwareID = await database.software.findOne({
+            attributes: ['software_id'],
+            where: {
+                name: softwareName
+            }
+        })
+        
+        // Find the software to update on the project_software table
+        const projectSoftwareToUpdate = await database.project_software.findOne({
+            where: {
+                project_id: projectID.dataValues.project_id,
+                software_id: softwareID.dataValues.software_id
+            }
+        });
+
+        // Create a new object with the software id and project id rather than software name and project name
+        let newProjSoftDetails = {
+            "installed_version": updateProjectSoftware.installed_version,
+            "software_id": softwareID.dataValues.software_id,
+            "project_id": projectID.dataValues.project_id
+        }
+
+        // If the software exists for the project, update the software
+        if (projectSoftwareToUpdate) {
+            let a = await database.project_software.update(newProjSoftDetails, {
                 where: {
-                    project_id: (database.project.findOne({
-                        attributes: [project_id],
-                        where: {
-                            name: projectName
-                        }
-                    })),
-                    software_id: (database.software.findOne({
-                        attributes: [software_id],
-                        where: {
-                            name: softwareName
-                        }
-                    }))
+                    project_id: projectID.dataValues.project_id,
+                    software_id: softwareID.dataValues.software_id
                 }
             });
 
-            // If the software exists for the project, update the software
-            if (projectSoftwareToUpdate) {
-                await database.ProjectSoftware.update(updateProjectSoftware, {
-                    where: {
-                        project_id: (database.project.findOne({
-                            attributes: [project_id],
-                            where: {
-                                name: projectName
-                            }
-                        })),
-                        software_id: (database.software.findOne({
-                            attributes: [software_id],
-                            where: {
-                                name: softwareName
-                            }
-                        }))
-                    }
-                });
-
-                return updateProjectSoftware;
-            }
-            return null;
-        } catch (error) {
-            throw error;
+            return updateProjectSoftware;
         }
+        return null;
+    } catch (error) {
+        throw error;
+    }
 }
 
-const deleteProjectSoftware = async() => {
-    let projectName = updateProjectSoftware.project_name;
-        let softwareName = updateProjectSoftware.software_name;
+const deleteProjectSoftware = async(deleteProjectSoftware) => {
+    let projectName = deleteProjectSoftware.project_name;
+    let softwareName = deleteProjectSoftware.software_name;
 
-        try {
-            // Find the software to delete from the project
-            const projectSoftwareToDelete = await database.project_software.findOne({
+    try {
+        // Get the project id
+        let projectID = await database.project.findOne({
+            attributes: ['project_id'],
+            where: {
+                name: projectName
+            }
+        })
+
+        // Get the software id
+        let softwareID = await database.software.findOne({
+            attributes: ['software_id'],
+            where: {
+                name: softwareName
+            }
+        })
+
+        // Find the software to delete from the project
+        const projectSoftwareToDelete = await database.project_software.findOne({
+            where: {
+                project_id: projectID.dataValues.project_id,
+                software_id: softwareID.dataValues.software_id
+            }
+        });
+
+        // If the software exists for the project, delete the software
+        if (projectSoftwareToDelete) {
+            const deletedProjectSoftware = await database.project_software.destroy({
                 where: {
-                    project_id: (database.project.findOne({
-                        attributes: [project_id],
-                        where: {
-                            name: projectName
-                        }
-                    })),
-                    software_id: (database.software.findOne({
-                        attributes: [software_id],
-                        where: {
-                            name: softwareName
-                        }
-                    }))
+                    project_id: projectID.dataValues.project_id,
+                    software_id: softwareID.dataValues.software_id
                 }
             });
-
-            // If the software exists for the project, delete the software
-            if (projectSoftwareToDelete) {
-                const deletedProjectSoftware = await database.project_software.destroy({
-                    where: {
-                        project_id: (database.project.findOne({
-                            attributes: [project_id],
-                            where: {
-                                name: projectName
-                            }
-                        })),
-                        software_id: (database.software.findOne({
-                            attributes: [software_id],
-                            where: {
-                                name: softwareName
-                            }
-                        }))
-                    }
-                });
-                return deletedProjectSoftware;
-            }
-            return null;
-        } catch (error) {
-            throw error;
+            return deletedProjectSoftware;
         }
+        return null;
+    } catch (error) {
+        throw error;
+    }
 }
 
 const startScan = async(projectNames) => {
