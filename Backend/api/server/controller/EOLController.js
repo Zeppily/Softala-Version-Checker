@@ -123,7 +123,7 @@ const deleteEOL = async(req, res) => {
     }
 }
 
-export {
+module.exports = {
     getAllEOLs,
     getProjectSpecificEOLs,
     addEOL,
