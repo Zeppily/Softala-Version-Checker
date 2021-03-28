@@ -78,7 +78,7 @@ const deleteProject = async(req, res) => {
         return util.send(res);
     }
 }
-export {
+module.exports = {
     getAllProjects,
     addProject,
     updatedProject,
@@ -163,4 +163,4 @@ export {
 //     }
 // }
 
-export default ProjectController;
+// export default ProjectController;

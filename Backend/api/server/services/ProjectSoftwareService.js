@@ -11,7 +11,7 @@ const getAllProjectSoftware = async() => {
     }
 }
 
-const getAllProjectSpecificSoftware = async() => {
+const getAllProjectSpecificSoftware = async(project) => {
     console.log(project.project)
         const projName = project.project
 

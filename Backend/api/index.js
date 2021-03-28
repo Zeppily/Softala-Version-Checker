@@ -38,8 +38,10 @@ app.get('*', (req, res) => res.status(200).send({
    message: 'Welcome to this API.'
 }));
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
    console.log(`Server is running on PORT ${port}`);
 });
 
 export default app;
+
+module.exports = server;
