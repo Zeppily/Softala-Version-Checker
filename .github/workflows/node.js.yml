@@ -25,6 +25,6 @@ jobs:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PSWD: ${{ secrets.DB_PSWD }}
       run: |
-        cd Backend/Node
+        cd Backend
         npm ci
         npm test
