@@ -6,6 +6,7 @@ const util = new Util();
 const getAllSoftwares = async(req, res) => {
     try {
         const allSoftwares = await SoftwareService.getAllSoftwares();
+        console.log(`this is allsoftwares ${allSoftwares}`)
         if (allSoftwares.length > 0) {
             util.setSuccess(200, 'Software retrieved', allSoftwares);
         } else {
@@ -24,7 +25,7 @@ const addSoftware = async(req, res) => {
         return util.send(res);
     }
     const newSoftware = req.body;
-    console.log(newSoftware);
+    // console.log(newSoftware);
     try {
         const createdSoftware = await SoftwareService.addSoftware(newSoftware);
         util.setSuccess(201, 'Software Added!', createdSoftware);
@@ -59,7 +60,7 @@ const updatedSoftware = async(req, res) => {
 
 const deleteSoftware = async(req, res) => {
     const { software_id } = req.params;
-
+    
     if (!Number(software_id)) {
         util.setError(400, 'Please provide a numeric value for id');
         return util.send(res);
@@ -67,7 +68,6 @@ const deleteSoftware = async(req, res) => {
 
     try {
         const softwareToDelete = await SoftwareService.deleteSoftware(software_id);
-
         if (softwareToDelete) {
             util.setSuccess(200, 'Software deleted');
         } else {

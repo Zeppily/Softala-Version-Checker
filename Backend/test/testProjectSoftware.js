@@ -6,25 +6,39 @@ var chaiHttp = require("chai-http");
 
 chai.use(chaiHttp);
 
-// This is used in updating and deleting the added software
+// // This is used in updating and deleting the added software
 let updateId;
+// let url = 'http://localhost:8000/api/projectsoftwares'
+// let projectUrl = 'http://localhost:8000/api/projects'
 
 describe('Test projectSoftware endpoints and table', function() {
-    describe('Get data from software table', function() {
-        let url = 'http://localhost:8000/api/projectsoftwares'
-
-        it('returns status 200', function(done) {
-            request(url, function(error, response, body) {
-                expect(response.statusCode).to.equal(200);
-                done();
-            });
-        });
-    });
+    
+    describe('Add project to the project table', function () {
+            
+        let project = {
+            "host": "www.example.com",
+            "name": "testProject2",
+            "username": "user",
+            "password": "pass"
+        }
+    
+        it("returns status code 201 and message 'Project Added'", function (done) {
+            chai.request(server)
+                    .post('/api/projects/')
+                    .send(project)
+                    .end((err, res) => {
+                        expect(res.statusCode).to.equal(201)
+                        expect(res.body.message).to.equal('Project Added!')
+                        updateId = res.body.data.project_id
+                        done();
+                    });
+        })    
+    })
 
     describe('Add data to project_software table', function() {
         let projectsoftware = {
-            project_id: "1",
-            software_id: "7",
+            project_name: "testProject2",
+            software_name: "testSoftware",
             installed_version: "9.13"
         }
 
@@ -34,7 +48,6 @@ describe('Test projectSoftware endpoints and table', function() {
                 .send(projectsoftware)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(201)
-                    updateId = res.text
                     done();
                 });
         });
@@ -44,42 +57,78 @@ describe('Test projectSoftware endpoints and table', function() {
 
         it('Expects status code 200', function (done) {
             let projectsoftware = {
-                project_id: "1",
-                software_id: "7",
-                installed_version: "9.13"
+                project_name: "testProject2",
+                software_name: "testSoftware",
+                installed_version: "10.0"
             }
             chai.request(server)
-                .put('/api/projectsoftwares/' + updateId)
+                .put('/api/projectsoftwares/')
                 .send(projectsoftware)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(200);
-                    console.log(updateId);
                     done();
                 });
         });
     });
 
-    describe('Test DELETE request', function () {
+    describe('Get data from software table', function() {
 
-        it('Expects status 200', function (done) {
+        it('returns status 200', function(done) {
             chai.request(server)
-                .delete('/api/projectsoftwares/' + updateId)
+                .get(`/api/projectsoftwares/`)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(200);
                     done();
                 });
+            // request(url, function(error, response, body) {
+            //     expect(response.statusCode).to.equal(200);
+            //     done();
+            // });
         });
     });
 
-    describe('Test get project specific software from Raahe server', function(){
-        let url = 'http://localhost:8000/api/projectsoftwares/Raahe'
+//     // THIS DOESNT WORK: NEEDS FIXING!!!
+//     // describe('Test get project specific software from testProject2 server', function(){
+//     //     let url = 'http://localhost:8000/api/projectsoftwares/testProject2'
 
-        it('Exprcts status 200', function(done) {
-            chai.request(url, function(error, response, body){
-                expect(response.statusCode).equal.to(200);
-                done();
-            });
+//     //     it('Expects status 200', function(done) {
+//     //         chai.request(url, function(error, response, body){
+//     //             expect(response.statusCode).equal.to(200);
+//     //             done();
+//     //         });
+//     //     });
+//     // });
+
+    describe('Test DELETE request', function () {
+        let projectsoftware = {
+            project_name: "testProject2",
+            software_name: "testSoftware",
+            installed_version: "10.0"
+        }
+
+        it("delete project software from project_software table", function (done) {
+            chai.request(server)
+                .delete(`/api/projectsoftwares/`)
+                .send(projectsoftware)
+                .end((err, res) => {
+                    expect(res.statusCode).to.equal(200)
+                    expect(res.body.message).to.equal('Software deleted from project')
+                    done();
+                })
         });
     });
+
+    describe('Delete the project from the project table', function () {
+        
+        it("returns status code 200 and message 'Project Deleted'", function (done) {
+            chai.request(server)
+                    .delete(`/api/projects/${updateId}`)
+                    .end((err, res) => {
+                        expect(res.statusCode).to.equal(200)
+                        expect(res.body.message).to.equal('Project deleted')
+                        done();
+                    });
+        })   
+    })
 
 });

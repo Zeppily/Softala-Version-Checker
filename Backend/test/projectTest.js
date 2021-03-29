@@ -1,8 +1,8 @@
+var server = require('../api/index');
+var expect = require('chai').expect;
 var request = require("request");
 var chai = require('chai');
 var chaiHttp = require("chai-http");
-const { expect } = require("chai");
-
 
 chai.use(chaiHttp);
 
@@ -10,7 +10,7 @@ let updateId;
 
 describe('Testing the projects endpoints', function () {
 
-    let url = "http://localhost:8000/api/projects";
+    // let url = "http://localhost:8000/api/projects";
 
     describe('Add project to the project table', function () {
             
@@ -22,8 +22,8 @@ describe('Testing the projects endpoints', function () {
         }
     
         it("returns status code 201 and message 'Project Added'", function (done) {
-            chai.request(url)
-                    .post('/')
+            chai.request(server)
+                    .post('/api/projects/')
                     .send(project)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(201)
@@ -44,8 +44,8 @@ describe('Testing the projects endpoints', function () {
         }
     
         it("returns status code 200 and message 'Project Updated'", function (done) {
-            chai.request(url)
-                    .put(`/${updateId}`)
+            chai.request(server)
+                    .put(`/api/projects/${updateId}`)
                     .send(project)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(200)
@@ -58,21 +58,23 @@ describe('Testing the projects endpoints', function () {
     describe('Get the project on the project table', function () {
         
         it("returns status code 200 and message 'Projects retrieved'", function (done) {
-            request(url, function (err, res) {
-                let resBody = JSON.parse(res.body)
-                expect(res.statusCode).to.equal(200);
-                expect(resBody.message).to.equal('Projects retrieved');
-                expect(resBody.data.length).to.equal(1);
-                done();
-            });
+            chai.request(server)
+                .get(`/api/projects/`)
+                .end((err, res) => {
+                    let list = JSON.parse(res.text)
+                    expect(res.statusCode).to.equal(200);
+                    expect(res.body.message).to.equal('Projects retrieved');
+                    expect(list.data.length).to.equal(1);
+                    done();
+                });            
         })    
     })
 
     describe('Delete a specific project from the project table', function () {
         
         it("returns status code 200 and message 'Project Deleted'", function (done) {
-            chai.request(url)
-                    .delete(`/${updateId}`)
+            chai.request(server)
+                    .delete(`/api/projects/${updateId}`)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(200)
                         expect(res.body.message).to.equal('Project deleted')
@@ -84,7 +86,7 @@ describe('Testing the projects endpoints', function () {
 
 describe('Negative Testing the projects endpoints', function () {
 
-    let url = "http://localhost:8000/api/projects";
+    // let url = "http://localhost:8000/api/projects";
 
     describe('Add project to the project table without all fields', function () {
             
@@ -95,8 +97,8 @@ describe('Negative Testing the projects endpoints', function () {
         }
     
         it("Does not returns status code 201 but returns status 'error' and message 'Please provide complete details'", function (done) {
-            chai.request(url)
-                    .post('/')
+            chai.request(server)
+                    .post('/api/projects/')
                     .send(project)
                     .end((err, res) => {
                         expect(res.statusCode).to.not.equal(201)
@@ -117,8 +119,8 @@ describe('Negative Testing the projects endpoints', function () {
         }
     
         it("returns status code 400 and status 'error' and message 'Please input a valid id'", function (done) {
-            chai.request(url)
-                    .put(`/fake`)
+            chai.request(server)
+                    .put(`/api/projects/fake`)
                     .send(project)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(400)
@@ -129,11 +131,11 @@ describe('Negative Testing the projects endpoints', function () {
         })    
     })
 
-    describe('Delete a specific project from the project table with invalid id', function () {
+    describe('Delete a specific project from the project table with invalid project name', function () {
         
         it("returns status code 400 and status 'error' and message 'Please provide a numeric value for id'", function (done) {
-            chai.request(url)
-                    .delete(`/fake`)
+            chai.request(server)
+                    .delete(`/api/projects/fake`)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(400)
                         expect(res.body.status).to.equal('error')

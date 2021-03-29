@@ -9,7 +9,6 @@ const getAllProjects = async() => {
 }
 
 const addProject = async(newProject) => {
-    console.log(newProject);
     try {
         return await database.project.create(newProject);
     } catch (error) {

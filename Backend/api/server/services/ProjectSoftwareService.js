@@ -12,12 +12,7 @@ const getAllProjectSoftware = async() => {
 }
 
 const getAllProjectSpecificSoftware = async(project) => {
-<<<<<<< HEAD
-    console.log(project.project)
-        const projName = project.project
-=======
     const projName = project.project
->>>>>>> 9631dda285afd957248d1a32f764fcb00e003f6f
 
     try {
         // Find the project id
@@ -27,83 +22,88 @@ const getAllProjectSpecificSoftware = async(project) => {
                 name: projName
             }
         })
+        
+        if(projId){
+            let projectId = JSON.stringify(projId.project_id)
 
-        let projectId = JSON.stringify(projId.project_id)
-
-        // Find all software associated with the specified project
-        return await database.project_software.findAll({
-            where: {
-                project_id: projectId
-            },
-            include: [
-                {
-                    model: database.software,
-                    as: 'software',
-                    attributes: ['name', 'latest_version']
+            // Find all software associated with the specified project
+            return await database.project_software.findAll({
+                where: {
+                    project_id: projectId
                 },
-                {
-                    model: database.project,
-                    as: 'project',
-                    attributes: []
-                }
-            ],
-            attributes: ['installed_version'],
-            raw: true
-        });
+                include: [
+                    {
+                        model: database.software,
+                        as: 'software',
+                        attributes: ['name', 'latest_version']
+                    },
+                    {
+                        model: database.project,
+                        as: 'project',
+                        attributes: []
+                    }
+                ],
+                attributes: ['installed_version'],
+                raw: true
+            });
+        }       
+        
+        return
     } catch (error) {
         throw error;
     }
 }
 
-const addProjectSoftware = async() => {
+const addProjectSoftware = async(newProjectSoftware) => {
     let projectName = newProjectSoftware.project_name;
-        let softwareName = newProjectSoftware.software_name;
-        let installedVersion = newProjectSoftware.installed_version;
-        try {
-            // Find the project id
-            const projId = await database.project.findOne({
-                attributes: ['project_id'],
-                where: {
-                    host: projectName
-                }
-            })
+    let softwareName = newProjectSoftware.software_name;
+    let installedVersion = newProjectSoftware.installed_version;
 
-            // Find the software id
-            let softId = await database.software.findOne({
+    try {
+        // Find the project id
+        const projId = await database.project.findOne({
+            attributes: ['project_id'],
+            where: {
+                name: projectName
+            }
+        })
+
+        // Find the software id
+        let softId = await database.software.findOne({
+            attributes: ['software_id'],
+            where: {
+                name: softwareName
+            }
+        })
+
+        // Check if the software exists on the software table and add it if it does not
+        if (softId === null) {
+            await database.software.create({
+                'name': softwareName,
+                'latest_version': installedVersion
+            });
+
+            softId = await database.software.findOne({
                 attributes: ['software_id'],
                 where: {
                     name: softwareName
                 }
             })
-
-            // Check if the software exists on the software table and add it if it does not
-            if (softId === null) {
-                await database.software.create({
-                    'name': softwareName,
-                    'latest_version': installedVersion
-                });
-
-                softId = await database.software.findOne({
-                    attributes: ['software_id'],
-                    where: {
-                        name: softwareName
-                    }
-                })
-            }
-
-            let projectId = JSON.stringify(projId.project_id)
-            let softwareId = JSON.stringify(softId.software_id)
-
-            // Add the software for the project to the project_software table
-            return await database.project_software.create({
-                'project_id': projectId,
-                'software_id': softwareId,
-                'installed_version': installedVersion
-            });
-
-        } catch (error) {
-            throw error;
         }
+
+        let projectId = JSON.stringify(projId.project_id)
+        let softwareId = JSON.stringify(softId.software_id)
+
+        // Add the software for the project to the project_software table
+        return await database.project_software.create({
+            'project_id': projectId,
+            'software_id': softwareId,
+            'installed_version': installedVersion
+        });
+
+    } catch (error) {
+        throw error;
+    }
 }
 
 const addListProjectSoftware = async(projectSoftwareList) => {
@@ -264,7 +264,6 @@ const deleteProjectSoftware = async(deleteProjectSoftware) => {
 }
 
 const startScan = async(projectNames) => {
-    console.log(projectNames)
         let credentials = {};
         let scan = [];
         let failedServers = []
@@ -281,7 +280,6 @@ const startScan = async(projectNames) => {
                     result.forEach(function (element) {
                         element.port = 22
                     })
-                    //console.log("printing results:", result)
                     credentials = result;
 
                 });
@@ -294,8 +292,6 @@ const startScan = async(projectNames) => {
                     }
                 })
                 .then(res => {
-                    console.log(`statusCode: ${res.status}`)
-                    //console.log("printing res:", res)
                     scan = res.data
                 })
                 .catch(error => {
@@ -309,7 +305,6 @@ const startScan = async(projectNames) => {
         } catch (error) {
             throw error;
         }
-        console.log(failedServers)
         return failedServers
 }
 
@@ -369,7 +364,6 @@ const serverListToDb = async (data) => {
 
         }
     };
-    console.log("errorlist:",errorList)
     return errorList
 }
 

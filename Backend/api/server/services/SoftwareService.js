@@ -9,7 +9,6 @@ const getAllSoftwares = async() => {
 }
 
 const addSoftware = async(newSoftware) => {
-    console.log(newSoftware);
         try {
             return await database.software.create(newSoftware);
         } catch (error) {
@@ -34,7 +33,7 @@ const updateSoftware = async(id, updateSoftware) => {
     }
 }
 
-const deletedSoftware = async(id) => {
+const deleteSoftware = async(id) => {
     try {
         const softwareToDelete = await database.software.findOne({ where: { software_id: Number(id) } });
 
@@ -42,7 +41,7 @@ const deletedSoftware = async(id) => {
             const deletedSoftware = await database.software.destroy({
                 where: { software_id: Number(id) }
             });
-            return deletedSoftware;
+            return deleteSoftware;
         }
         return null;
     } catch (error) {
@@ -54,5 +53,5 @@ module.exports = {
     getAllSoftwares,
     addSoftware,
     updateSoftware,
-    deletedSoftware
+    deleteSoftware
 }
