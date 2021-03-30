@@ -35,15 +35,10 @@ const updateProject = async(id, updateProject) => {
 
 const deleteProject = async(id) => {
     try {
-        const projectToDelete = await database.project.findOne({ where: { project_id: Number(id) } });
-
-        if (projectToDelete) {
-            const deletedProject = await database.project.destroy({
-                where: { project_id: Number(id) }
-            });
-            return deletedProject;
-        }
-        return null;
+        const deletedProject = await database.project.destroy({
+            where: { project_id: Number(id) }
+        });
+        return deletedProject;
     } catch (error) {
         throw error;
     }

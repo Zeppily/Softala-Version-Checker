@@ -35,15 +35,10 @@ const updateSoftware = async(id, updateSoftware) => {
 
 const deleteSoftware = async(id) => {
     try {
-        const softwareToDelete = await database.software.findOne({ where: { software_id: Number(id) } });
-
-        if (softwareToDelete) {
-            const deletedSoftware = await database.software.destroy({
-                where: { software_id: Number(id) }
-            });
-            return deleteSoftware;
-        }
-        return null;
+        const deletedSoftware = await database.software.destroy({
+            where: { software_id: Number(id) }
+        });
+        return deletedSoftware;
     } catch (error) {
         throw error;
     }

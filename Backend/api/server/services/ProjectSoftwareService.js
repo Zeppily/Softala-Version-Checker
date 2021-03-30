@@ -239,25 +239,14 @@ const deleteProjectSoftware = async(deleteProjectSoftware) => {
             }
         })
 
-        // Find the software to delete from the project
-        const projectSoftwareToDelete = await database.project_software.findOne({
+        const deletedProjectSoftware = await database.project_software.destroy({
             where: {
                 project_id: projectID.dataValues.project_id,
                 software_id: softwareID.dataValues.software_id
             }
         });
 
-        // If the software exists for the project, delete the software
-        if (projectSoftwareToDelete) {
-            const deletedProjectSoftware = await database.project_software.destroy({
-                where: {
-                    project_id: projectID.dataValues.project_id,
-                    software_id: softwareID.dataValues.software_id
-                }
-            });
-            return deletedProjectSoftware;
-        }
-        return null;
+        return deletedProjectSoftware;
     } catch (error) {
         throw error;
     }

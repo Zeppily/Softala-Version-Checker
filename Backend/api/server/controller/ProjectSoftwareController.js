@@ -115,7 +115,7 @@ const deleteProjectSoftware = async(req, res) => {
         // }
     try {
         const projectSoftwareToDelete = await ProjectSoftwareService.deleteProjectSoftware(deletedProjectSoftware);
-
+        console.log(`this is the result in the controller ${projectSoftwareToDelete}`)
         if (projectSoftwareToDelete) {
             util.setSuccess(200, 'Software deleted from project');
         } else {

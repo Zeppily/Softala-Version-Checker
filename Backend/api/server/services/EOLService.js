@@ -131,23 +131,13 @@ const deleteEOL = async(deleteEOL) => {
     let version = deleteEOL.version
 
     try {
-        const eolToDelete = await database.eol.findOne({
+        const deletedEOL = await database.eol.destroy({
             where: {
                 software_name: name,
                 version: version
             }
         });
-        
-        if (eolToDelete) {
-            const deletedEOL = await database.eol.destroy({
-                where: {
-                    software_name: name,
-                    version: version
-                }
-            });
-            return deletedEOL;
-        }
-        return null;
+        return deletedEOL;
     } catch (error) {
         throw error;
     }
