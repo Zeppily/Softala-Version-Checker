@@ -83,13 +83,13 @@ const scanEOLs = async() => {
     let software_list = [];
     try {
         await axios
-                .get('http://127.0.0.1:5000/eols')
+            .get(`http://${process.env.PY_URL}:5000/eols`)
                 .then(res => software_list = res.data.softwareList)
                 .catch(error => {
                     console.error(error)
                 })
 
-        const addEols = await EOLService.addEOLList(software_list)
+        const addEols = await addEOLList(software_list)
         return addEols
     } catch (error) {
         console.error(error)

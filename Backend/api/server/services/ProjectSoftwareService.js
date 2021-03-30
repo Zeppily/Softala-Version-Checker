@@ -61,10 +61,10 @@ const addProjectSoftware = async(newProjectSoftware) => {
 
     try {
         // Find the project id
-        const projId = await database.project.findOne({
+        let projId = await database.project.findOne({
             attributes: ['project_id'],
             where: {
-                name: projectName
+                host: projectName
             }
         })
 
@@ -272,9 +272,9 @@ const startScan = async(projectNames) => {
                     credentials = result;
 
                 });
-                console.log(`${process.env.PY_URL}/start`)
+                
             await axios
-                .post(`${process.env.PY_URL}:5000/start`, {
+            TO    .post(`http://${process.env.PY_URL}:5000/start`, {
                     credentials,
                     headers: {
                         'Content-Type': 'application/json'
@@ -346,7 +346,7 @@ const serverListToDb = async (data) => {
                     }
                 } else {
                     let objectToSend = { project_name: hostname, software_name: srvDeps[dependency].depName, installed_version: srvDeps[dependency].depVer }
-                    ProjectSoftwareService.addProjectSoftware(objectToSend)
+                    addProjectSoftware(objectToSend)
                 }
 
             }
