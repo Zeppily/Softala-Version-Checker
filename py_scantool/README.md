@@ -1,3 +1,5 @@
+![Python Tests](https://github.com/Zeppily/Softala-Version-Checker/actions/workflows/python-app.yml/badge.svg)
+
 # Python get started:
 
 Dependencies:

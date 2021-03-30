@@ -19,16 +19,21 @@ def ssh_scrap(serverList):
 		username = serverInfo["username"]
 		password = serverInfo["password"]
 		# command = serverInfo["command"]
-		command = "dpkg -l | grep -e 'mariadb\|mysql\|postgresql\|python\|nodejs'"
+		command = "dpkg -l | tail -n +6"
 
 		results = ssh_connect.sshConnect(host, port, username, password, command)
+		manualInstalled = ssh_connect.sshConnect(host, port, username, password, "apt-mark showmanual")
+
+		manualFormatted = formatter.formatManual(manualInstalled["result"])
 
 		if not results["returnCode"]:
 			depList.append(str(results["result"]))
 		else:
 			for result in results["result"]:
 				formattedOutput = formatter.format_dpkg(str(result))
-				depList.append(formattedOutput)
+				streamlinedOutput = formatter.streamline(formattedOutput, manualFormatted)
+				if streamlinedOutput:
+					depList.append(streamlinedOutput)
 		output = {"serverIp": serverInfo["host"], "depList": depList}
 		softList.append(output)
 
