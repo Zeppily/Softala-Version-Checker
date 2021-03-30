@@ -24,7 +24,10 @@ jobs:
       env:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PSWD: ${{ secrets.DB_PSWD }}
+        DB_URL: ${{ secrets.DB_URL }}
+        TEST_DB: ${{ secrets.TEST_DB }}
+        NODE_ENV: test
       run: |
-        cd Backend/Node
+        cd Backend
         npm ci
         npm test
