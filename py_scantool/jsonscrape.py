@@ -38,3 +38,4 @@ def scrap_eol():
                 pass
 
     return eolList
+

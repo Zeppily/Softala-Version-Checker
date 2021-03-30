@@ -1,3 +1,4 @@
 ./Backend/Node/.env
 ./Backend/sequelize_version/.env
 .env
+

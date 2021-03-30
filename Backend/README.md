@@ -1,3 +1,4 @@
+[![Node.js CI](https://github.com/Zeppily/Softala-Version-Checker/actions/workflows/node.js.yml/badge.svg)](https://github.com/Zeppily/Softala-Version-Checker/actions/workflows/node.js.yml)
 # Backend get started
 In terminal:
 
