@@ -37,7 +37,7 @@ describe('Test projectSoftware endpoints and table', function() {
 
     describe('Add data to project_software table', function() {
         let projectsoftware = {
-            project_name: "testProject2",
+            project_name: "www.example.com",
             software_name: "testSoftware",
             installed_version: "9.13"
         }
