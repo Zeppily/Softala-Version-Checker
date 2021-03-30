@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+# Python Flask Container
+  py_app:
+    image: python:3.8-slim-buster
+    build:
+      context: ./py_scantool
+      dockerfile: ./Dockerfile
+    ports:
+      - "5000:5000"
+
+# Database
+# Change volume to host file for production
+  database:
+    image: postgres:12.6
+    env_file:
+      - database.env
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+    ports:
+      - "14330:5432"
+  
+# Backend Server
+  backend:
+    image: node:14
+    build:
+      context: ./Backend
+      dockerfile: ./Dockerfile
+    env_file: 
+      - backend.env
+    ports:
+      - "8000:8000"
+
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
