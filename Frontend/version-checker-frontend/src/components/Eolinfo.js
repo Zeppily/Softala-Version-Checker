@@ -9,9 +9,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import Title from './Title';
 
-// At the moment this is same as the Versioninfo.js 
-// When we have more specific info about the Eol-dates this will be updated.
-
 function preventDefault(event) {
   event.preventDefault();
 }

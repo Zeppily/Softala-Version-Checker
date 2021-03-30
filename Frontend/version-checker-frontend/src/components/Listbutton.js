@@ -46,11 +46,8 @@ import PropTypes from 'prop-types'
           
       }, []);
 
-
-
-
-    //TODO: Finish "initiate scan" so it calls a function that starts server scan and updates the EoL info to the database 
-  
+    
+    //Calls the backend to start the whole scan process
     const initiateScan = (event) => {
       const projectnames = projects.map(project => project.name);
       const projectnamesObj = {name: projectnames};

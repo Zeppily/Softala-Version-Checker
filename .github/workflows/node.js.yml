@@ -16,15 +16,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 12.x
+    - name: Use Node.js 14.x
       uses: actions/setup-node@v1
       with:
-        node-version: 12.x
+        node-version: 14.x
     - name: install and test
       env:
         DB_USER: ${{ secrets.DB_USER }}
         DB_PSWD: ${{ secrets.DB_PSWD }}
+        DB_URL: ${{ secrets.DB_URL }}
+        TEST_DB: ${{ secrets.TEST_DB }}
+        NODE_ENV: test
       run: |
-        cd Backend/Node
-        npm ci
+        cd Backend
+        npm install
         npm test

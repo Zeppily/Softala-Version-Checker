@@ -1,0 +1,154 @@
+import database from '../src/models';
+import service from './ProjectSoftwareService'
+import db from '../src/models/index'
+const { Op, Sequelize } = require("sequelize");
+const axios = require('axios');
+
+// Return all EOLs from the EOL table
+const getAllEOLs = async() => {
+    try {
+        return await database.eol.findAll();
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Get project specific eol information
+const getProjectSpecificEOLs = async(project) => {
+    let eols = []
+
+    try {
+        // Get a list of softwares used in the project
+        const softwares = await service.getAllProjectSpecificSoftware(project);
+        
+        if(softwares) {
+                // Loop through the individual software on the project
+            for (let i in softwares) {
+                
+                // Get the relevant information we need for the search
+                let name = softwares[i]['software.name'];
+                let vers = softwares[i].installed_version
+                
+                // Format the version number so it only takes the first number of the version ('12.3.6' becomes '12.')
+                let version = vers.substr(0, (vers.indexOf('.')));
+
+                // Find the eol information for the software
+                let eolInfo = await database.eol.findOne({
+                    where: {
+                        [Op.and]: {
+                            software_name : {
+                                [Op.like] : `%${name}%`
+                            },
+                            version: {
+                                [Op.like] : `${version}%`
+                            }
+                        }
+                        
+                    }
+                });
+                
+                // if eol info found add it to the eol list
+                if(eolInfo != null) {
+                    eols.push(eolInfo.dataValues)
+                }
+            }
+        }       
+        return eols
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Add a single new EOL
+const addEOL = async(newEOL) => {
+    try {
+        return await database.eol.create(newEOL);
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Add a list of new EOLs
+const addEOLList = async(eolList) => {
+    try {
+        await database.eol.bulkCreate(eolList, { ignoreDuplicates: true})
+        return "Eols Added Successfully"
+    } catch (error) {
+        throw error;
+    }
+}
+
+//Calling the python EoL fetcher
+const scanEOLs = async() => {
+    let software_list = [];
+    try {
+        await axios
+                .get('http://127.0.0.1:5000/eols')
+                .then(res => software_list = res.data.softwareList)
+                .catch(error => {
+                    console.error(error)
+                })
+
+        const addEols = await EOLService.addEOLList(software_list)
+        return addEols
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+}
+
+// Update a single EOL record
+const updateEOL = async(updateEOL) => {
+    let name = updateEOL.software_name;
+    let version = updateEOL.version
+    try {
+        const eolToUpdate = await database.eol.findOne({
+            where: {
+                software_name: name,
+                version: version
+            }
+        });
+
+        if (eolToUpdate) {
+            await database.eol.update(updateEOL, {
+                where: {
+                    software_name: name,
+                    version: version
+                }
+            });
+
+            return updateEOL;
+        }
+        return null;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Delete a single EOL record
+const deleteEOL = async(deleteEOL) => {
+    let name = deleteEOL.software_name;
+    let version = deleteEOL.version
+
+    try {
+        const deletedEOL = await database.eol.destroy({
+            where: {
+                software_name: name,
+                version: version
+            }
+        });
+        return deletedEOL;
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = {
+    getAllEOLs,
+    getProjectSpecificEOLs,
+    addEOL,
+    addEOLList,
+    scanEOLs,
+    updateEOL,
+    deleteEOL
+}
