@@ -272,9 +272,9 @@ const startScan = async(projectNames) => {
                     credentials = result;
 
                 });
-
+                console.log(`${process.env.PY_URL}/start`)
             await axios
-                .post('http://localhost:5000/start', {
+                .post(`${process.env.PY_URL}:5000/start`, {
                     credentials,
                     headers: {
                         'Content-Type': 'application/json'
