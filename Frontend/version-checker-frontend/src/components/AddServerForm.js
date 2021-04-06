@@ -5,6 +5,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { Typography } from '@material-ui/core';
 
 export default function AddServerForm(props) {
     const [open, setOpen] = React.useState(false);
@@ -67,13 +68,15 @@ export default function AddServerForm(props) {
                 Add new server
             </Button>
             <Dialog open={open} onClose={handleCancelClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Add new server</DialogTitle>
+                <DialogTitle id="form-dialog-title">Add new server 
+                    <Typography component="p" variant="caption">(Fields marked with * are required)</Typography>
+                </DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
                         margin="dense"
                         id="host"
-                        label="Host"
+                        label="Host*"
                         name="host"
                         value={newserver.host}
                         onChange={e => inputChanged(e)}
@@ -82,7 +85,7 @@ export default function AddServerForm(props) {
                     <TextField
                         margin="dense"
                         id="name"
-                        label="Name"
+                        label="Name*"
                         name="name"
                         value={newserver.name}
                         onChange={e => inputChanged(e)}
@@ -91,7 +94,7 @@ export default function AddServerForm(props) {
                     <TextField
                         margin="dense"
                         id="username"
-                        label="Username"
+                        label="Username*"
                         name="username"
                         value={newserver.username}
                         onChange={e => inputChanged(e)}
