@@ -1,3 +1,5 @@
+import config from '../config.json';
+
 export const REQUEST_EOLS = 'REQUEST_EOLS'
 export const RECEIVE_EOLS = 'RECEIVE_EOLS'
 export const SELECT_SERVER = 'SELECT_SERVER'
@@ -56,7 +58,7 @@ export const receiveServerSoftware = (servername, json) => ({
 const fetchEols = servername => dispatch => {
   dispatch(requestEols(servername))
   //Endpoint needs to be changed to the correct one when it is ready on the Sequelize backend
-  return fetch(`http://localhost:8000/api/eols/${servername}`)
+  return fetch(`${config.url}/api/eols/${servername}`)
     .then(response => response.json())
     .then(json => {if(json.data){
                       dispatch(receiveEols(servername, json.data))}
@@ -69,7 +71,7 @@ const fetchEols = servername => dispatch => {
 const fetchServerSoftware = servername => dispatch => {
   dispatch(requestServerSoftware(servername))
   //Endpoint needs to be changed to the correct one when it is ready on the Sequelize backend
-  return fetch(`http://localhost:8000/api/projectsoftwares/${servername}`)
+  return fetch(`${config.url}/api/projectsoftwares/${servername}`)
     .then(response => response.json())
     .then(json => dispatch(receiveServerSoftware(servername, json.data)))
     .catch((error) => console.error(error))
