@@ -6,6 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { Typography } from '@material-ui/core';
+import config from '../config.json';
 
 export default function AddServerForm(props) {
     const [open, setOpen] = React.useState(false);
@@ -49,7 +50,7 @@ export default function AddServerForm(props) {
     }
 
     const addServer = (newserver) => {
-        fetch("http://localhost:8000/api/projects",
+        fetch(`${config.url}/api/projects`,
         {
             method: "POST",
             headers: {"Content-Type": "application/json"},

@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
+import config from '../config.json';
 
   const ITEM_HEIGHT = 48;
   
@@ -39,7 +40,7 @@ import PropTypes from 'prop-types'
 
     //Gets project names for the dropdown menu
     useEffect(() => {
-        fetch('http://localhost:8000/api/projects')
+        fetch(`${config.url}/api/projects`)
           .then((response) => response.json())
           .then((data) => setProjects(data.data))
           .catch((error) => console.error(error))
@@ -52,7 +53,7 @@ import PropTypes from 'prop-types'
       const projectnames = projects.map(project => project.name);
       const projectnamesObj = {name: projectnames};
       setLoading(true);
-      fetch("http://localhost:8000/startscan",
+      fetch(`${config.url}/startscan`,
       {
         method: "POST",
         headers: {"Content-Type": "application/json"},
