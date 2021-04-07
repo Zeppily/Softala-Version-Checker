@@ -31,7 +31,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/eols', eolRoutes);
 app.use('/api/softwares', softwareRoutes);
 app.use('/api/projectsoftwares', porjectSoftwareRoutes);
-app.use('/startscan', startScanRoutes);
+app.use('/api/startscan', startScanRoutes);
 
 // when a random route is inputed
 app.get('*', (req, res) => res.status(200).send({
