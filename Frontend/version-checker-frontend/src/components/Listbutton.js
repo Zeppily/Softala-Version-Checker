@@ -63,7 +63,7 @@ import { Typography } from "@material-ui/core";
       const projectnames = projects.map(project => project.name);
       const projectnamesObj = {name: projectnames};
       setLoading(true);
-      fetch(`${config.url}/startscan`,
+      fetch(`${config.url}/api/startscan`,
       {
         method: "POST",
         headers: {"Content-Type": "application/json"},
