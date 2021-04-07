@@ -13,7 +13,7 @@ const getAllEOLs = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -31,7 +31,7 @@ const getProjectSpecificEOLs = async(req, res) => {
         return util.send(res);
     } catch (error) {
         console.log(error)
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -87,7 +87,7 @@ const updatedEOL = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(404, error);
+        util.setError(404, error.message);
         return util.send(res);
     }
 }
@@ -106,7 +106,7 @@ const deleteEOL = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }

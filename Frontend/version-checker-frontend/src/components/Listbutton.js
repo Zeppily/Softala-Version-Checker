@@ -6,6 +6,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
 import config from '../config.json';
+import { Typography } from "@material-ui/core";
 
   const ITEM_HEIGHT = 48;
   
@@ -15,9 +16,18 @@ import config from '../config.json';
     //Gets the default value set for Redux for useState
     const [currentProject, setCurrentProject] = useState(props.obj.selectedServername);
     const [loading, setLoading] = useState(false)
+    const [projects, setProjects] = useState([]);
+    const [conditional, setConditional] = useState(true);
+
+    const checkData = (dataToCheck) => {
+      if (Array.isArray(dataToCheck)) {
+        setConditional(false)
+      }
+    }
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
+      checkData(projects)
     };
   
     //When a project is changed from the dropdown menu
@@ -36,14 +46,14 @@ import config from '../config.json';
       
     };
 
-    const [projects, setProjects] = useState([]);
-
     //Gets project names for the dropdown menu
     useEffect(() => {
         fetch(`${config.url}/api/projects`)
           .then((response) => response.json())
           .then((data) => setProjects(data.data))
           .catch((error) => console.error(error))
+
+        checkData(projects)
           
       }, []);
 
@@ -53,7 +63,7 @@ import config from '../config.json';
       const projectnames = projects.map(project => project.name);
       const projectnamesObj = {name: projectnames};
       setLoading(true);
-      fetch(`${config.url}/startscan`,
+      fetch(`${config.url}/api/startscan`,
       {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -67,8 +77,8 @@ import config from '../config.json';
       })
       .catch(err => console.error(err))
     };
-  
 
+    console.log("conditional", conditional)
 
     return (
       <div>
@@ -82,29 +92,55 @@ import config from '../config.json';
         >
           {currentProject}
         </Button>
-        <Menu
-          id="long-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={open}
-          onClose={handleClose}
-          PaperProps={{
-            style: {
-              maxHeight: ITEM_HEIGHT * 4.5,
-              width: '20ch',
-            },
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {projects.map((option) => (
-            <MenuItem key={option.name} onClick={() => handleProjectChange(option.name)}>
-              {option.name}
+        
+        { conditional ?
+          <Menu
+            id="long-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: '20ch',
+              },
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <MenuItem>
+              Is empty
             </MenuItem>
-          ))}
-        </Menu>
+          </Menu>
+          :
+          <Menu
+            id="long-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: '20ch',
+              },
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            {projects.map((option) => (
+              <MenuItem key={option.name} onClick={() => handleProjectChange(option.name)}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </Menu>
+        }
+        
 
         { loading? 
           <Button>Scan in progress</Button> 

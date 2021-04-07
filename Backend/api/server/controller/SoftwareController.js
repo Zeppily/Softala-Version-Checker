@@ -14,7 +14,7 @@ const getAllSoftwares = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -53,7 +53,7 @@ const updatedSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(404, error);
+        util.setError(404, error.message);
         return util.send(res);
     }
 }
@@ -75,7 +75,7 @@ const deleteSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
