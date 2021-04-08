@@ -29,28 +29,59 @@ const getProjectSpecificEOLs = async(project) => {
                 let name = softwares[i]['software.name'];
                 let vers = softwares[i].installed_version
                 
-                // Format the version number so it only takes the first number of the version ('12.3.6' becomes '12.')
-                let version = vers.substr(0, (vers.indexOf('.')));
+                let formatted_name1 = name.match(/[A-Za-z0-9]+-/)
+                let formatted_name2 = name.match(/[A-Za-z]+/)
+
+                if (Array.isArray(formatted_name1)) {
+                    formatted_name1 = formatted_name1[0]
+                }
+                
+                if (Array.isArray(formatted_name2)) {
+                    formatted_name2 = formatted_name2[0]
+                }
+
+                // Format the version number so it gives us multiple options to search eols with
+
+                // Gets the version number up to the first '.'
+                let version = vers.match(/[0-9]+./);
+                // Gets the version number if its just one number, not split by '.'
+                let exact = vers.match(/[0-9]+/);
+                // Gets the first 2 numbers of the version if valid
+                let strict_version = vers.match(/[0-9]+.[0-9]+./)
 
                 // Find the eol information for the software
                 let eolInfo = await database.eol.findOne({
                     where: {
                         [Op.and]: {
                             software_name : {
-                                [Op.like] : `%${name}%`
+                                [Op.or] : [{[Op.like] : name}, {[Op.like] : formatted_name1}, {[Op.like] : formatted_name2 }]
                             },
                             version: {
-                                [Op.like] : `${version}%`
+                                    [Op.or] : [{[Op.like]: `${strict_version}%`}, {[Op.like]: `${version}%`}, exact]
                             }
+                               
+                            
                         }
                         
                     }
                 });
                 
-                // if eol info found add it to the eol list
-                if(eolInfo != null) {
-                    eols.push(eolInfo.dataValues)
-                }
+                if (eolInfo) {
+                    let insert = true;
+
+                    eols.forEach(e => {                       
+                        let x = (e.software_name == eolInfo.dataValues.software_name)
+                        let y = (e.version == eolInfo.dataValues.version)                        
+                        if(x && y) { 
+                            insert = false
+                        }                        
+                    })
+
+                    if (insert){
+                        eols.push(eolInfo.dataValues)
+                    }
+                    
+                }               
             }
         }       
         return eols
