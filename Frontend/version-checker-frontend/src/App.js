@@ -14,6 +14,7 @@ import Overview from './components/Overview';
 import Eolinfo from './components/Eolinfo';
 import Listbutton from './components/Listbutton';
 import AddServerForm from "./components/AddServerForm";
+import Deletebutton from './components/Deletebutton';
 import { connect } from "react-redux";
 import { selectServername, fetchEolsIfNeeded, invalidateEols, fetchServerSoftwareIfNeeded, invalidateServerSoftware } from './actions'
 import PropTypes from 'prop-types'
@@ -88,8 +89,9 @@ class App extends Component {
               Update forms
             </Button>
             <AddServerForm />
+            <Deletebutton selectedServername = {selectedServername}/>   {/* sends servername data to Deletebutton.js */}
           </Toolbar>
-        </AppBar>
+        </AppBar> 
       </div>
 
         {/*NEEDS FIXING: This is under the topbar for some reason and if taken away cards go under the bar.*/}

@@ -78,7 +78,7 @@ import { Typography } from "@material-ui/core";
       .catch(err => console.error(err))
     };
 
-    console.log("conditional", conditional)
+   
 
     return (
       <div>
@@ -94,6 +94,7 @@ import { Typography } from "@material-ui/core";
         </Button>
         
         { conditional ?
+        
           <Menu
             id="long-menu"
             anchorEl={anchorEl}
@@ -139,6 +140,7 @@ import { Typography } from "@material-ui/core";
               </MenuItem>
             ))}
           </Menu>
+          
         }
         
 
