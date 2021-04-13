@@ -37,7 +37,7 @@ export default function Eolinfo(props) {
         </TableHead>
         <TableBody>
           {props.eols.map((server) => (
-            <TableRow key={server.software_name}>
+            <TableRow key={server.software_name, server.version}>
               <TableCell>{server.software_name}</TableCell>
               <TableCell>{server.version}</TableCell>
               <TableCell>{server.eol_date}</TableCell>
