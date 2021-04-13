@@ -24,3 +24,14 @@ def start_scan():
 @app.route('/eols', methods=['GET'])
 def get_eol():
     return jsonscrape.scrap_eol()
+
+
+# improved version of /start/
+@app.route('/uptime/', methods=['POST'])
+def get_uptime():
+    request_data = request.get_json()
+    if(request_data):
+        output = scantool.getUptime(request_data["credentials"])
+        return json.dumps(output)
+    else:
+        return 'bad request!', 400

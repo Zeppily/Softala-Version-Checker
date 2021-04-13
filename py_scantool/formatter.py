@@ -30,7 +30,6 @@ def streamline(data, manualFormatted):
 
 			streamlinedVersion = str(re.split(r'[^0-9.-]', depVer)[0])
 
-			print(usefulDepName + ' ' + streamlinedVersion)
 			return {
 				"depName": usefulDepName,
 				"depVer": streamlinedVersion
