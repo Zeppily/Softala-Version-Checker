@@ -20,8 +20,11 @@ def ssh_scrap(serverList):
 		password = serverInfo["password"]
 		# command = serverInfo["command"]
 		command = "dpkg -l | tail -n +6"
-
+		
+		# Retrieve all installed software with version number
 		results = ssh_connect.sshConnect(host, port, username, password, command)
+		
+		# Retrieve manually installed software
 		manualInstalled = ssh_connect.sshConnect(host, port, username, password, "apt-mark showmanual")
 
 		manualFormatted = formatter.formatManual(manualInstalled["result"])
