@@ -78,7 +78,7 @@ import { Typography } from "@material-ui/core";
       .catch(err => console.error(err))
     };
 
-    console.log("conditional", conditional)
+   
 
     return (
       <div>
@@ -88,12 +88,13 @@ import { Typography } from "@material-ui/core";
           variant="contained"
           color="primary"
           onClick={handleClick}
-          style={{marginLeft: 30}}
+          style={{marginBottom: 10}}
         >
           {currentProject}
         </Button>
         
         { conditional ?
+        
           <Menu
             id="long-menu"
             anchorEl={anchorEl}
@@ -139,6 +140,7 @@ import { Typography } from "@material-ui/core";
               </MenuItem>
             ))}
           </Menu>
+          
         }
         
 

@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Eolinfo(props) {
   const classes = useStyles();
-  console.log(props)
+  
   return (
     <React.Fragment>
       <Title>End-Of-Life Information</Title>
@@ -37,7 +37,7 @@ export default function Eolinfo(props) {
         </TableHead>
         <TableBody>
           {props.eols.map((server) => (
-            <TableRow key={server.software_name}>
+            <TableRow key={server.software_name, server.version}>
               <TableCell>{server.software_name}</TableCell>
               <TableCell>{server.version}</TableCell>
               <TableCell>{server.eol_date}</TableCell>

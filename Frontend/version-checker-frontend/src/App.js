@@ -1,12 +1,9 @@
 import React, { Component, useState, useEffect, version } from "react";
 import './App.css';
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Paper } from "@material-ui/core";
+import { Grid, Paper, GridList, GridListTile } from "@material-ui/core";
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Versioninfo from './components/Versioninfo';
@@ -14,9 +11,11 @@ import Overview from './components/Overview';
 import Eolinfo from './components/Eolinfo';
 import Listbutton from './components/Listbutton';
 import AddServerForm from "./components/AddServerForm";
+import Deletebutton from './components/Deletebutton';
 import { connect } from "react-redux";
-import { selectServername, fetchEolsIfNeeded, invalidateEols, fetchServerSoftwareIfNeeded, invalidateServerSoftware } from './actions'
-import PropTypes from 'prop-types'
+import { selectServername, fetchEolsIfNeeded, invalidateEols, fetchServerSoftwareIfNeeded, invalidateServerSoftware } from './actions';
+import PropTypes from 'prop-types';
+
 
 class App extends Component {
   
@@ -61,7 +60,6 @@ class App extends Component {
   render() {
     
     const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching, handleRefreshClick } = this.props
-    console.log(eols)
     let isEmptySoft = false
     if(typeof serverSoftware != 'object'){
       isEmptySoft = true
@@ -75,71 +73,63 @@ class App extends Component {
       }
     return(
       <div className={classes.root}>
-      <div>
-        {/* Toolbar/Banner */}
-        <CssBaseline />
-        <AppBar position="absolute" className={clsx(classes.appBar, classes.appBarShift)}>
-          <Toolbar className={classes.toolbar}>
-            <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Version checker
-            </Typography>
-            <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername, handleRefreshClick: this.handleRefreshClick}}/>
-            <Button variant="contained" color="primary" onClick={this.handleRefreshClick}>
-              Update forms
-            </Button>
-            <AddServerForm />
-          </Toolbar>
-        </AppBar>
-      </div>
+          {/* Main elements in the dashboard */}
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
+            
+            <Container maxWidth="lg" className={classes.container}>
+              <GridList cols={6} cellHeight={100} style={{marginTop: 50}}>
+                  <GridListTile>
+                    <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername, handleRefreshClick: this.handleRefreshClick}}/>
+                  </GridListTile>
+                  <GridListTile>
+                    <Button variant="contained" color="primary" style={{marginBottom:10}} onClick={this.handleRefreshClick}>
+                      Update forms
+                    </Button>
+                    <AddServerForm />
+                  </GridListTile>
+                  <GridListTile>
+                    <Deletebutton selectedServername = {selectedServername}/>   {/* sends servername data to Deletebutton.js */}
+                  </GridListTile>
+              </GridList>
 
-        {/*NEEDS FIXING: This is under the topbar for some reason and if taken away cards go under the bar.*/}
-        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              projectName
-        </Typography>
+              <Grid container spacing={2}>
+                {/* Overview */}
+                <Grid item xs={12} md={12} lg={12}>
+                  <Paper className={classes.paper}>
+                    <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
+                  </Paper>
+                </Grid>
 
-        {/* Main elements in the dashboard */}
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
-          
-          <Container maxWidth="lg" className={classes.container}>
-          
-            <Grid container spacing={2}>
-              {/* Overview */}
-              <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
-                </Paper>
+                {/* Software Version Information */}
+                
+                <Grid item xs={12} md={12} lg={12}>
+                  {isEmptySoft ? (serverSoftwareIsFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
+                    :  
+                  <Paper className={classes.paper}>
+                    <Typography variant="h6">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                    <Versioninfo serverSoftware={serverSoftware}/>
+                  </Paper>
+                  }
+                </Grid>
+              
+
+                {/* End-Of-Life Information */}
+                
+                <Grid item xs={12} md={12} lg={12}>
+                  {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
+                    :  
+                  <Paper className={classes.paper}>
+                    <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                    <Eolinfo eols={eols}/>
+                  </Paper>
+                  }
+                </Grid>
+              
+
               </Grid>
-
-            {/* Software Version Information */}
-            
-            <Grid item xs={12} md={12} lg={12}>
-              {isEmptySoft ? (serverSoftwareIsFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
-                :  
-              <Paper className={classes.paper}>
-                <Typography variant="h6">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                <Versioninfo serverSoftware={serverSoftware}/>
-              </Paper>
-              }
-              </Grid>
-            
-
-            {/* End-Of-Life Information */}
-            
-            <Grid item xs={12} md={12} lg={12}>
-              {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
-                :  
-              <Paper className={classes.paper}>
-                <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                <Eolinfo eols={eols}/>
-              </Paper>
-              }
-              </Grid>
-            
-
-            </Grid>
-          </Container>
-        </main>
+            </Container>
+          </main>
       </div>
     )
   }
