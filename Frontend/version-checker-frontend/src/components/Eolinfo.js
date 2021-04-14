@@ -53,11 +53,7 @@ const eol_approaching = (eol_date) => {
     )
   }
 }
-                                                                    // tee muutokset:
-
-                                                                    //keltanen kun on alle puoli vuotta             %
-                                                                    //alle 90 päivää niin oranssi                   %
-                                                                    //eol menny: out of date punasella tekstillä    %
+                                                                 
 
 
 export default function Eolinfo(props) {
