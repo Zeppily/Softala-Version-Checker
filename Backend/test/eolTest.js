@@ -6,11 +6,6 @@ var chaiHttp = require("chai-http");
 
 chai.use(chaiHttp);
 
-// let url = "http://localhost:8000/api/eols";
-// let projectUrl = "http://localhost:8000/api/projects";
-// let projectSoftwareUrl = "http://localhost:8000/api/projectsoftwares";
-// let softwareUrl = "http://localhost:8000/api/softwares";
-
 describe('Testing the EOL endpoints', function () {
     let eol = {
         "software_name": "nodejs",
@@ -188,9 +183,8 @@ describe('Testing the EOL endpoints', function () {
         });
         
         it("delete project", function (done) {
-            console.log(`this is the projId ${projId}`)
             chai.request(server)
-                .delete(`/api/projects/${projId}`)
+                .delete(`/api/projects/testProject`)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(200)
                     expect(res.body.message).to.equal('Project deleted')

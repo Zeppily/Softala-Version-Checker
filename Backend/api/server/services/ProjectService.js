@@ -16,16 +16,13 @@ const addProject = async(newProject) => {
     }
 }
 
-const updateProject = async(id, updateProject) => {
+const updateProject = async(project, updateProject) => {
     try {
-        const projectToUpdate = await database.project.findOne({
-            where: { project_id: Number(id) }
+        const updatedProject = await database.project.update(updateProject, { 
+            where: { name: project } 
         });
-
-        if (projectToUpdate) {
-            await database.project.update(updateProject, { where: { project_id: Number(id) } });
-
-            return updateProject;
+        if(updatedProject[0]) {
+            return updatedProject;
         }
         return null;
     } catch (error) {
@@ -33,10 +30,10 @@ const updateProject = async(id, updateProject) => {
     }
 }
 
-const deleteProject = async(id) => {
+const deleteProject = async(project) => {
     try {
         const deletedProject = await database.project.destroy({
-            where: { project_id: Number(id) }
+            where: { name: project }
         });
         return deletedProject;
     } catch (error) {
