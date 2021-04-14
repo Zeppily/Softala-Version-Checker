@@ -78,7 +78,8 @@ import { Typography } from "@material-ui/core";
       .catch(err => console.error(err))
     };
 
-   
+    //Sorts data into alphabetical order
+    projects.sort((a, b) => a.name.localeCompare(b.name))
 
     return (
       <div>
