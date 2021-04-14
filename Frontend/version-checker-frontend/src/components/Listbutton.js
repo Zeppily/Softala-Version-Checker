@@ -88,7 +88,7 @@ import { Typography } from "@material-ui/core";
           variant="contained"
           color="primary"
           onClick={handleClick}
-          style={{marginLeft: 30}}
+          style={{marginBottom: 10}}
         >
           {currentProject}
         </Button>

@@ -38,18 +38,18 @@ describe('Testing the projects endpoints', function () {
         
         let project = {
             "host": "www.example.com",
-            "name": "testProject3",
-            "username": "user",
+            "name": "testProject2",
+            "username": "user1",
             "password": "pass"
         }
     
         it("returns status code 200 and message 'Project Updated'", function (done) {
             chai.request(server)
-                    .put(`/api/projects/${updateId}`)
+                    .put(`/api/projects/testProject2`)
                     .send(project)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(200)
-                        expect(res.body.message).to.equal('Project updated')
+                        expect(res.body.message).to.equal('The project has been updated')
                         done();
                     });
         })    
@@ -74,7 +74,7 @@ describe('Testing the projects endpoints', function () {
         
         it("returns status code 200 and message 'Project Deleted'", function (done) {
             chai.request(server)
-                    .delete(`/api/projects/${updateId}`)
+                    .delete(`/api/projects/testProject2`)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(200)
                         expect(res.body.message).to.equal('Project deleted')
@@ -109,7 +109,7 @@ describe('Negative Testing the projects endpoints', function () {
         })    
     })
     
-    describe('Update the project on the project table with invalid id', function () {
+    describe('Update the project on the project table with invalid project name', function () {
         
         let project = {
             "host": "www.example.com",
@@ -118,14 +118,14 @@ describe('Negative Testing the projects endpoints', function () {
             "password": "pass"
         }
     
-        it("returns status code 400 and status 'error' and message 'Please input a valid id'", function (done) {
+        it("returns status code 400 and status 'error' and message 'Cannot find fake project'", function (done) {
             chai.request(server)
                     .put(`/api/projects/fake`)
                     .send(project)
                     .end((err, res) => {
-                        expect(res.statusCode).to.equal(400)
+                        expect(res.statusCode).to.equal(404)
                         expect(res.body.status).to.equal('error')
-                        expect(res.body.message).to.equal('Please input a valid id')
+                        expect(res.body.message).to.equal('Cannot find fake project')
                         done();
                     });
         })    
@@ -137,9 +137,9 @@ describe('Negative Testing the projects endpoints', function () {
             chai.request(server)
                     .delete(`/api/projects/fake`)
                     .end((err, res) => {
-                        expect(res.statusCode).to.equal(400)
+                        expect(res.statusCode).to.equal(404)
                         expect(res.body.status).to.equal('error')
-                        expect(res.body.message).to.equal('Please provide a numeric value for id')
+                        expect(res.body.message).to.equal('fake project cannot be found')
                         done();
                     });
         })   

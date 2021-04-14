@@ -122,7 +122,7 @@ describe('Test projectSoftware endpoints and table', function() {
         
         it("returns status code 200 and message 'Project Deleted'", function (done) {
             chai.request(server)
-                    .delete(`/api/projects/${updateId}`)
+                    .delete(`/api/projects/testProject2`)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(200)
                         expect(res.body.message).to.equal('Project deleted')
