@@ -20,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    uptime: {
+      type: DataTypes.STRING
+    }
   }, {
     createdAt: false,
     updatedAt: false,

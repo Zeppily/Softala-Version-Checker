@@ -126,7 +126,7 @@ const startScan = async(req, res) => {
     try {
         const startScan = await ProjectSoftwareService.startScan(projectNames);
         const scanEols = await EOLService.scanEOLs();
-        const getUptime = await ProjectService.getProjectUptime(projectNames);
+        const getUptime = await ProjectService.getUptime(projectNames);
         if (startScan) {
             util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}\n ${getUptime}`);
         } else {

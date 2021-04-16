@@ -1,4 +1,5 @@
 import database from '../src/models';
+const axios = require('axios');
 
 const getAllProjects = async() => {
     try {
@@ -41,7 +42,7 @@ const deleteProject = async(project) => {
     }
 }
 
-const getUptime = async() => {
+const getUptime = async(projectNames) => {
     let credentials = {};
     let uptimeInfo = [];
     try {
@@ -60,9 +61,9 @@ const getUptime = async() => {
                 credentials = result;
 
             });
+
         await axios
-            // .post(`http://${process.env.PY_URL}:5000/uptime`, {
-            .post(`http://localhost:5000/uptime`, {    
+            .post(`http://${process.env.PY_URL}:5000/uptime`, {   
                 credentials,
                 headers: {
                     'Content-Type': 'application/json'
@@ -75,7 +76,14 @@ const getUptime = async() => {
                 console.error(error)
             });
         
-            await database.eol.bulkCreate(eolList, { ignoreDuplicates: true})
+        for (let i in uptimeInfo) {
+            
+            await database.project.update({uptime: uptimeInfo[i].uptime}, { 
+                where: { 
+                    host: uptimeInfo[i].host 
+                } 
+            });
+        }
             return "Uptime Information Added Successfully"
     } catch (error) {
         console.error(error)
