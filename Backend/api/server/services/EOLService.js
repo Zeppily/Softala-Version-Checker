@@ -174,6 +174,21 @@ const deleteEOL = async(deleteEOL) => {
     }
 }
 
+//Delete all eols
+const deleteAllEOLs = async() => {
+
+    try {
+        const deletedEOLs = await database.eol.destroy({
+            where: {},
+            truncate: true
+        });
+        // If delete was successful, deletedEOLs will = 0.
+        return deletedEOLs;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     getAllEOLs,
     getProjectSpecificEOLs,
@@ -181,5 +196,6 @@ module.exports = {
     addEOLList,
     scanEOLs,
     updateEOL,
-    deleteEOL
+    deleteEOL,
+    deleteAllEOLs
 }
