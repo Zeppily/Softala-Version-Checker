@@ -22,6 +22,9 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
+      uptime: {
+        type: Sequelize.STRING
+      }
     });
   },
   down: (queryInterface) => {
