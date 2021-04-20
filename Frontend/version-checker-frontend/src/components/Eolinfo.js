@@ -54,8 +54,6 @@ const eol_approaching = (eol_date) => {
   }
 }
                                                                  
-
-
 export default function Eolinfo(props) {
   const classes = useStyles();
 
