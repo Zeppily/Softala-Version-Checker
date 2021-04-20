@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -60,10 +60,15 @@ export default function AddServerForm(props) {
                     })
                     setOpen(false);
                     setConfirmpassword("");
+
+                    window.location.reload(false); 
                 }else{
                     alert("You must provide Host, Projectname and Username.");
                 } 
+                
+
     } 
+
     }
 
     const handleCancelClose = () => {
