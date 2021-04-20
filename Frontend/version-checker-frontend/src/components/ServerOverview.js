@@ -38,17 +38,13 @@ class ServerOverview extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, selectedServername, selectAllServers } = this.props
-    dispatch(fetchEolsIfNeeded(selectedServername))
-    dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+    const { dispatch, selectAllServers } = this.props
     dispatch(fetchServersIfNeeded(selectAllServers))
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.selectedServername !== this.props.selectedServername || prevProps.selectAllServers !== this.props.selectAllServers) {
-      const { dispatch, selectedServername, selectAllServers } = this.props
-      dispatch(fetchEolsIfNeeded(selectedServername))
-      dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+    if (prevProps.selectAllServers !== this.props.selectAllServers) {
+      const { dispatch, selectAllServers } = this.props
       dispatch(fetchServersIfNeeded(selectAllServers))
     }
   }
@@ -64,18 +60,12 @@ class ServerOverview extends Component {
   handleRefreshClick = e => {
     e.preventDefault()
 
-    const { dispatch, selectedServername, selectAllServers } = this.props
-    dispatch(invalidateEols(selectedServername))
-    dispatch(fetchEolsIfNeeded(selectedServername))
-    dispatch(invalidateServerSoftware(selectedServername))
-    dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+    const { dispatch, selectAllServers } = this.props
     dispatch(invalidateServers(selectAllServers))
   }
 
   render() {
-    const { selectedServername, eols, isFetching, 
-      lastUpdated, serverSoftware, serverSoftwareLastUpdated, 
-      serverSoftwareIsFetching, handleRefreshClick, serverData, 
+    const { selectedServername, handleRefreshClick, serverData, 
       serversIsFetching, serversLastUpdated } = this.props
       // let isEmptySoft = false
       // if(typeof serverSoftware != 'object'){
@@ -153,24 +143,7 @@ class ServerOverview extends Component {
 
 
 const mapStateToProps = state => {
-  const { selectedServername, eolsByServername, serverSoftwareByServername, selectAllServers, serverInfo } = state
-  const {
-    isFetching,
-    lastUpdated,
-    items: eols
-  } = eolsByServername [selectedServername] || {
-    isFetching: true,
-    items: []
-  }
-
-  const {
-    serverSoftwareIsFetching,
-    serverSoftwareLastUpdated,
-    serverSoftwareItems: serverSoftware
-  } = serverSoftwareByServername [selectedServername] || {
-    serverSoftwareIsFetching: true,
-    serverSoftwareItems: []
-  }
+  const { selectedServername, selectAllServers, serverInfo } = state
 
   const {
     serversIsFetching,
@@ -183,12 +156,6 @@ const mapStateToProps = state => {
 
   return {
     selectedServername,
-    eols,
-    isFetching,
-    lastUpdated,
-    serverSoftware,
-    serverSoftwareIsFetching,
-    serverSoftwareLastUpdated,
     serverData,
     serversIsFetching,
     serversLastUpdated,
