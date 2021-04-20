@@ -1,27 +1,28 @@
 import React, { Component, useState, useEffect, version } from "react";
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
+import config from '../config.json';
 
 export default function Deletebutton(props) {
 
-    
 
 
     const deleteServer = (e) => {
 
             alert('deleteServer called '+props.selectedServername)
-
-            /* fetch(`${config.url}/api/projects/`+id,    //add selected project id here eq 'Raahe'
+            fetch(`${config.url}/api/projects/`+props.selectedServername,    //Works now and deletes the selected servew from database
             {
                 method: "DELETE",
-                headers: {"Content-Type": "application/json"},
-                
+                headers: {"Content-Type": "application/json"}
             })
             .then(_ => {
                 alert("Server Deleted");
-                setOpen(false)
+                
+                //setOpen(false)
             })
-            .catch(err => console.error(err)) */
+            .catch(err => console.error(err)) 
+
+            
         
     }
 
@@ -30,7 +31,7 @@ export default function Deletebutton(props) {
         deleteServer(props.selectedServername);
         alert('Server "' + props.selectedServername + '" has been deleted.') 
         // here call function that does the DELETE request.
-
+       // window.location.reload(false);                      // Reloads the page after Deleting something from the server using the button
     }
     //If pressed OK, asks again if you really want to delete the project
     const pressOk = (e) => {
