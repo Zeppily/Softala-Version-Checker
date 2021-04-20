@@ -131,6 +131,18 @@ class App extends Component {
                   </Paper>
                 </Grid>
 
+                {/* End-Of-Life Information */}
+                
+                <Grid item xs={12} md={12} lg={12}>
+                  {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
+                    :  
+                  <Paper className={classes.paper}>
+                    <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                    <Eolinfo eols={eols}/>
+                  </Paper>
+                  }
+                </Grid>
+
                 {/* Software Version Information */}
                 
                 <Grid item xs={12} md={12} lg={12}>
@@ -144,17 +156,7 @@ class App extends Component {
                 </Grid>
               
 
-                {/* End-Of-Life Information */}
-                
-                <Grid item xs={12} md={12} lg={12}>
-                  {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
-                    :  
-                  <Paper className={classes.paper}>
-                    <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                    <Eolinfo eols={eols}/>
-                  </Paper>
-                  }
-                </Grid>
+    
               
 
               </Grid>

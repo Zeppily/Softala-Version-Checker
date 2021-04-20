@@ -82,7 +82,7 @@ export default function AddServerForm(props) {
             body: JSON.stringify(newserver)
         })
         .then(res => {
-            if (res.status == 200) {
+            if (res.status == 200 || res.status == 201) {
                 alert("New Server added");
                 setOpen(false)
             } else {
