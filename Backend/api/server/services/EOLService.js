@@ -139,8 +139,7 @@ const scanEOLs = async() => {
     let software_list = [];
     try {
         await axios
-            // .get(`http://${process.env.PY_URL}:5000/eols`)
-            .get(`http://localhost:5000/eols`)
+            .get(`http://${process.env.PY_URL}:5000/eols`)
                 .then(res => software_list = res.data.softwareList)
                 .catch(error => {
                     console.error(error)
