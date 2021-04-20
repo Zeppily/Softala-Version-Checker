@@ -5,43 +5,36 @@ import config from '../config.json';
 
 export default function Deletebutton(props) {
 
-
-
     const deleteServer = (e) => {
 
-            alert('deleteServer called '+props.selectedServername)
-            fetch(`${config.url}/api/projects/`+props.selectedServername,    //Works now and deletes the selected servew from database
+        fetch(`${config.url}/api/projects/${props.obj.selectedServername}`,    //add selected project id here eq 'Raahe'
             {
                 method: "DELETE",
-                headers: {"Content-Type": "application/json"}
+                headers: {"Content-Type": "application/json"},       
             })
-            .then(_ => {
-                alert("Server Deleted");
-                
-                //setOpen(false)
-            })
-            .catch(err => console.error(err)) 
+            .then(res => {
+                console.log(res)
+                if (res.status == 200) {
+                    alert(`Server ${props.obj.selectedServername} Deleted`);
+                    props.obj.handleNewServerAdded(`${props.obj.selectedServername}deleted}`)
+                    props.obj.handleChange("Select Server")
+                } else {
+                    alert(`Something went wrong. Status code: ${res.status}`)
+                }   
 
-            
+            })
+            .catch(err => alert(`There was an error during deletion ${err}`))
         
     }
 
-    //If pressed OK AGAIN, calls deleteServer()
-    const pressOkAgain = (e) => {
-        deleteServer(props.selectedServername);
-        alert('Server "' + props.selectedServername + '" has been deleted.') 
-        // here call function that does the DELETE request.
-       // window.location.reload(false);                      // Reloads the page after Deleting something from the server using the button
-    }
-    //If pressed OK, asks again if you really want to delete the project
+    //If pressed OK calls deleteServer()
     const pressOk = (e) => {
-        window.confirm("This action can't be undone. Are you really sure?") &&
-            pressOkAgain(e)
+        deleteServer(props.obj.selectedServername);
     }
 
     //Delete button to delete project from server
     const deleteReguest = (e) => {
-        window.confirm("Are you sure you want to delete project '"+ props.selectedServername+"'?") &&
+        window.confirm("Are you sure you want to delete project '"+ props.obj.selectedServername+"'?") &&
             pressOk(e)
     }
 
@@ -63,3 +56,4 @@ export default function Deletebutton(props) {
 Deletebutton.propTypes = {
     selectedServername: PropTypes.string.isRequired
   }
+

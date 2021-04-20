@@ -75,10 +75,8 @@ export default function AddServerForm(props) {
         setOpen(false);
     }
 
-    const inputChanged = event => {
-            
-            setNewserver({...newserver, [event.target.name]: event.target.value});
-         
+    const inputChanged = event => {    
+        setNewserver({...newserver, [event.target.name]: event.target.value});
     }
 
     const addServer = (newserver) => {
@@ -88,11 +86,18 @@ export default function AddServerForm(props) {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newserver)
         })
-        .then(_ => {
-            alert("New Server added");
-            setOpen(false)
+        .then(res => {
+            if (res.status == 200) {
+                alert("New Server added");
+                setOpen(false)
+            } else {
+                alert(`Something went wrong.  Status code: ${res.status}`)
+            }
+            
         })
-        .catch(err => console.error(err))
+        .catch(err => alert(`There was an error with adding a new server: ${err}`))
+
+        props.handleNewServerAdded(newserver.name)
     }
 
     return (
@@ -105,18 +110,7 @@ export default function AddServerForm(props) {
                     <Typography component="p" variant="caption">(Fields marked with * are required)</Typography>
                 </DialogTitle>
                 <DialogContent style={{width:600}}>
-                   {/*  
-                        <TextField
-                        autoFocus
-                        margin="dense"
-                        id="host"
-                        label="Host*"
-                        name="host"
-                        value={newserver.host}
-                        onChange={e => inputChanged(e)}
-                        fullWidth
-                    />*/}
-                     <InputLabel style={{marginTop: 20}}>Host*</InputLabel>
+                    <InputLabel htmlFor="host" style={{marginTop: 20}}>Host*</InputLabel>
                     <Input   
                         margin="dense"
                         id="host"
@@ -127,17 +121,7 @@ export default function AddServerForm(props) {
                         fullWidth 
                     /> 
 
-                   {/*  <TextField
-                        margin="dense"
-                        id="name"
-                        label="Name*"
-                        name="name"
-                        value={newserver.name}
-                        onChange={e => inputChanged(e)}
-                        fullWidth
-                    />  */}
-
-                    <InputLabel style={{marginTop: 20}}>Name*</InputLabel>
+                    <InputLabel htmlFor="name" style={{marginTop: 20}}>Name*</InputLabel>
                     <Input   
                         margin="dense"
                         id="name"
@@ -147,19 +131,8 @@ export default function AddServerForm(props) {
                         onChange={e => inputChanged(e)}
                         fullWidth 
                     /> 
-                    
-                        {/*       
-                        <TextField
-                        margin="dense"
-                        id="username"
-                        label="Username*"
-                        name="username"
-                        value={newserver.username}
-                        onChange={e => inputChanged(e)}
-                        fullWidth
-                        /> */}
 
-                    <InputLabel style={{marginTop: 20}}>Username*</InputLabel>
+                    <InputLabel htmlFor="username" style={{marginTop: 20}}>Username*</InputLabel>
                     <Input
                         onChange={e => inputChanged(e)}
                         value={newserver.username}
@@ -167,29 +140,31 @@ export default function AddServerForm(props) {
                         label="Username"
                         name="username"
                         margin="dense"
-                        fullWidth 
+                        fullWidth
                     /> 
                     
-                   <InputLabel style={{marginTop: 20}}>Password*</InputLabel>
+                    <InputLabel htmlFor="password" style={{marginTop: 20}}>Password*</InputLabel>
                     <Input
                         type={values.showPassword ? "text" : "password"}
                         onChange={e => inputChanged(e)}
                         value={newserver.password}
+                        id="password"
                         label="Password"
                         name="password"
                         margin="dense"
-                        fullWidth 
+                        fullWidth
                     /> 
 
-                    <InputLabel style={{marginTop: 20}}>Confirm password*</InputLabel>
+                    <InputLabel htmlFor="ConfirmPass" style={{marginTop: 20}}>Confirm password*</InputLabel>
                     <Input
                         type={values.showPassword ? "text" : "password"}
                         onChange={e => setConfirmpassword(e.target.value)}
                         value={confirmpassword}
+                        id="ConfirmPass"
                         label="Confirmpassword"
                         name="confirmpassword"
                         margin="dense"
-                        fullWidth 
+                        fullWidth
                     /> 
                     
                 </DialogContent>

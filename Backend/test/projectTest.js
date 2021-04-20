@@ -18,7 +18,8 @@ describe('Testing the projects endpoints', function () {
             "host": "www.example.com",
             "name": "testProject2",
             "username": "user",
-            "password": "pass"
+            "password": "pass",
+            "uptime": 25
         }
     
         it("returns status code 201 and message 'Project Added'", function (done) {
@@ -40,7 +41,8 @@ describe('Testing the projects endpoints', function () {
             "host": "www.example.com",
             "name": "testProject2",
             "username": "user1",
-            "password": "pass"
+            "password": "pass",
+            "uptime": 25
         }
     
         it("returns status code 200 and message 'Project Updated'", function (done) {
@@ -115,7 +117,8 @@ describe('Negative Testing the projects endpoints', function () {
             "host": "www.example.com",
             "name": "testProject3",
             "username": "user",
-            "password": "pass"
+            "password": "pass",
+            "uptime": 25
         }
     
         it("returns status code 400 and status 'error' and message 'Cannot find fake project'", function (done) {

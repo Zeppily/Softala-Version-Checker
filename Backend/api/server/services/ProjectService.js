@@ -1,4 +1,5 @@
 import database from '../src/models';
+const axios = require('axios');
 
 const getAllProjects = async() => {
     try {
@@ -41,9 +42,58 @@ const deleteProject = async(project) => {
     }
 }
 
+const getUptime = async(projectNames) => {
+    let credentials = {};
+    let uptimeInfo = [];
+    try {
+        // Get project credentials
+        await database.project.findAll({
+            attributes: ['host', 'username', 'password'],
+            where: {
+                name: projectNames
+            },
+            raw: true
+        })
+            .then(result => {
+                result.forEach(function (element) {
+                    element.port = 22
+                })
+                credentials = result;
+
+            });
+
+        await axios
+            .post(`http://${process.env.PY_URL}:5000/uptime`, {   
+                credentials,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                uptimeInfo = res.data
+            })
+            .catch(error => {
+                console.error(error)
+            });
+        
+        for (let i in uptimeInfo) {
+            
+            await database.project.update({uptime: uptimeInfo[i].uptime}, { 
+                where: { 
+                    host: uptimeInfo[i].host 
+                } 
+            });
+        }
+            return "Uptime Information Added Successfully"
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 module.exports = {
     getAllProjects,
     addProject,
     updateProject,
-    deleteProject
+    deleteProject,
+    getUptime
 }

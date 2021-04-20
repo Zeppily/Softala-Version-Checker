@@ -97,7 +97,8 @@ describe('Testing the EOL endpoints', function () {
             "host": "www.example.com",
             "name": "testProject",
             "username": "user",
-            "password": "pass"
+            "password": "pass",
+            "uptime": 25
         }
 
         let projectSoftwareList = [
@@ -180,6 +181,26 @@ describe('Testing the EOL endpoints', function () {
                     expect(res.body.message).to.equal('Software deleted from project')
                     done();
                 })
+        });
+    
+        it('Delete software 1', function (done) {
+            chai.request(server)
+                .delete(`/api/softwares/postgreSQL`)
+                // .send(software)
+                .end((err, res) => {
+                    expect(res.statusCode).to.equal(200);
+                    done();
+                });
+        });
+        
+        it('Delete software 2', function (done) {
+            chai.request(server)
+                .delete(`/api/softwares/nodejs`)
+                // .send(software)
+                .end((err, res) => {
+                    expect(res.statusCode).to.equal(200);
+                    done();
+                });
         });
         
         it("delete project", function (done) {
@@ -322,7 +343,6 @@ describe('Negative Testing the eol endpoints', function () {
             chai.request(server)
                 .get('/api/eols/fakeProject')
                 .end((err, res) => {
-                    console.log(res)
                     expect(res.statusCode).to.equal(200)
                     expect(res.body.status).to.equal('success')
                     expect(res.body.message).to.equal('No eol information available for fakeProject project')
