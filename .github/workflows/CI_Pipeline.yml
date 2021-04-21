@@ -31,4 +31,4 @@ jobs:
           context: ./py_scantool
           file: ./py_scantool/Dockerfile
           push: true
-          tags: ${{ secrets.CI_URL }}/py_app:latest
+          tags: ${{ secrets.CI_USER }}/py_app:latest
