@@ -1,0 +1,19 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ Artifactory ]
+  pull_request:
+    branches: [ Artifactory ]
+
+jobs:
+  login:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to JFROG Artifactory
+        uses: docker/login-action@v1
+        with:
+          registry: artifactory.dev.eficode.io
+          username: ${{ secrets.CI_USER }}
+          password: ${{ secrets.CI_PASSWORD }}
