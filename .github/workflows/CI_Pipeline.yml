@@ -31,5 +31,5 @@ jobs:
           context: ./py_scantool
           file: ./py_scantool/Dockerfile
           push: true
-          tags: artifactory/${{ secrets.CI_USER }}/py_app:latest
+          tags: artifactory.dev.eficode.io/${{ secrets.CI_URL }}/py_app:latest
           #tags: artifactory.dev.eficode.io/artifactory/${{ secrets.CI_URL }}:latest
