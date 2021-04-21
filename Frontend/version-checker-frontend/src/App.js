@@ -13,7 +13,9 @@ import Listbutton from './components/Listbutton';
 import AddServerForm from "./components/AddServerForm";
 import Deletebutton from './components/Deletebutton';
 import { connect } from "react-redux";
-import { selectServername, fetchEolsIfNeeded, invalidateEols, fetchServerSoftwareIfNeeded, invalidateServerSoftware } from './actions';
+import { selectServername, fetchEolsIfNeeded, invalidateEols, 
+          fetchServerSoftwareIfNeeded, invalidateServerSoftware, 
+          invalidateServers, fetchServersIfNeeded, newServerAdded } from './actions';
 import PropTypes from 'prop-types';
 
 
@@ -25,21 +27,29 @@ class App extends Component {
     serverSoftware: PropTypes.array.isRequired,
     isFetching: PropTypes.bool.isRequired,
     lastUpdated: PropTypes.number,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    serverData: PropTypes.array.isRequired,
+    selectAllServers: PropTypes.string.isRequired
   }
 
   componentDidMount() {
-    const { dispatch, selectedServername } = this.props
+    const { dispatch, selectedServername, selectAllServers } = this.props
     dispatch(fetchEolsIfNeeded(selectedServername))
     dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+    dispatch(fetchServersIfNeeded(selectAllServers))
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.selectedServername !== this.props.selectedServername) {
-      const { dispatch, selectedServername } = this.props
+    if (prevProps.selectedServername !== this.props.selectedServername || prevProps.selectAllServers !== this.props.selectAllServers) {
+      const { dispatch, selectedServername, selectAllServers } = this.props
       dispatch(fetchEolsIfNeeded(selectedServername))
       dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+      dispatch(fetchServersIfNeeded(selectAllServers))
     }
+  }
+
+  handleNewServerAdded = (newServerName) => {
+    this.props.dispatch(newServerAdded(newServerName))
   }
 
   handleChange = nextServername => {
@@ -49,17 +59,22 @@ class App extends Component {
   handleRefreshClick = e => {
     e.preventDefault()
 
-    const { dispatch, selectedServername } = this.props
+    const { dispatch, selectedServername, selectAllServers } = this.props
     dispatch(invalidateEols(selectedServername))
     dispatch(fetchEolsIfNeeded(selectedServername))
     dispatch(invalidateServerSoftware(selectedServername))
     dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+    dispatch(invalidateServers(selectAllServers))
   }
 
 
   render() {
     
-    const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching, handleRefreshClick } = this.props
+    const { selectedServername, eols, isFetching, 
+      lastUpdated, serverSoftware, serverSoftwareLastUpdated, 
+      serverSoftwareIsFetching, handleRefreshClick, serverData, 
+      serversIsFetching, serversLastUpdated } = this.props
+
     let isEmptySoft = false
     if(typeof serverSoftware != 'object'){
       isEmptySoft = true
@@ -70,7 +85,8 @@ class App extends Component {
     let isEmptyEol = eols.length === 0
     if(Array.isArray(eols) == false){
        isEmptyEol = true
-      }
+    }
+
     return(
       <div className={classes.root}>
           {/* Main elements in the dashboard */}
@@ -80,16 +96,30 @@ class App extends Component {
             <Container maxWidth="lg" className={classes.container}>
               <GridList cols={6} cellHeight={100} style={{marginTop: 50}}>
                   <GridListTile>
-                    <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername, handleRefreshClick: this.handleRefreshClick}}/>
+                    { serversIsFetching ? 
+                      <Button>Loading Servers</Button>
+                      :
+                      <Listbutton obj={{
+                            handleChange: this.handleChange, 
+                            selectedServername: selectedServername, 
+                            handleRefreshClick: this.handleRefreshClick, 
+                            serverData: serverData,
+                      }}/>
+                    }
+                    
                   </GridListTile>
                   <GridListTile>
                     <Button variant="contained" color="primary" style={{marginBottom:10}} onClick={this.handleRefreshClick}>
                       Update forms
                     </Button>
-                    <AddServerForm />
+                    <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
                   </GridListTile>
                   <GridListTile>
-                    <Deletebutton selectedServername = {selectedServername}/>   {/* sends servername data to Deletebutton.js */}
+                    <Deletebutton obj = {{
+                            selectedServername: selectedServername, 
+                            handleNewServerAdded: this.handleNewServerAdded,
+                            handleChange: this.handleChange
+                    }}/>   {/* sends servername data to Deletebutton.js */}
                   </GridListTile>
               </GridList>
 
@@ -99,6 +129,18 @@ class App extends Component {
                   <Paper className={classes.paper}>
                     <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
                   </Paper>
+                </Grid>
+
+                {/* End-Of-Life Information */}
+                
+                <Grid item xs={12} md={12} lg={12}>
+                  {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
+                    :  
+                  <Paper className={classes.paper}>
+                    <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                    <Eolinfo eols={eols}/>
+                  </Paper>
+                  }
                 </Grid>
 
                 {/* Software Version Information */}
@@ -114,17 +156,7 @@ class App extends Component {
                 </Grid>
               
 
-                {/* End-Of-Life Information */}
-                
-                <Grid item xs={12} md={12} lg={12}>
-                  {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
-                    :  
-                  <Paper className={classes.paper}>
-                    <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                    <Eolinfo eols={eols}/>
-                  </Paper>
-                  }
-                </Grid>
+    
               
 
               </Grid>
@@ -136,7 +168,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  const { selectedServername, eolsByServername, serverSoftwareByServername } = state
+  const { selectedServername, eolsByServername, serverSoftwareByServername, selectAllServers, serverInfo } = state
   const {
     isFetching,
     lastUpdated,
@@ -155,6 +187,15 @@ const mapStateToProps = state => {
     serverSoftwareItems: []
   }
 
+  const {
+    serversIsFetching,
+    serversLastUpdated,
+    serversItems: serverData
+  } = serverInfo [selectAllServers] || {
+    serversIsFetching: true,
+    serversItems: []
+  }
+
   return {
     selectedServername,
     eols,
@@ -162,7 +203,11 @@ const mapStateToProps = state => {
     lastUpdated,
     serverSoftware,
     serverSoftwareIsFetching,
-    serverSoftwareLastUpdated
+    serverSoftwareLastUpdated,
+    serverData,
+    serversIsFetching,
+    serversLastUpdated,
+    selectAllServers
   }
 }
 

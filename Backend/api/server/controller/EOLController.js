@@ -111,11 +111,31 @@ const deleteEOL = async(req, res) => {
     }
 }
 
+const deleteAllEOLs = async(req, res) => {
+
+    try {
+        const eolsToDelete = await EOLService.deleteAllEOLs();
+
+        // If all eols are deleted successfully the db returns 0
+        // so if 0 we go into the success message
+        if (!eolsToDelete) {
+            util.setSuccess(200, 'All EOL information has been deleted');
+        } else {
+            util.setError(404, `Unable to delete all EOL information`);
+        }
+        return util.send(res);
+    } catch (error) {
+        util.setError(400, error.message);
+        return util.send(res);
+    }
+}
+
 module.exports = {
     getAllEOLs,
     getProjectSpecificEOLs,
     addEOL,
     addEOLList,
     updatedEOL,
+    deleteAllEOLs,
     deleteEOL
 }

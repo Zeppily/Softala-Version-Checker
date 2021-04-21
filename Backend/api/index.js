@@ -61,8 +61,9 @@ cron.schedule('* * * * *', () => {
 );
 
 app.use(bodyParser.json());
+app.use(express.json());
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 8000;
 

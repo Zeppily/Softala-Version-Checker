@@ -14,6 +14,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true
       },
       username: {
         type: Sequelize.STRING,
@@ -22,6 +23,9 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
+      uptime: {
+        type: Sequelize.STRING
+      }
     });
   },
   down: (queryInterface) => {

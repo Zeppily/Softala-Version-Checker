@@ -16,16 +16,30 @@ const addSoftware = async(newSoftware) => {
         }
 }
 
-const updateSoftware = async(id, updateSoftware) => {
+// const updateSoftware = async(id, updateSoftware) => {
+//     try {
+//         const softwareToUpdate = await database.software.findOne({
+//             where: { software_id: Number(id) }
+//         });
+
+//         if (softwareToUpdate) {
+//             await database.software.update(updateSoftware, { where: { software_id: Number(id) } });
+
+//             return updateSoftware;
+//         }
+//         return null;
+//     } catch (error) {
+//         throw error;
+//     }
+// }
+
+const updateSoftware = async(software, updateSoftware) => {
     try {
-        const softwareToUpdate = await database.software.findOne({
-            where: { software_id: Number(id) }
+        const updatedSoftware = await database.software.update(updateSoftware, { 
+            where: { name: software } 
         });
-
-        if (softwareToUpdate) {
-            await database.software.update(updateSoftware, { where: { software_id: Number(id) } });
-
-            return updateSoftware;
+        if(updatedSoftware[0]) {
+            return updatedSoftware;
         }
         return null;
     } catch (error) {
@@ -33,10 +47,21 @@ const updateSoftware = async(id, updateSoftware) => {
     }
 }
 
-const deleteSoftware = async(id) => {
+// const deleteSoftware = async(id) => {
+//     try {
+//         const deletedSoftware = await database.software.destroy({
+//             where: { software_id: Number(id) }
+//         });
+//         return deletedSoftware;
+//     } catch (error) {
+//         throw error;
+//     }
+// }
+
+const deleteSoftware = async(software) => {
     try {
         const deletedSoftware = await database.software.destroy({
-            where: { software_id: Number(id) }
+            where: { name: software }
         });
         return deletedSoftware;
     } catch (error) {

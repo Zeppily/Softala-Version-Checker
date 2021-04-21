@@ -41,23 +41,23 @@ const getProjectSpecificEOLs = async(project) => {
                 }
 
                 // Format the version number so it gives us multiple options to search eols with
-
                 // Gets the version number up to the first '.'
                 let version = vers.match(/[0-9]+./);
                 // Gets the version number if its just one number, not split by '.'
                 let exact = vers.match(/[0-9]+/);
                 // Gets the first 2 numbers of the version if valid
-                let strict_version = vers.match(/[0-9]+.[0-9]+./)
+                let stricter_version = vers.match(/[0-9]+.[0-9]./)
+                // commented original out. removed the . at the end
+                let strict_version = vers.match(/[0-9]+.[0-9]/)
 
-                // Find the eol information for the software
-                let eolInfo = await database.eol.findOne({
+                let eolInfo = await database.eol.findAll({
                     where: {
                         [Op.and]: {
                             software_name : {
                                 [Op.or] : [{[Op.like] : name}, {[Op.like] : formatted_name1}, {[Op.like] : formatted_name2 }]
                             },
                             version: {
-                                    [Op.or] : [{[Op.like]: `${strict_version}%`}, {[Op.like]: `${version}%`}, exact]
+                                    [Op.or] : [{[Op.like]: `${stricter_version}%`}, {[Op.like]: `${strict_version}%`}, {[Op.like]: `${version}%`}, exact]
                             }
                                
                             
@@ -65,22 +65,46 @@ const getProjectSpecificEOLs = async(project) => {
                         
                     }
                 });
-                
-                if (eolInfo) {
+                // If db query returns somethong we go into the statement
+                if (eolInfo.length >= 1) {
                     let insert = true;
+                    // If the db query returns more than one result we ave to loop through the results to find the best match
+                    if(eolInfo.length > 1) {
+                        eolInfo.forEach(eInfo => {
+                            if(eInfo.dataValues.version == vers || eInfo.dataValues.version == strict_version){
+                                eols.forEach(e => {
+                                    let x = (e.software_name == eInfo.dataValues.software_name)
+                                    let y = (e.version == eInfo.dataValues.version)                        
+                                    if(x && y) { 
+                                        insert = false
+                                    }                                                       
+                                })
 
-                    eols.forEach(e => {                       
-                        let x = (e.software_name == eolInfo.dataValues.software_name)
-                        let y = (e.version == eolInfo.dataValues.version)                        
-                        if(x && y) { 
-                            insert = false
-                        }                        
-                    })
-
-                    if (insert){
-                        eols.push(eolInfo.dataValues)
-                    }
-                    
+                                if (insert){
+                                    eols.push(eInfo.dataValues)
+                                }
+                            }                            
+                        })
+                    } else {
+                        // If just one result is returned from db query we check if that info is already in the list and add if not adds to the list
+                        eolInfo.forEach(eInfo => {
+                                if(eols > 0){
+                                    eols.forEach(e => {
+                                        let x = (e.software_name == eInfo.dataValues.software_name)
+                                        let y = (e.version == eInfo.dataValues.version)                        
+                                        if(x && y) { 
+                                            insert = false
+                                        }
+                                    }) 
+    
+                                    if (insert){
+                                        eols.push(eInfo.dataValues)
+                                    } 
+                                } else {
+                                    eols.push(eInfo.dataValues)
+                                }                                
+                        })
+                    }    
                 }               
             }
         }       
@@ -174,6 +198,21 @@ const deleteEOL = async(deleteEOL) => {
     }
 }
 
+//Delete all eols
+const deleteAllEOLs = async() => {
+
+    try {
+        const deletedEOLs = await database.eol.destroy({
+            where: {},
+            truncate: true
+        });
+        // If delete was successful, deletedEOLs will = 0.
+        return deletedEOLs;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     getAllEOLs,
     getProjectSpecificEOLs,
@@ -181,5 +220,6 @@ module.exports = {
     addEOLList,
     scanEOLs,
     updateEOL,
-    deleteEOL
+    deleteEOL,
+    deleteAllEOLs
 }

@@ -9,5 +9,6 @@ router.post('/', EOLController.addEOL);
 router.post('/list', EOLController.addEOLList);
 router.put('/', EOLController.updatedEOL);
 router.delete('/', EOLController.deleteEOL);
+router.delete('/all', EOLController.deleteAllEOLs);
 
 export default router;

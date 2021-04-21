@@ -1,5 +1,6 @@
 import EOLService from '../services/EOLService';
 import ProjectSoftwareService from '../services/ProjectSoftwareService';
+import ProjectService from '../services/ProjectService';
 import Util from '../utils/Utils';
 
 const util = new Util();
@@ -125,8 +126,9 @@ const startScan = async(req, res) => {
     try {
         const startScan = await ProjectSoftwareService.startScan(projectNames);
         const scanEols = await EOLService.scanEOLs();
+        const getUptime = await ProjectService.getUptime(projectNames);
         if (startScan) {
-            util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}`);
+            util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}\n ${getUptime}`);
         } else {
             util.setError(404, 'Scan was unsuccessful');
         }
