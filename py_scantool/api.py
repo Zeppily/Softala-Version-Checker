@@ -19,14 +19,15 @@ def start_scan():
         return 'bad request!', 400
 
 
-# /eols End-point that only accepts GET requests
+# /eols/ End-point that only accepts GET requests
 # Starts the json scrapper and returns the software list
 @app.route('/eols', methods=['GET'])
 def get_eol():
     return jsonscrape.scrap_eol()
 
 
-# improved version of /start/
+# /uptime/ End-point that only accepts GET requests
+#  endpoint to retrieve server up time from each server given
 @app.route('/uptime/', methods=['POST'])
 def get_uptime():
     request_data = request.get_json()

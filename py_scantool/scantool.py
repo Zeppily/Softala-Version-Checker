@@ -26,7 +26,7 @@ def ssh_scrap(serverList):
 		# Retrieve manually installed software
 		manualInstalled = ssh_connect.sshConnect(host, port, username, password, "apt-mark showmanual")
 
-		# Format manually installed software into a list
+		# Format manually installed software into a list without new lines
 		manualFormatted = formatter.formatManual(manualInstalled["result"])
 
 		if not results["returnCode"]:
