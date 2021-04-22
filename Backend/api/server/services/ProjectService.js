@@ -3,7 +3,9 @@ const axios = require('axios');
 
 const getAllProjects = async() => {
     try {
-        return await database.project.findAll();
+        return await database.project.findAll({
+            attributes: ['host', 'name', 'uptime'],
+        });
     } catch (error) {
         throw error;
     }
