@@ -270,32 +270,45 @@ const startScan = async(projectNames) => {
                         element.port = 22
                     })
                     credentials = result;
-
+                    callAxios(credentials);
                 });
 
-            await axios
-                .post(`http://${process.env.PY_URL}:5000/start`, {
-                    credentials,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(res => {
-                    scan = res.data
-                })
-                .catch(error => {
-                    console.error(error)
-                });
+            
 
             // Send credentials to the scan tool and set results to serverList variable
 
             // Loop through the servers in the server list
-            failedServers = await serverListToDb(scan)
+            //failedServers = await serverListToDb(scan)
         } catch (error) {
             throw error;
         }
-        return failedServers
-}
+        //return failedServers
+};
+
+const callAxios = async(credentials) => {
+    let scan = []
+    let failedServers = []
+    try { 
+        await axios
+            .post(`${process.env.PY_URL}`, {
+                credentials,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                scan = res.data
+            })
+            .catch(error => {
+                console.error(error)
+            });
+
+        failedServers = await serverListToDb(scan);
+    } catch (error) {
+        throw error;
+    }
+    return failedServers
+};
 
 const serverListToDb = async (data) => {
     let errorList = [];
@@ -363,5 +376,6 @@ module.exports = {
     addListProjectSoftware,
     updateProjectSoftware,
     deleteProjectSoftware,
-    startScan
+    startScan,
+    callAxios,
 }
