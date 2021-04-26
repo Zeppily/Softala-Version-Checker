@@ -3,9 +3,9 @@ import { NavLink } from 'react-router-dom';
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Deletebutton from '../components/Deletebutton';
+import AddServerForm from '../components/AddServerForm';
 import { connect } from "react-redux";
 import { selectServername, invalidateServers, fetchServersIfNeeded, newServerAdded } from '../actions';
 import PropTypes from 'prop-types';
@@ -15,6 +15,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionActions from "@material-ui/core/AccordionActions";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Divider from "@material-ui/core/Divider";
+import EditServerForm from './EditServerForm.js';
 
 
 class ServerOverview extends Component {
@@ -58,10 +59,21 @@ class ServerOverview extends Component {
      
       
       return (
+
         <Container maxWidth="lg" className={classes.container}>
-            <div className={classes.root} style={{marginTop: 100}}>
+            <div style={{marginTop: 100}}>
+            <h1>SERVER OVERVIEW</h1>
+            <h3>List of all servers</h3>
+            <p>You can view and edit server info here</p>
+            
+            <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
+            </div>
+
+            
+            <div className={classes.root} style={{marginTop: 50}}>
+              
               {serverData.map((accordion) => {
-                let { name, host, uptime, lastupdated } = accordion;
+                let { name, host, uptime, lastupdated } = accordion; // add password here?
                 if(!uptime){uptime = 0}
                 console.log('servername: ', name)
                 console.log('host: ', host)
@@ -103,7 +115,12 @@ class ServerOverview extends Component {
                     
                     <Divider />
                     <AccordionActions>
-                      <Button size="small">Get uptime</Button>
+                      {/* <Button size="small">Get uptime</Button> */}
+                      
+                      {/* EDIT SERVER INFORMATION */}
+                      <EditServerForm handleNewServerAdded = {this.handleNewServerAdded} name={name} host={host}/>
+                   
+
                       <Deletebutton obj = {{
                             selectedServername: name, 
                             handleNewServerAdded: this.handleNewServerAdded,

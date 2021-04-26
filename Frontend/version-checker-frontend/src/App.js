@@ -94,9 +94,11 @@ class App extends Component {
             <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
             
             <Container maxWidth="lg" className={classes.container}>
-              <GridList cols={6} cellHeight={100} style={{marginTop: 50}}>
-                  <GridListTile>
-                    { serversIsFetching ? 
+            <div style={{marginTop: 50, marginBottom: 20}}>
+            <h1>SOFTWARE INFORMATION</h1>
+            <h3>Overview and EOLs</h3>
+           
+            { serversIsFetching ? 
                       <Button>Loading Servers</Button>
                       :
                       <Listbutton obj={{
@@ -106,30 +108,40 @@ class App extends Component {
                             serverData: serverData,
                       }}/>
                     }
-                    
-                  </GridListTile>
-                  <GridListTile>
-                    <Button variant="contained" color="primary" style={{marginBottom:10}} onClick={this.handleRefreshClick}>
+            </div>
+            
+          
+              {/* Overview */}
+              <Grid item xs={12} md={12} lg={12}>
+                  <Paper className={classes.paper}>
+                          <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
+                  </Paper>
+              </Grid>
+            
+                
+            <Grid container style={{ marginTop: 10, maxHeight: 60, marginBottom: 20}}>
+              <Grid item xs={2}>
+                <Button variant="contained" color="primary"  onClick={this.handleRefreshClick}>
                       Update forms
                     </Button>
-                    <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
-                  </GridListTile>
-                  <GridListTile>
-                    <Deletebutton obj = {{
+              </Grid>
+              <Grid item xs={2}>
+                  <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
+              </Grid>
+              <Grid item xs={8} >
+                <Grid container justify="flex-end">
+               <Deletebutton obj = {{
                             selectedServername: selectedServername, 
                             handleNewServerAdded: this.handleNewServerAdded,
                             handleChange: this.handleChange
                     }}/>   {/* sends servername data to Deletebutton.js */}
-                  </GridListTile>
-              </GridList>
+                </Grid>
+              </Grid>
+            </Grid>
 
               <Grid container spacing={2}>
-                {/* Overview */}
-                <Grid item xs={12} md={12} lg={12}>
-                  <Paper className={classes.paper}>
-                    <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
-                  </Paper>
-                </Grid>
+             
+                
 
                 {/* End-Of-Life Information */}
                 
@@ -290,6 +302,7 @@ function createStyling() {
     fixedHeight: {
       height: 240,
     },
+    
   }));
 
   return myStyles

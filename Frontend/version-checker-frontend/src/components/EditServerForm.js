@@ -9,11 +9,12 @@ import config from '../config.json';
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 
-export default function AddServerForm(props) {
+export default function EditServerForm(props) {
+    console.log(props);
     const [open, setOpen] = React.useState(false);
     const [newserver, setNewserver] = React.useState({
-       host: "",
-       name: "",
+       host: props.host,
+       name: props.name,
        username: "",
        password: "",
               
@@ -39,7 +40,6 @@ export default function AddServerForm(props) {
       }; 
     // password hide / visible
 
-
     const submitData = () => {
             if (newserver.password !== confirmpassword){      // password comparison happens here
                 alert("Passwords don't match");
@@ -58,15 +58,11 @@ export default function AddServerForm(props) {
                         password: ""
                     })
                     setOpen(false);
-                    setConfirmpassword("");
-
-                    
+                    setConfirmpassword("");   
                 }else{
                     alert("You must provide Host, Projectname and Username.");
                 } 
-                
-
-    } 
+            } 
 
     }
 
@@ -79,34 +75,34 @@ export default function AddServerForm(props) {
     }
 
     const addServer = (newserver) => {
-        fetch(`${config.url}/api/projects`,
+        fetch(`${config.url}/api/projects/${props.name}`,
         {
-            method: "POST",
+            method: "PUT",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newserver)
         })
         .then(res => {
             if (res.status == 200 || res.status == 201) {
-                alert("New Server added");
+                alert("Server updated successfully");
                 setOpen(false)
-                window.location.reload(false); // page refresh
+                window.location.reload(false); 
             } else {
                 alert(`Something went wrong.  Status code: ${res.status}`)
             }
-            
+             
         })
-        .catch(err => alert(`There was an error with adding a new server: ${err}`))
+        .catch(err => alert(`There was an error with updating a server: ${err}`))
 
-        props.handleNewServerAdded(newserver.name)
+        //props.handleNewServerAdded(newserver.name) //change this
     }
 
     return (
         <div>
             <Button variant="contained" color="primary" onClick={handleClickOpen}>
-                Add new server
+                Update
             </Button>
             <Dialog open={open} onClose={handleCancelClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Add new server 
+                <DialogTitle id="form-dialog-title">Update 
                     <Typography component="p" variant="caption">(Fields marked with * are required)</Typography>
                 </DialogTitle>
                 <DialogContent style={{width:500}}>
@@ -132,7 +128,7 @@ export default function AddServerForm(props) {
                         fullWidth 
                     /> 
 
-                    <InputLabel htmlFor="username" style={{marginTop: 20}}>Username*</InputLabel>
+                    <InputLabel htmlFor="username" style={{marginTop: 20}}>Username*</InputLabel>                    {/*  // check if needed to update in form*/}
                     <Input
                         onChange={e => inputChanged(e)}
                         value={newserver.username}
@@ -143,7 +139,7 @@ export default function AddServerForm(props) {
                         fullWidth
                     /> 
                     
-                    <InputLabel htmlFor="password" style={{marginTop: 20}}>Password*</InputLabel>
+                    <InputLabel htmlFor="password" style={{marginTop: 20}}>Password*</InputLabel>                   {/*  // check if needed to update  in form*/}
                     <Input
                         type={values.showPassword ? "text" : "password"}
                         onChange={e => inputChanged(e)}
@@ -155,7 +151,7 @@ export default function AddServerForm(props) {
                         fullWidth
                     /> 
 
-                    <InputLabel htmlFor="ConfirmPass" style={{marginTop: 20}}>Confirm password*</InputLabel>
+                    <InputLabel htmlFor="ConfirmPass" style={{marginTop: 20}}>Confirm password*</InputLabel>        {/*  // check if needed to update in form*/}
                     <Input
                         type={values.showPassword ? "text" : "password"}
                         onChange={e => setConfirmpassword(e.target.value)}

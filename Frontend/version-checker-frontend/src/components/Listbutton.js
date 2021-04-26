@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
 import config from '../config.json';
 import { Typography } from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
   const ITEM_HEIGHT = 48;
   
@@ -86,15 +87,19 @@ import { Typography } from "@material-ui/core";
     
     return (
       <div>
-        <Button
+        <Button 
           aria-controls="customized-menu"
           aria-haspopup="true"
           variant="contained"
           color="primary"
           onClick={handleClick}
-          style={{marginBottom: 10}}
+         //style={{marginBottom: 10}}
+          style={{marginRight: 40}}
+          endIcon={<ExpandMoreIcon />}
         >
+          
           {currentProject}
+          
         </Button>
         
         { conditional ?
