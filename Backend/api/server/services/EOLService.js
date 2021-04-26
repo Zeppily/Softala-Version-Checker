@@ -65,14 +65,13 @@ const getProjectSpecificEOLs = async(project) => {
                         
                     }
                 });
-
                 // If db query returns somethong we go into the statement
                 if (eolInfo.length >= 1) {
                     let insert = true;
                     // If the db query returns more than one result we ave to loop through the results to find the best match
                     if(eolInfo.length > 1) {
                         eolInfo.forEach(eInfo => {
-                            if(eInfo.dataValues.version == vers){
+                            if(eInfo.dataValues.version == vers || eInfo.dataValues.version == strict_version){
                                 eols.forEach(e => {
                                     let x = (e.software_name == eInfo.dataValues.software_name)
                                     let y = (e.version == eInfo.dataValues.version)                        
