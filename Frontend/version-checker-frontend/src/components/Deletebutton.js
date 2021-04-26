@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect, version } from "react";
 import Button from '@material-ui/core/Button';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import config from '../config.json';
 
 export default function Deletebutton(props) {
