@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import Deletebutton from '../components/Deletebutton';
 import AddServerForm from '../components/AddServerForm';
 import { connect } from "react-redux";
@@ -16,6 +17,9 @@ import AccordionActions from "@material-ui/core/AccordionActions";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Divider from "@material-ui/core/Divider";
 import EditServerForm from './EditServerForm.js';
+import Brightness1Icon from '@material-ui/icons/Brightness1';
+import { green } from '@material-ui/core/colors';
+import { red } from '@material-ui/core/colors';
 
 
 class ServerOverview extends Component {
@@ -51,100 +55,144 @@ class ServerOverview extends Component {
 
     const { dispatch, selectAllServers } = this.props
     dispatch(invalidateServers(selectAllServers))
-  } 
+  }
 
-  
-  
- 
+
+
+
 
   render() {
-    const { selectedServername, handleRefreshClick, serverData, 
+    const { selectedServername, handleRefreshClick, serverData,
       serversIsFetching, serversLastUpdated } = this.props
-      
-      //get total number of servers
-      var totalServers = serverData.length;
 
-      return (
+    //get total number of servers
+    var totalServers = serverData.length;
 
-        <Container maxWidth="lg" className={classes.container}>
-            <div style={{marginTop: 100}}>
-                <h1>SERVER OVERVIEW</h1>
-                <h3>List of all servers</h3>
-                <p>You can view and edit server info here</p>
-                <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
-            </div>
+    // here boolean comparison weather the latest scan has been successful
+    var booleanValue = true;// import the scan status here from props
+    var scanStatus = "";
 
-            <p>Total servers</p>
-            <h3>{totalServers}</h3>
+      if(booleanValue == true) {
+        scanStatus=(<Brightness1Icon style={{ color: green[500] }} />);
+      } else {
+        scanStatus=(<Brightness1Icon style={{ color: red[500] }} />);
+      }
 
-            <div className={classes.root} style={{marginTop: 50}}>
-              
-              {serverData.map((accordion) => {
-                let { name, host, uptime, lastupdated } = accordion; // add password here?
-                if(!uptime){uptime = 0}
-                console.log('servername: ', name)
-                console.log('host: ', host)
-                console.log('uptime: ', uptime)
-                console.log('lastupdated: ', lastupdated)
-                return (
-                  <Accordion defaultClosed>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1c-content" id="panel1c-header">
-                      <div className={classes.column}>
-                        <Typography className={classes.heading}>{name}</Typography>
-                      
-                        <Typography className={classes.secondaryHeading}>{host}</Typography>
-                      </div>
-                    </AccordionSummary>
-    
-                    <AccordionDetails className={classes.details}>
-                      <div className={classes.column} />
-                        <div className={clsx(classes.column, classes.helper)}>
-                          <Typography className={classes.heading}>
-                            Total uptime: {uptime} days
-                          </Typography>
-                       
-                          <Typography className={classes.heading}>
-                            <a href={"https://" + host}>
-                              Link to project domain
-                            </a>
-                          </Typography>
+    // get length of true/false scans
+    // test array of true/false
+    const arr = [true, true, false, false, false];  // import here the array boolean values
+    const PassingServers = arr.filter(Boolean).length;
+    const notPassingServers = arr.length - PassingServers;
 
-                          <NavLink 
-                              exact to="/" 
-                              onClick={()=> this.handleChange(name)}
-                          >
-                              {name} information
-                          </NavLink>
 
-                      </div>                        
-                    </AccordionDetails>
-                    
-                    
-                    <Divider />
-                    <AccordionActions>
-                      {/* <Button size="small">Get uptime</Button> */}
-                      
-                      {/* EDIT SERVER INFORMATION */}
-                      <EditServerForm handleNewServerAdded = {this.handleNewServerAdded} name={name} host={host}/>
-                   
+    return (
 
-                      <Deletebutton obj = {{
-                            selectedServername: name, 
-                            handleNewServerAdded: this.handleNewServerAdded,
-                            handleChange: this.handleChange
-                    }}/>   {/* sends servername data to Deletebutton.js */}
-                    </AccordionActions>
-                  </Accordion>
-                );
-              })}
-            </div>
-          </Container>
-      )
-          
+      <Container maxWidth="lg" className={classes.container}>
+        <div style={{ marginTop: 100 }}>
+          <h1>SERVER OVERVIEW</h1>
+          <h3>List of all servers</h3>
+          <p>You can view and edit server info here</p>
+          <AddServerForm handleNewServerAdded={this.handleNewServerAdded} />
+        </div>
+        <Grid container>
+          <Grid item xs={2}>
+             <p>Total servers</p> 
+             <h3>{totalServers}</h3>
+          </Grid>
+          <Grid item xs={4}>
+             <p>Servers not passing scan</p> 
+             <h3>{notPassingServers}</h3>
+          </Grid>
+        </Grid>
+       
+        <div className={classes.root} style={{ marginTop: 50 }}>
+          <div>
+          <Grid container style={{marginBottom:10}}>
+          <Grid item xs={4}>
+            <Typography className={classes.heading} style={{ marginLeft: 15 }}>Name</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography className={classes.heading}style={{ marginLeft: 115 }}>Host</Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography className={classes.heading} style={{ marginLeft: 50 }}>Scan status</Typography>
+          </Grid>
+          </Grid>
+          </div>
+
+          {serverData.map((accordion) => {
+            let { name, host, uptime, lastupdated } = accordion; // add password here?
+            if (!uptime) { uptime = 0 }
+            console.log('servername: ', name)
+            console.log('host: ', host)
+            console.log('uptime: ', uptime)
+            console.log('lastupdated: ', lastupdated)
+
+            return (
+              <Accordion defaultClosed>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1c-content" id="panel1c-header">
+                  <Grid item xs={4}>
+                    <div className={classes.column}>
+                      <Typography className={classes.heading}>{name}</Typography>
+                    </div>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <div className={classes.column} style={{ marginLeft: 120 }}>
+                      <Typography className={classes.secondaryHeading}>{host}</Typography>
+                    </div>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <div className={classes.column} style={{ marginLeft: 120 }}>
+                      {/* <Typography className={classes.secondaryHeading} >boolean</Typography> */}
+                      {/* <Brightness1Icon style={{ color: green[500] }} /> */}
+                      {scanStatus}
+                    </div>
+                  </Grid>
+                </AccordionSummary>
+
+                <AccordionDetails className={classes.details}>
+                  <div className={classes.column} />
+                  <div className={clsx(classes.column, classes.helper)}>
+                    <Typography className={classes.heading}>
+                      Total uptime: {uptime} days
+                    </Typography>
+                    <Typography className={classes.heading}>
+                      <a href={"https://" + host}>
+                        Link to project domain
+                      </a>
+                    </Typography>
+                        <NavLink
+                          exact to="/"
+                          onClick={() => this.handleChange(name)}>
+                          {name} information
+                        </NavLink>
+                  </div>
+                </AccordionDetails>
+
+                <Divider />
+                <AccordionActions>
+                  {/* <Button size="small">Get uptime</Button> */}
+
+                  {/* EDIT SERVER INFORMATION */}
+                  <EditServerForm handleNewServerAdded={this.handleNewServerAdded} name={name} host={host} />
+
+                  <Deletebutton obj={{
+                    selectedServername: name,
+                    handleNewServerAdded: this.handleNewServerAdded,
+                    handleChange: this.handleChange
+                  }} />   {/* sends servername data to Deletebutton.js */}
+                </AccordionActions>
+              </Accordion>
+            );
+          })}
+        </div>
+      </Container>
+    )
+
   }
-} 
+}
 
-  
+
 
 
 const mapStateToProps = state => {
@@ -154,7 +202,7 @@ const mapStateToProps = state => {
     serversIsFetching,
     serversLastUpdated,
     serversItems: serverData
-  } = serverInfo [selectAllServers] || {
+  } = serverInfo[selectAllServers] || {
     serversIsFetching: true,
     serversItems: []
   }
