@@ -25,6 +25,12 @@ module.exports = {
       },
       uptime: {
         type: Sequelize.STRING
+      },
+      scansuccessful: {
+        type: Sequelize.BOOLEAN
+      },
+      timestamp: {
+        type: Sequelize.STRING
       }
     });
   },

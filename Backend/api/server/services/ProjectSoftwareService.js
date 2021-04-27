@@ -1,4 +1,5 @@
 import database from '../src/models';
+import project from './ProjectService'
 const axios = require('axios');
 // This is used for WHERE IN statements and stuff like that.
 // const { Op } = require("sequelize");
@@ -253,44 +254,28 @@ const deleteProjectSoftware = async(deleteProjectSoftware) => {
 }
 
 const startScan = async(projectNames) => {
-        let credentials = {};
-        let scan = [];
-        let failedServers = []
-        try {
-            // Get project credentials
-            await database.project.findAll({
-                attributes: ['host', 'username', 'password'],
-                where: {
-                    name: projectNames
-                },
-                raw: true
-            })
-                .then(result => {
-                    result.forEach(function (element) {
-                        element.port = 22
-                    })
-                    credentials = result;
-                    callAxios(credentials);
-                });
-
-            
-
-            // Send credentials to the scan tool and set results to serverList variable
-
-            // Loop through the servers in the server list
-            //failedServers = await serverListToDb(scan)
-        } catch (error) {
-            throw error;
-        }
-        //return failedServers
-};
-
-const callAxios = async(credentials) => {
-    let scan = []
+    let credentials = {};
+    let scan = [];
     let failedServers = []
-    try { 
+    try {
+        // Get project credentials
+        await database.project.findAll({
+            attributes: ['host', 'username', 'password'],
+            where: {
+                name: projectNames
+            },
+            raw: true
+        })
+            .then(result => {
+                result.forEach(function (element) {
+                    element.port = 22
+                })
+                credentials = result;
+
+            });
+
         await axios
-            .post(`${process.env.PY_URL}`, {
+            .post(`http://${process.env.PY_URL}:5000/start`, {
                 credentials,
                 headers: {
                     'Content-Type': 'application/json'
@@ -303,12 +288,75 @@ const callAxios = async(credentials) => {
                 console.error(error)
             });
 
-        failedServers = await serverListToDb(scan);
+        // Send credentials to the scan tool and set results to serverList variable
+
+        // Loop through the servers in the server list
+        failedServers = await serverListToDb(scan)
     } catch (error) {
         throw error;
     }
     return failedServers
-};
+}
+
+
+// const startScan = async(projectNames) => {
+//         let credentials = {};
+//         let scan = [];
+//         let failedServers = []
+//         try {
+//             // Get project credentials
+//             await database.project.findAll({
+//                 attributes: ['host', 'username', 'password'],
+//                 where: {
+//                     name: projectNames
+//                 },
+//                 raw: true
+//             })
+//                 .then(result => {
+//                     result.forEach(function (element) {
+//                         element.port = 22
+//                     })
+//                     credentials = result;
+//                 })
+//                 .then(await callAxios(credentials));
+
+            
+
+//             // Send credentials to the scan tool and set results to serverList variable
+
+//             // Loop through the servers in the server list
+//             //failedServers = await serverListToDb(scan)
+//         } catch (error) {
+//             throw error;
+//         }
+//         //return failedServers
+// };
+
+// const callAxios = async(credentials) => {
+//     let scan = []
+//     let failedServers = []
+//     try { 
+//         await axios
+//             // .post(`${process.env.PY_URL}`, {
+//             .post('http://localhost:5000/start', {
+//                 credentials,
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 }
+//             })
+//             .then(res => {
+//                 scan = res.data
+//             })
+//             .catch(error => {
+//                 console.error(error)
+//             });
+
+//         failedServers = await serverListToDb(scan);
+//     } catch (error) {
+//         throw error;
+//     }
+//     return failedServers
+// };
 
 const serverListToDb = async (data) => {
     let errorList = [];
@@ -316,8 +364,18 @@ const serverListToDb = async (data) => {
     for (let server in serverList) {
         // Catch any servers where the scan did not work
         if (typeof serverList[server].depList == "string") {
+            let results = {
+                "scanSuccessful": false,
+                "lastScanTimestamp": `${new Date()}`
+            }
+            await project.updateScanResults(serverList[server].serverIp, results);
             errorList.append(server)
         } else {
+            let results = {
+                "scanSuccessful": true,
+                "lastScanTimestamp": `${new Date()}`
+            }
+            await project.updateScanResults(serverList[server].serverIp, results);
             const hostname = serverList[server].serverIp
             // Loop through the dependencies in the server and update the installed version if needed.
             const srvDeps = serverList[server].depList
@@ -377,5 +435,5 @@ module.exports = {
     updateProjectSoftware,
     deleteProjectSoftware,
     startScan,
-    callAxios,
+    //callAxios,
 }
