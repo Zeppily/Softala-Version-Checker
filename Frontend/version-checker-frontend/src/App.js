@@ -94,7 +94,7 @@ class App extends Component {
             <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
             
             <Container maxWidth="lg" className={classes.container}>
-            <div style={{marginTop: 50, marginBottom: 20}}>
+            <div style={{marginTop: 60, marginBottom: 20}}>
             <h1>SOFTWARE INFORMATION</h1>
             <h3>Overview and EOLs</h3>
            

@@ -51,25 +51,32 @@ class ServerOverview extends Component {
 
     const { dispatch, selectAllServers } = this.props
     dispatch(invalidateServers(selectAllServers))
-  }
+  } 
+
+  
+  
+ 
 
   render() {
     const { selectedServername, handleRefreshClick, serverData, 
       serversIsFetching, serversLastUpdated } = this.props
-     
       
+      //get total number of servers
+      var totalServers = serverData.length;
+
       return (
 
         <Container maxWidth="lg" className={classes.container}>
             <div style={{marginTop: 100}}>
-            <h1>SERVER OVERVIEW</h1>
-            <h3>List of all servers</h3>
-            <p>You can view and edit server info here</p>
-            
-            <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
+                <h1>SERVER OVERVIEW</h1>
+                <h3>List of all servers</h3>
+                <p>You can view and edit server info here</p>
+                <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
             </div>
 
-            
+            <p>Total servers</p>
+            <h3>{totalServers}</h3>
+
             <div className={classes.root} style={{marginTop: 50}}>
               
               {serverData.map((accordion) => {
