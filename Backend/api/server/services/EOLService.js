@@ -54,7 +54,7 @@ const getProjectSpecificEOLs = async(project) => {
                     where: {
                         [Op.and]: {
                             software_name : {
-                                [Op.or] : [{[Op.like] : name}, {[Op.like] : formatted_name1}, {[Op.like] : formatted_name2 }]
+                                [Op.or] : [{[Op.like] : name}, {[Op.like] : `${formatted_name1}`}, {[Op.like] : `${formatted_name2}%` }]
                             },
                             version: {
                                     [Op.or] : [{[Op.like]: `${stricter_version}%`}, {[Op.like]: `${strict_version}%`}, {[Op.like]: `${version}%`}, exact]
@@ -65,8 +65,9 @@ const getProjectSpecificEOLs = async(project) => {
                         
                     }
                 });
+
                 // If db query returns somethong we go into the statement
-                if (eolInfo.length >= 1) {
+                if (eolInfo.length > 0) {
                     let insert = true;
                     // If the db query returns more than one result we ave to loop through the results to find the best match
                     if(eolInfo.length > 1) {
@@ -74,8 +75,9 @@ const getProjectSpecificEOLs = async(project) => {
                             if(eInfo.dataValues.version == vers || eInfo.dataValues.version == strict_version){
                                 eols.forEach(e => {
                                     let x = (e.software_name == eInfo.dataValues.software_name)
-                                    let y = (e.version == eInfo.dataValues.version)                        
-                                    if(x && y) { 
+                                    //let y = (e.version == eInfo.dataValues.version)                        
+                                    //if(x && y) { 
+                                    if(x) {
                                         insert = false
                                     }                                                       
                                 })
@@ -88,16 +90,21 @@ const getProjectSpecificEOLs = async(project) => {
                     } else {
                         // If just one result is returned from db query we check if that info is already in the list and add if not adds to the list
                         eolInfo.forEach(eInfo => {
-                                if(eols > 0){
+                                if(eols.length > 0){
                                     eols.forEach(e => {
                                         let x = (e.software_name == eInfo.dataValues.software_name)
-                                        let y = (e.version == eInfo.dataValues.version)                        
-                                        if(x && y) { 
+                                        console.log('e.software_name = ', e.software_name)
+                                        console.log('eInfo.dataValues.software_name = ', eInfo.dataValues.software_name)
+                                        //let y = (e.version == eInfo.dataValues.version)                        
+                                        //if(x && y) {
+                                        if(x) { 
+                                            console.log('already in the list')
                                             insert = false
                                         }
                                     }) 
     
                                     if (insert){
+                                        console.log('not in the list')
                                         eols.push(eInfo.dataValues)
                                     } 
                                 } else {
