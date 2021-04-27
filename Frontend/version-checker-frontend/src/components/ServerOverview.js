@@ -68,21 +68,14 @@ class ServerOverview extends Component {
     //get total number of servers
     var totalServers = serverData.length;
 
-    // here boolean comparison weather the latest scan has been successful
-    var booleanValue = true;// import the scan status here from props
-    var scanStatus = "";
+    // loops through servers that have failed
+    let i =0;
+    serverData.forEach(e => {
+      if(e.scansuccessful != true){
+      i++
+      }})
 
-      if(booleanValue == true) {
-        scanStatus=(<Brightness1Icon style={{ color: green[500] }} />);
-      } else {
-        scanStatus=(<Brightness1Icon style={{ color: red[500] }} />);
-      }
-
-    // get length of true/false scans
-    // test array of true/false
-    const arr = [true, true, false, false, false];  // import here the array boolean values
-    const PassingServers = arr.filter(Boolean).length;
-    const notPassingServers = arr.length - PassingServers;
+    const notPassingServers = i;
 
 
     return (
@@ -121,12 +114,19 @@ class ServerOverview extends Component {
           </div>
 
           {serverData.map((accordion) => {
-            let { name, host, uptime, lastupdated } = accordion; // add password here?
+            let { name, host, uptime, lastupdated, timestamp, scansuccessful } = accordion; // add password here?
             if (!uptime) { uptime = 0 }
-            console.log('servername: ', name)
-            console.log('host: ', host)
-            console.log('uptime: ', uptime)
-            console.log('lastupdated: ', lastupdated)
+          
+              //This works!
+              // here boolean comparison weather the latest scan has been successful
+              var booleanValue = scansuccessful;// import the scan status here from props
+              var scanStatus = "";
+
+                if(booleanValue == true) {
+                  scanStatus=(<Brightness1Icon style={{ color: green[500] }} />);
+                } else {
+                  scanStatus=(<Brightness1Icon style={{ color: red[500] }} />);
+                } 
 
             return (
               <Accordion defaultClosed>
@@ -154,6 +154,10 @@ class ServerOverview extends Component {
                   <div className={classes.column} />
                   <div className={clsx(classes.column, classes.helper)}>
                     <Typography className={classes.heading}>
+
+                     Date of last scan: {timestamp} {/* server timestamp */}
+                    </Typography>
+                    <Typography className={classes.heading}>
                       Total uptime: {uptime} days
                     </Typography>
                     <Typography className={classes.heading}>
@@ -161,11 +165,14 @@ class ServerOverview extends Component {
                         Link to project domain
                       </a>
                     </Typography>
+
                         <NavLink
                           exact to="/"
                           onClick={() => this.handleChange(name)}>
                           {name} information
                         </NavLink>
+
+                    
                   </div>
                 </AccordionDetails>
 
