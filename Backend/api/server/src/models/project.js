@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     uptime: {
       type: DataTypes.STRING
+    },
+    scansuccessful: {
+      type: DataTypes.BOOLEAN
+    },
+    timestamp: {
+      type: DataTypes.STRING
     }
   }, {
     createdAt: false,

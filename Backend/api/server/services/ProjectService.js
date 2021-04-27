@@ -4,7 +4,7 @@ const axios = require('axios');
 const getAllProjects = async() => {
     try {
         return await database.project.findAll({
-            attributes: ['host', 'name', 'uptime'],
+            attributes: ['host', 'name', 'uptime', 'scansuccessful', 'timestamp'],
         });
     } catch (error) {
         throw error;
@@ -24,6 +24,26 @@ const updateProject = async(project, updateProject) => {
         const updatedProject = await database.project.update(updateProject, { 
             where: { name: project } 
         });
+        if(updatedProject[0]) {
+            return updatedProject;
+        }
+        return null;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const updateScanResults = async(hostname, updateProject) => {
+    try {
+        const updatedProject = await database.project.update(
+            {
+                scansuccessful: updateProject.scanSuccessful,
+                timestamp: updateProject.lastScanTimestamp
+            },
+            {
+                where: { host: hostname }
+            }
+        );
         if(updatedProject[0]) {
             return updatedProject;
         }
@@ -65,7 +85,7 @@ const getUptime = async(projectNames) => {
             });
 
         await axios
-            .post(`http://${process.env.PY_URL}:5000/uptime`, {   
+            .post(`http://${process.env.PY_URL}:5000/uptime`, { 
                 credentials,
                 headers: {
                     'Content-Type': 'application/json'
@@ -97,5 +117,6 @@ module.exports = {
     addProject,
     updateProject,
     deleteProject,
-    getUptime
+    getUptime,
+    updateScanResults
 }
