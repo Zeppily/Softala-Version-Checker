@@ -1,4 +1,5 @@
 import database from '../src/models';
+const axios = require('axios');
 
 const getAllSoftwares = async() => {
     try {
@@ -47,16 +48,31 @@ const updateSoftware = async(software, updateSoftware) => {
     }
 }
 
-// const deleteSoftware = async(id) => {
-//     try {
-//         const deletedSoftware = await database.software.destroy({
-//             where: { software_id: Number(id) }
-//         });
-//         return deletedSoftware;
-//     } catch (error) {
-//         throw error;
-//     }
-// }
+const getLatestSoftware = async() => {
+    let softwares = await database.software.findAll({attributes: ['name'], raw: true});
+    let software_list = softwares.map(software => software.name)
+    let new_software_version_info;
+    try {
+        await axios
+            .post(`http://localhost:8888/version/`, {
+                software_list,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => {
+                new_software_version_info = res.data
+            })
+            .catch(error => {
+                console.error(error)
+            });
+        return new_software_version_info;
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+}
+
 
 const deleteSoftware = async(software) => {
     try {
@@ -73,5 +89,6 @@ module.exports = {
     getAllSoftwares,
     addSoftware,
     updateSoftware,
-    deleteSoftware
+    deleteSoftware,
+    getLatestSoftware
 }

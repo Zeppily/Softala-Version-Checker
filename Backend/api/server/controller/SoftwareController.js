@@ -6,7 +6,6 @@ const util = new Util();
 const getAllSoftwares = async(req, res) => {
     try {
         const allSoftwares = await SoftwareService.getAllSoftwares();
-        console.log(`this is allsoftwares ${allSoftwares}`)
         if (allSoftwares.length > 0) {
             util.setSuccess(200, 'Software retrieved', allSoftwares);
         } else {
@@ -25,7 +24,6 @@ const addSoftware = async(req, res) => {
         return util.send(res);
     }
     const newSoftware = req.body;
-    // console.log(newSoftware);
     try {
         const createdSoftware = await SoftwareService.addSoftware(newSoftware);
         util.setSuccess(201, 'Software Added!', createdSoftware);
@@ -79,6 +77,21 @@ const updatedSoftware = async(req, res) => {
     }
 }
 
+const getLatestSoftware = async(req, res) => {
+    try {
+        const latestSoftware = await SoftwareService.getLatestSoftware();
+        if(latestSoftware) {
+            util.setSuccess(200, `This is the info`, latestSoftware);
+        } else {
+            util.setSuccess(404, 'some error');
+        }
+        return util.send(res);
+    } catch (error) {
+        util.setError(404, error.message);
+        return util.send(res);
+    }
+}
+
 // const deleteSoftware = async(req, res) => {
 //     const { software_id } = req.params;
     
@@ -124,5 +137,6 @@ module.exports = {
     getAllSoftwares,
     addSoftware,
     updatedSoftware,
-    deleteSoftware
+    deleteSoftware,
+    getLatestSoftware
 }
