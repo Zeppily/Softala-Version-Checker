@@ -52,6 +52,8 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
         setProjects(props.obj.serverData) 
     }, []);
 
+
+
     
     //Calls the backend to start the whole scan process
     const initiateScan = (event) => {

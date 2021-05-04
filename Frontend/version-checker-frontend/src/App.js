@@ -94,7 +94,7 @@ class App extends Component {
             <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
             
             <Container maxWidth="lg" className={classes.container}>
-            <div style={{marginTop: 50, marginBottom: 20}}>
+            <div style={{marginTop: 60, marginBottom: 20}}>
             <h1>SOFTWARE INFORMATION</h1>
             <h3>Overview and EOLs</h3>
            
@@ -120,16 +120,19 @@ class App extends Component {
             
                 
             <Grid container style={{ marginTop: 10, maxHeight: 60, marginBottom: 20}}>
-              <Grid item xs={2}>
+              <Grid item xs={4}>
                 <Button variant="contained" color="primary"  onClick={this.handleRefreshClick}>
                       Update forms
                     </Button>
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={4}>
                   <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
               </Grid>
-              <Grid item xs={8} >
-                <Grid container justify="flex-end">
+              <Grid item xs={4} >
+                <Grid container 
+                //justify="flex-end"
+                style={{ marginLeft: 80 }}
+                >
                <Deletebutton obj = {{
                             selectedServername: selectedServername, 
                             handleNewServerAdded: this.handleNewServerAdded,
