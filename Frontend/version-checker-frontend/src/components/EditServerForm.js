@@ -10,61 +10,45 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 
 export default function EditServerForm(props) {
-    console.log(props);
+    //console.log(props);
     const [open, setOpen] = React.useState(false);
     const [newserver, setNewserver] = React.useState({
        host: props.host,
        name: props.name,
        username: "",
-       password: "",
-              
+       
     })
 
-    const [confirmpassword, setConfirmpassword] = React.useState("");// password confirmation, is not sent to database
+   
 
     const handleClickOpen = () => {
         setOpen(true);
     }
 
-    // password hide / visible
-    const [values, setValues] = React.useState({
-        password: "",
-        confirmpassword: "",         // password confirmation, is not sent to database
-        showPassword: false,
-      });
-       const handleClickShowPassword = () => {
-        setValues({ ...values, showPassword: !values.showPassword });
-      };
-      const handlePasswordChange = (prop) => (event) => {
-        setValues({ ...values, [prop]: event.target.value });
-      }; 
-    // password hide / visible
-
+    
     const submitData = () => {
-            if (newserver.password !== confirmpassword){      // password comparison happens here
-                alert("Passwords don't match");
-            } else {
+            
                 let trimhost = newserver.host.trim()
                 let trimname = newserver.name.trim()
                 let trimusername = newserver.username.trim()
                 
                 if(trimhost && trimname && trimusername){
-                    let trimmedserver = {host: trimhost, name: trimname, username: trimusername, password: newserver.password}
+                    let trimmedserver = {host: trimhost, name: trimname, username: trimusername}
                     addServer(trimmedserver);
                     setNewserver({
                         host: "",
                         name: "",
                         username: "",
-                        password: ""
+                        
                     })
                     setOpen(false);
-                    setConfirmpassword("");   
+                    
                 }else{
                     alert("You must provide Host, Projectname and Username.");
                 } 
             } 
 
-    }
+    
 
     const handleCancelClose = () => {
         setOpen(false);
@@ -93,7 +77,7 @@ export default function EditServerForm(props) {
         })
         .catch(err => alert(`There was an error with updating a server: ${err}`))
 
-        //props.handleNewServerAdded(newserver.name) //change this
+        
     }
 
     return (
@@ -128,7 +112,7 @@ export default function EditServerForm(props) {
                         fullWidth 
                     /> 
 
-                    <InputLabel htmlFor="username" style={{marginTop: 20}}>Username*</InputLabel>                    {/*  // check if needed to update in form*/}
+                   <InputLabel htmlFor="username" style={{marginTop: 20}}>Username*</InputLabel>                 
                     <Input
                         onChange={e => inputChanged(e)}
                         value={newserver.username}
@@ -138,30 +122,7 @@ export default function EditServerForm(props) {
                         margin="dense"
                         fullWidth
                     /> 
-                    
-                    <InputLabel htmlFor="password" style={{marginTop: 20}}>Password*</InputLabel>                   {/*  // check if needed to update  in form*/}
-                    <Input
-                        type={values.showPassword ? "text" : "password"}
-                        onChange={e => inputChanged(e)}
-                        value={newserver.password}
-                        id="password"
-                        label="Password"
-                        name="password"
-                        margin="dense"
-                        fullWidth
-                    /> 
-
-                    <InputLabel htmlFor="ConfirmPass" style={{marginTop: 20}}>Confirm password*</InputLabel>        {/*  // check if needed to update in form*/}
-                    <Input
-                        type={values.showPassword ? "text" : "password"}
-                        onChange={e => setConfirmpassword(e.target.value)}
-                        value={confirmpassword}
-                        id="ConfirmPass"
-                        label="Confirmpassword"
-                        name="confirmpassword"
-                        margin="dense"
-                        fullWidth
-                    /> 
+               
                     
                 </DialogContent>
                 <DialogActions>
