@@ -16,11 +16,9 @@ const getAllEOLs = async() => {
 // Get project specific eol information
 const getProjectSpecificEOLs = async(project) => {
     let eols = []
-
     try {
         // Get a list of softwares used in the project
         const softwares = await service.getAllProjectSpecificSoftware(project);
-        
         if(softwares) {
                 // Loop through the individual software on the project
             for (let i in softwares) {
@@ -93,18 +91,15 @@ const getProjectSpecificEOLs = async(project) => {
                                 if(eols.length > 0){
                                     eols.forEach(e => {
                                         let x = (e.software_name == eInfo.dataValues.software_name)
-                                        console.log('e.software_name = ', e.software_name)
-                                        console.log('eInfo.dataValues.software_name = ', eInfo.dataValues.software_name)
+                                       
                                         //let y = (e.version == eInfo.dataValues.version)                        
                                         //if(x && y) {
                                         if(x) { 
-                                            console.log('already in the list')
                                             insert = false
                                         }
                                     }) 
     
                                     if (insert){
-                                        console.log('not in the list')
                                         eols.push(eInfo.dataValues)
                                     } 
                                 } else {
@@ -114,7 +109,7 @@ const getProjectSpecificEOLs = async(project) => {
                     }    
                 }               
             }
-        }       
+        }      
         return eols
     } catch (error) {
         throw error;
