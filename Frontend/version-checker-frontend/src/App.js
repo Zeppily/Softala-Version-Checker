@@ -12,10 +12,12 @@ import Eolinfo from './components/Eolinfo';
 import Listbutton from './components/Listbutton';
 import AddServerForm from "./components/AddServerForm";
 import Deletebutton from './components/Deletebutton';
+import AddEolForm from './components/AddEolForm';
+
 import { connect } from "react-redux";
 import { selectServername, fetchEolsIfNeeded, invalidateEols, 
           fetchServerSoftwareIfNeeded, invalidateServerSoftware, 
-          invalidateServers, fetchServersIfNeeded, newServerAdded } from './actions';
+          invalidateServers, fetchServersIfNeeded, newServerAdded, receiveEols } from './actions';
 import PropTypes from 'prop-types';
 
 
@@ -50,6 +52,10 @@ class App extends Component {
 
   handleNewServerAdded = (newServerName) => {
     this.props.dispatch(newServerAdded(newServerName))
+  }
+
+  handleNewEolAdded = (ServerName) => {
+    this.props.dispatch(receiveEols(ServerName))
   }
 
   handleChange = nextServername => {
@@ -158,7 +164,9 @@ class App extends Component {
                   }
                 </Grid>
                 {/* Software Version Information */}
-                
+                <Grid item xs={4}>
+                <AddEolForm handleRefreshClick ={this.handleRefreshClick}/>
+                </Grid>
                 <Grid item xs={12} md={12} lg={12}>
                   {isEmptySoft ? (serverSoftwareIsFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
                     :  
@@ -168,11 +176,7 @@ class App extends Component {
                   </Paper>
                   }
                 </Grid>
-              
-
-    
-              
-
+            
               </Grid>
             </Container>
           </main>
