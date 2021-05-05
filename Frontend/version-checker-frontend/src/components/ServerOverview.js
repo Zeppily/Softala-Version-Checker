@@ -78,6 +78,12 @@ class ServerOverview extends Component {
     const notPassingServers = i;
 
 
+    // Sorts server names aplhabetically
+    if (Array.isArray(serverData)) {
+      serverData.sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+
     return (
 
       <Container maxWidth="lg" className={classes.container}>
