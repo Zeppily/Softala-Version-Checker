@@ -40,6 +40,8 @@ services:
       dockerfile: ./Dockerfile
     env_file: 
       - backend.env
+    volumes:
+      - ~/.ssh:/root/.ssh 
     ports:
       - "8000:8000"
 volumes:
