@@ -18,6 +18,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
+
 const middleware = [ thunk ]
 
 //Creating a store for the Redux so we can access required resources from other components
@@ -43,6 +44,7 @@ ReactDOM.render(
       </Switch>
     </Router>
   </Provider>,
+  
   document.getElementById('root')
 );
 
