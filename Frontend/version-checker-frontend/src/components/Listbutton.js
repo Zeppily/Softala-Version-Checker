@@ -21,8 +21,6 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
     const [projects, setProjects] = useState(props.obj.serverData);
     const [conditional, setConditional] = useState(true);
 
-    console.log(props.obj.serverData[0].name);
-
     const checkData = (dataToCheck) => {
       if (Array.isArray(dataToCheck)) {
         setConditional(false)
@@ -53,8 +51,9 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
     //Gets project names for the dropdown menu
     useEffect(() => {
         setProjects(props.obj.serverData) 
-
-        handleProjectChange(props.obj.serverData[0].name)
+        if (props.obj.serverData) {
+          handleProjectChange(props.obj.serverData[0].name)
+        }
 
     }, []);
 

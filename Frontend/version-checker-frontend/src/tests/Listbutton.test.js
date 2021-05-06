@@ -11,6 +11,8 @@ afterAll(() => {
   jest.fn().mockClear
 })
 
+const handleChange = nextServername => {'test'}
+
 //TODO: Need to figure out a way to test the startscan button when it has the right kind of data and should find the text "Scan in progress"
 //Changing fetching servers to redux broke it
 
@@ -34,7 +36,7 @@ test('renders start server scan button and gets alert because of faulty data', (
   });
 
 test('renders start server scan button and changes text when clicked', () => {
-    render(<Listbutton obj={{selectedServername: selectedServername, serverData: serverData}}/>);
+    render(<Listbutton obj={{selectedServername: selectedServername, serverData: serverData, handleChange: handleChange}}/>);
     screen.getByText('Start server scan').click();
     const buttonElement = screen.getByText("Scan in progress");
     expect(buttonElement).toBeInTheDocument();
