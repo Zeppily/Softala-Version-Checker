@@ -13,6 +13,8 @@ import Listbutton from './components/Listbutton';
 import AddServerForm from "./components/AddServerForm";
 import Deletebutton from './components/Deletebutton';
 import AddEolForm from './components/AddEolForm';
+import Footer from './components/Footer';
+
 
 import { connect } from "react-redux";
 import { selectServername, fetchEolsIfNeeded, invalidateEols, 
@@ -180,7 +182,9 @@ class App extends Component {
               </Grid>
             </Container>
           </main>
+          <Footer/>
       </div>
+     
     )
   }
 }
@@ -233,6 +237,11 @@ export default connect(mapStateToProps)(App)
 
 function createStyling() {
   const myStyles = makeStyles((theme) => ({
+
+    footer: {
+      marginTop: 0 
+    },
+
     root: {
       display: 'flex',
     },
