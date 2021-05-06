@@ -20,7 +20,7 @@ import EditServerForm from './EditServerForm.js';
 import Brightness1Icon from '@material-ui/icons/Brightness1';
 import { green } from '@material-ui/core/colors';
 import { red } from '@material-ui/core/colors';
-
+import Footer from './Footer';
 
 class ServerOverview extends Component {
   static propTypes = {
@@ -85,7 +85,7 @@ class ServerOverview extends Component {
 
 
     return (
-
+      <div>
       <Container maxWidth="lg" className={classes.container}>
         <div style={{ marginTop: 100 }}>
           <h1>SERVER OVERVIEW</h1>
@@ -199,7 +199,10 @@ class ServerOverview extends Component {
             );
           })}
         </div>
-      </Container>
+        
+      </Container> 
+      <Footer/>
+     </div>
     )
 
   }
