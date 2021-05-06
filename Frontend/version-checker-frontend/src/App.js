@@ -70,7 +70,7 @@ class App extends Component {
     }
 
     let isEmptyEol = eols.length === 0
-    if(typeof eols == 'string'){
+    if(Array.isArray(eols) == false){
        isEmptyEol = true
       }
     return(

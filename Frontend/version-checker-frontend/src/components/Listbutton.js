@@ -5,6 +5,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
+import config from '../config.json';
+import { Typography } from "@material-ui/core";
 
   const ITEM_HEIGHT = 48;
   
@@ -14,9 +16,18 @@ import PropTypes from 'prop-types'
     //Gets the default value set for Redux for useState
     const [currentProject, setCurrentProject] = useState(props.obj.selectedServername);
     const [loading, setLoading] = useState(false)
+    const [projects, setProjects] = useState([]);
+    const [conditional, setConditional] = useState(true);
+
+    const checkData = (dataToCheck) => {
+      if (Array.isArray(dataToCheck)) {
+        setConditional(false)
+      }
+    }
 
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
+      checkData(projects)
     };
   
     //When a project is changed from the dropdown menu
@@ -35,14 +46,14 @@ import PropTypes from 'prop-types'
       
     };
 
-    const [projects, setProjects] = useState([]);
-
     //Gets project names for the dropdown menu
     useEffect(() => {
-        fetch('http://localhost:8000/api/projects')
+        fetch(`${config.url}/api/projects`)
           .then((response) => response.json())
           .then((data) => setProjects(data.data))
           .catch((error) => console.error(error))
+
+        checkData(projects)
           
       }, []);
 
@@ -52,7 +63,7 @@ import PropTypes from 'prop-types'
       const projectnames = projects.map(project => project.name);
       const projectnamesObj = {name: projectnames};
       setLoading(true);
-      fetch("http://localhost:8000/startscan",
+      fetch(`${config.url}/api/startscan`,
       {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -66,8 +77,8 @@ import PropTypes from 'prop-types'
       })
       .catch(err => console.error(err))
     };
-  
 
+    console.log("conditional", conditional)
 
     return (
       <div>
@@ -81,29 +92,55 @@ import PropTypes from 'prop-types'
         >
           {currentProject}
         </Button>
-        <Menu
-          id="long-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={open}
-          onClose={handleClose}
-          PaperProps={{
-            style: {
-              maxHeight: ITEM_HEIGHT * 4.5,
-              width: '20ch',
-            },
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {projects.map((option) => (
-            <MenuItem key={option.name} onClick={() => handleProjectChange(option.name)}>
-              {option.name}
+        
+        { conditional ?
+          <Menu
+            id="long-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: '20ch',
+              },
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <MenuItem>
+              Is empty
             </MenuItem>
-          ))}
-        </Menu>
+          </Menu>
+          :
+          <Menu
+            id="long-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                maxHeight: ITEM_HEIGHT * 4.5,
+                width: '20ch',
+              },
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            {projects.map((option) => (
+              <MenuItem key={option.name} onClick={() => handleProjectChange(option.name)}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </Menu>
+        }
+        
 
         { loading? 
           <Button>Scan in progress</Button> 

@@ -15,7 +15,7 @@ const getAllProjectSoftwares = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -32,19 +32,10 @@ const getAllProjectSpecificSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        console.log(error)
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
-
-// static async getProjectSoftwareVersionInfo(req, res) {
-    //     try {
-
-    //         return 
-    //     }
-    // }//check out link below for join tomorrow
-    //https://stackoverflow.com/questions/46551060/how-to-perform-multiple-inner-joins-in-sequelize-postgresql
 
 // Add a software to a project
 const addProjectSoftware = async(req, res) => {
@@ -99,7 +90,7 @@ const updatedProjectSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(404, error);
+        util.setError(404, error.message);
         return util.send(res);
     }
 }
@@ -123,7 +114,7 @@ const deleteProjectSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -142,7 +133,7 @@ const startScan = async(req, res) => {
         
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
