@@ -58,3 +58,4 @@ npx sequelize-cli db:migrate
 (* Docker compose: https://docs.docker.com/compose/install/)
 ## Notes
 - Passwords are optionally stored, you can create SSH keys for the target servers on the server hosting the stack beforehand.  
+- Make sure SSH keys generated are not specified to a user.
