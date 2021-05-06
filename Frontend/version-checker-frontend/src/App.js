@@ -1,12 +1,9 @@
 import React, { Component, useState, useEffect, version } from "react";
 import './App.css';
 import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Paper } from "@material-ui/core";
+import { Grid, Paper, GridList, GridListTile } from "@material-ui/core";
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Versioninfo from './components/Versioninfo';
@@ -14,9 +11,15 @@ import Overview from './components/Overview';
 import Eolinfo from './components/Eolinfo';
 import Listbutton from './components/Listbutton';
 import AddServerForm from "./components/AddServerForm";
+import Deletebutton from './components/Deletebutton';
+import AddEolForm from './components/AddEolForm';
+
 import { connect } from "react-redux";
-import { selectServername, fetchEolsIfNeeded, invalidateEols, fetchServerSoftwareIfNeeded, invalidateServerSoftware } from './actions'
-import PropTypes from 'prop-types'
+import { selectServername, fetchEolsIfNeeded, invalidateEols, 
+          fetchServerSoftwareIfNeeded, invalidateServerSoftware, 
+          invalidateServers, fetchServersIfNeeded, newServerAdded, receiveEols } from './actions';
+import PropTypes from 'prop-types';
+
 
 class App extends Component {
   
@@ -26,21 +29,33 @@ class App extends Component {
     serverSoftware: PropTypes.array.isRequired,
     isFetching: PropTypes.bool.isRequired,
     lastUpdated: PropTypes.number,
-    dispatch: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired,
+    serverData: PropTypes.array.isRequired,
+    selectAllServers: PropTypes.string.isRequired
   }
 
   componentDidMount() {
-    const { dispatch, selectedServername } = this.props
+    const { dispatch, selectedServername, selectAllServers } = this.props
     dispatch(fetchEolsIfNeeded(selectedServername))
     dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+    dispatch(fetchServersIfNeeded(selectAllServers))
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.selectedServername !== this.props.selectedServername) {
-      const { dispatch, selectedServername } = this.props
+    if (prevProps.selectedServername !== this.props.selectedServername || prevProps.selectAllServers !== this.props.selectAllServers) {
+      const { dispatch, selectedServername, selectAllServers } = this.props
       dispatch(fetchEolsIfNeeded(selectedServername))
       dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+      dispatch(fetchServersIfNeeded(selectAllServers))
     }
+  }
+
+  handleNewServerAdded = (newServerName) => {
+    this.props.dispatch(newServerAdded(newServerName))
+  }
+
+  handleNewEolAdded = (ServerName) => {
+    this.props.dispatch(receiveEols(ServerName))
   }
 
   handleChange = nextServername => {
@@ -50,18 +65,22 @@ class App extends Component {
   handleRefreshClick = e => {
     e.preventDefault()
 
-    const { dispatch, selectedServername } = this.props
+    const { dispatch, selectedServername, selectAllServers } = this.props
     dispatch(invalidateEols(selectedServername))
     dispatch(fetchEolsIfNeeded(selectedServername))
     dispatch(invalidateServerSoftware(selectedServername))
     dispatch(fetchServerSoftwareIfNeeded(selectedServername))
+    dispatch(invalidateServers(selectAllServers))
   }
 
 
   render() {
     
-    const { selectedServername, eols, isFetching, lastUpdated, serverSoftware, serverSoftwareLastUpdated, serverSoftwareIsFetching, handleRefreshClick } = this.props
-    console.log(eols)
+    const { selectedServername, eols, isFetching, 
+      lastUpdated, serverSoftware, serverSoftwareLastUpdated, 
+      serverSoftwareIsFetching, handleRefreshClick, serverData, 
+      serversIsFetching, serversLastUpdated } = this.props
+
     let isEmptySoft = false
     if(typeof serverSoftware != 'object'){
       isEmptySoft = true
@@ -70,83 +89,104 @@ class App extends Component {
     }
 
     let isEmptyEol = eols.length === 0
-    if(typeof eols == 'string'){
+    if(Array.isArray(eols) == false){
        isEmptyEol = true
-      }
+    }
+
     return(
       <div className={classes.root}>
-      <div>
-        {/* Toolbar/Banner */}
-        <CssBaseline />
-        <AppBar position="absolute" className={clsx(classes.appBar, classes.appBarShift)}>
-          <Toolbar className={classes.toolbar}>
-            <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Version checker
-            </Typography>
-            <Listbutton obj={{handleChange: this.handleChange, selectedServername: selectedServername, handleRefreshClick: this.handleRefreshClick}}/>
-            <Button variant="contained" color="primary" onClick={this.handleRefreshClick}>
-              Update forms
-            </Button>
-            <AddServerForm />
-          </Toolbar>
-        </AppBar>
-      </div>
-
-        {/*NEEDS FIXING: This is under the topbar for some reason and if taken away cards go under the bar.*/}
-        <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              projectName
-        </Typography>
-
-        {/* Main elements in the dashboard */}
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
+          {/* Main elements in the dashboard */}
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} style={{paddingTop: 40}}/>
+            
+            <Container maxWidth="lg" className={classes.container}>
+            <div style={{marginTop: 60, marginBottom: 20}}>
+            <h1>SOFTWARE INFORMATION</h1>
+            <h3>Overview and EOLs</h3>
+           
+            { serversIsFetching ? 
+                      <Button>Loading Servers</Button>
+                      :
+                      <Listbutton obj={{
+                            handleChange: this.handleChange, 
+                            selectedServername: selectedServername, 
+                            handleRefreshClick: this.handleRefreshClick, 
+                            serverData: serverData,
+                      }}/>
+                    }
+            </div>
+            
           
-          <Container maxWidth="lg" className={classes.container}>
-          
-            <Grid container spacing={2}>
               {/* Overview */}
               <Grid item xs={12} md={12} lg={12}>
-                <Paper className={classes.paper}>
-                  <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
-                </Paper>
-              </Grid>
-
-            {/* Software Version Information */}
-            
-            <Grid item xs={12} md={12} lg={12}>
-              {isEmptySoft ? (serverSoftwareIsFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
-                :  
-              <Paper className={classes.paper}>
-                <Typography variant="h6">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                <Versioninfo serverSoftware={serverSoftware}/>
-              </Paper>
-              }
+                  <Paper className={classes.paper}>
+                          <Overview obj = {{eols: eols, serverSoftware: serverSoftware}}/>
+                  </Paper>
               </Grid>
             
-
-            {/* End-Of-Life Information */}
-            
-            <Grid item xs={12} md={12} lg={12}>
-              {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
-                :  
-              <Paper className={classes.paper}>
-                <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
-                <Eolinfo eols={eols}/>
-              </Paper>
-              }
+                
+            <Grid container style={{ marginTop: 10, maxHeight: 60, marginBottom: 20}}>
+              <Grid item xs={4}>
+                <Button variant="contained" color="primary"  onClick={this.handleRefreshClick}>
+                      Update forms
+                    </Button>
               </Grid>
-            
-
+              <Grid item xs={4}>
+                  <AddServerForm handleNewServerAdded = {this.handleNewServerAdded}/>
+              </Grid>
+              <Grid item xs={4} >
+                <Grid container 
+                //justify="flex-end"
+                style={{ marginLeft: 80 }}
+                >
+               <Deletebutton obj = {{
+                            selectedServername: selectedServername, 
+                            handleNewServerAdded: this.handleNewServerAdded,
+                            handleChange: this.handleChange
+                    }}/>   {/* sends servername data to Deletebutton.js */}
+                </Grid>
+              </Grid>
             </Grid>
-          </Container>
-        </main>
+
+              <Grid container spacing={2}>
+             
+                
+
+                {/* End-Of-Life Information */}
+                
+                <Grid item xs={12} md={12} lg={12}>
+                  {isEmptyEol ? (isFetching ? <h3>Loading from database...</h3> : <h3>No Eol data found or there may be an issue.</h3>)
+                    :  
+                  <Paper className={classes.paper}>
+                    <Typography variant="h6">Last updated at {new Date(lastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                    <Eolinfo eols={eols}/>
+                  </Paper>
+                  }
+                </Grid>
+                {/* Software Version Information */}
+                <Grid item xs={4}>
+                <AddEolForm handleRefreshClick ={this.handleRefreshClick}/>
+                </Grid>
+                <Grid item xs={12} md={12} lg={12}>
+                  {isEmptySoft ? (serverSoftwareIsFetching ? <h3>Loading from database...</h3> : <h3>No data found or there may be an issue.</h3>)
+                    :  
+                  <Paper className={classes.paper}>
+                    <Typography variant="h6">Last updated at {new Date(serverSoftwareLastUpdated).toLocaleTimeString()}.{' '}</Typography>
+                    <Versioninfo serverSoftware={serverSoftware}/>
+                  </Paper>
+                  }
+                </Grid>
+            
+              </Grid>
+            </Container>
+          </main>
       </div>
     )
   }
 }
 
 const mapStateToProps = state => {
-  const { selectedServername, eolsByServername, serverSoftwareByServername } = state
+  const { selectedServername, eolsByServername, serverSoftwareByServername, selectAllServers, serverInfo } = state
   const {
     isFetching,
     lastUpdated,
@@ -165,6 +205,15 @@ const mapStateToProps = state => {
     serverSoftwareItems: []
   }
 
+  const {
+    serversIsFetching,
+    serversLastUpdated,
+    serversItems: serverData
+  } = serverInfo [selectAllServers] || {
+    serversIsFetching: true,
+    serversItems: []
+  }
+
   return {
     selectedServername,
     eols,
@@ -172,7 +221,11 @@ const mapStateToProps = state => {
     lastUpdated,
     serverSoftware,
     serverSoftwareIsFetching,
-    serverSoftwareLastUpdated
+    serverSoftwareLastUpdated,
+    serverData,
+    serversIsFetching,
+    serversLastUpdated,
+    selectAllServers
   }
 }
 
@@ -245,17 +298,18 @@ function createStyling() {
     },
     container: {
       paddingTop: theme.spacing(4),
-      paddingBottom: theme.spacing(4),
+      paddingBottom: theme.spacing(4)
     },
     paper: {
       padding: theme.spacing(2),
       display: 'flex',
       overflow: 'auto',
-      flexDirection: 'column',
+      flexDirection: 'column'
     },
     fixedHeight: {
       height: 240,
     },
+    
   }));
 
   return myStyles

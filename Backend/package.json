@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec babel-node ./api/index.js",
-    "test": "mocha --require @babel/register --timeout 10000"
+    "test": "mocha --require @babel/register --timeout 10000 --exit"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +18,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mocha": "^8.3.2",
+    "node-cron": "^3.0.0",
     "nodemon": "^2.0.7",
     "path": "^0.12.7",
     "pg": "^8.5.1",
@@ -35,5 +36,5 @@
     "@babel/runtime": "^7.13.10",
     "babel-loader": "^8.2.2"
   },
-  "description": ""
+  "description": "[![Node.js CI](https://github.com/Zeppily/Softala-Version-Checker/actions/workflows/node.js.yml/badge.svg)](https://github.com/Zeppily/Softala-Version-Checker/actions/workflows/node.js.yml) # Backend get started In terminal:"
 }

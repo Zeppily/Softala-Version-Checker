@@ -13,7 +13,7 @@ const getAllEOLs = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -31,7 +31,7 @@ const getProjectSpecificEOLs = async(req, res) => {
         return util.send(res);
     } catch (error) {
         console.log(error)
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -87,7 +87,7 @@ const updatedEOL = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(404, error);
+        util.setError(404, error.message);
         return util.send(res);
     }
 }
@@ -106,7 +106,26 @@ const deleteEOL = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
+        return util.send(res);
+    }
+}
+
+const deleteAllEOLs = async(req, res) => {
+
+    try {
+        const eolsToDelete = await EOLService.deleteAllEOLs();
+
+        // If all eols are deleted successfully the db returns 0
+        // so if 0 we go into the success message
+        if (!eolsToDelete) {
+            util.setSuccess(200, 'All EOL information has been deleted');
+        } else {
+            util.setError(404, `Unable to delete all EOL information`);
+        }
+        return util.send(res);
+    } catch (error) {
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -117,5 +136,6 @@ module.exports = {
     addEOL,
     addEOLList,
     updatedEOL,
+    deleteAllEOLs,
     deleteEOL
 }

@@ -16,11 +16,9 @@ const getAllEOLs = async() => {
 // Get project specific eol information
 const getProjectSpecificEOLs = async(project) => {
     let eols = []
-
     try {
         // Get a list of softwares used in the project
         const softwares = await service.getAllProjectSpecificSoftware(project);
-        
         if(softwares) {
                 // Loop through the individual software on the project
             for (let i in softwares) {
@@ -29,30 +27,89 @@ const getProjectSpecificEOLs = async(project) => {
                 let name = softwares[i]['software.name'];
                 let vers = softwares[i].installed_version
                 
-                // Format the version number so it only takes the first number of the version ('12.3.6' becomes '12.')
-                let version = vers.substr(0, (vers.indexOf('.')));
+                let formatted_name1 = name.match(/[A-Za-z0-9]+-/)
+                let formatted_name2 = name.match(/[A-Za-z]+/)
 
-                // Find the eol information for the software
-                let eolInfo = await database.eol.findOne({
+                if (Array.isArray(formatted_name1)) {
+                    formatted_name1 = formatted_name1[0]
+                }
+                
+                if (Array.isArray(formatted_name2)) {
+                    formatted_name2 = formatted_name2[0]
+                }
+
+                // Format the version number so it gives us multiple options to search eols with
+                // Gets the version number up to the first '.'
+                let version = vers.match(/[0-9]+./);
+                // Gets the version number if its just one number, not split by '.'
+                let exact = vers.match(/[0-9]+/);
+                // Gets the first 2 numbers of the version if valid
+                let stricter_version = vers.match(/[0-9]+.[0-9]./)
+                // commented original out. removed the . at the end
+                let strict_version = vers.match(/[0-9]+.[0-9]/)
+
+                let eolInfo = await database.eol.findAll({
                     where: {
                         [Op.and]: {
                             software_name : {
-                                [Op.like] : `%${name}%`
+                                [Op.or] : [{[Op.like] : name}, {[Op.like] : `${formatted_name1}`}, {[Op.like] : `${formatted_name2}%` }]
                             },
                             version: {
-                                [Op.like] : `${version}%`
+                                    [Op.or] : [{[Op.like]: `${stricter_version}%`}, {[Op.like]: `${strict_version}%`}, {[Op.like]: `${version}%`}, exact]
                             }
+                               
+                            
                         }
                         
                     }
                 });
-                
-                // if eol info found add it to the eol list
-                if(eolInfo != null) {
-                    eols.push(eolInfo.dataValues)
-                }
+
+                // If db query returns somethong we go into the statement
+                if (eolInfo.length > 0) {
+                    let insert = true;
+                    // If the db query returns more than one result we ave to loop through the results to find the best match
+                    if(eolInfo.length > 1) {
+                        eolInfo.forEach(eInfo => {
+                            if(eInfo.dataValues.version == vers || eInfo.dataValues.version == strict_version){
+                                eols.forEach(e => {
+                                    let x = (e.software_name == eInfo.dataValues.software_name)
+                                    //let y = (e.version == eInfo.dataValues.version)                        
+                                    //if(x && y) { 
+                                    if(x) {
+                                        insert = false
+                                    }                                                       
+                                })
+
+                                if (insert){
+                                    eols.push(eInfo.dataValues)
+                                }
+                            }                            
+                        })
+                    } else {
+                        // If just one result is returned from db query we check if that info is already in the list and add if not adds to the list
+                        eolInfo.forEach(eInfo => {
+                                if(eols.length > 0){
+                                    eols.forEach(e => {
+                                        let x = (e.software_name == eInfo.dataValues.software_name)
+                                       
+                                        //let y = (e.version == eInfo.dataValues.version)                        
+                                        //if(x && y) {
+                                        if(x) { 
+                                            insert = false
+                                        }
+                                    }) 
+    
+                                    if (insert){
+                                        eols.push(eInfo.dataValues)
+                                    } 
+                                } else {
+                                    eols.push(eInfo.dataValues)
+                                }                                
+                        })
+                    }    
+                }               
             }
-        }       
+        }      
         return eols
     } catch (error) {
         throw error;
@@ -143,6 +200,21 @@ const deleteEOL = async(deleteEOL) => {
     }
 }
 
+//Delete all eols
+const deleteAllEOLs = async() => {
+
+    try {
+        const deletedEOLs = await database.eol.destroy({
+            where: {},
+            truncate: true
+        });
+        // If delete was successful, deletedEOLs will = 0.
+        return deletedEOLs;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports = {
     getAllEOLs,
     getProjectSpecificEOLs,
@@ -150,5 +222,6 @@ module.exports = {
     addEOLList,
     scanEOLs,
     updateEOL,
-    deleteEOL
+    deleteEOL,
+    deleteAllEOLs
 }

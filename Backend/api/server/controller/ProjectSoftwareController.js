@@ -1,5 +1,7 @@
 import EOLService from '../services/EOLService';
 import ProjectSoftwareService from '../services/ProjectSoftwareService';
+import ProjectService from '../services/ProjectService';
+import SlackService from '../services/SlackService';
 import Util from '../utils/Utils';
 
 const util = new Util();
@@ -15,7 +17,7 @@ const getAllProjectSoftwares = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -32,19 +34,10 @@ const getAllProjectSpecificSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        console.log(error)
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
-
-// static async getProjectSoftwareVersionInfo(req, res) {
-    //     try {
-
-    //         return 
-    //     }
-    // }//check out link below for join tomorrow
-    //https://stackoverflow.com/questions/46551060/how-to-perform-multiple-inner-joins-in-sequelize-postgresql
 
 // Add a software to a project
 const addProjectSoftware = async(req, res) => {
@@ -99,7 +92,7 @@ const updatedProjectSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(404, error);
+        util.setError(404, error.message);
         return util.send(res);
     }
 }
@@ -115,7 +108,6 @@ const deleteProjectSoftware = async(req, res) => {
         // }
     try {
         const projectSoftwareToDelete = await ProjectSoftwareService.deleteProjectSoftware(deletedProjectSoftware);
-        console.log(`this is the result in the controller ${projectSoftwareToDelete}`)
         if (projectSoftwareToDelete) {
             util.setSuccess(200, 'Software deleted from project');
         } else {
@@ -123,7 +115,7 @@ const deleteProjectSoftware = async(req, res) => {
         }
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }
@@ -134,15 +126,18 @@ const startScan = async(req, res) => {
     try {
         const startScan = await ProjectSoftwareService.startScan(projectNames);
         const scanEols = await EOLService.scanEOLs();
+        const getUptime = await ProjectService.getUptime(projectNames);
         if (startScan) {
-            util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}`);
+            util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}\n ${getUptime}`);
         } else {
             util.setError(404, 'Scan was unsuccessful');
         }
+
+        await SlackService.slackBot()
         
         return util.send(res);
     } catch (error) {
-        util.setError(400, error);
+        util.setError(400, error.message);
         return util.send(res);
     }
 }

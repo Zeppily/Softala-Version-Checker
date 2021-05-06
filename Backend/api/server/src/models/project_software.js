@@ -24,8 +24,14 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Project_Software.associate = models => {
-    Project_Software.belongsTo(models.project, { foreignKey: 'project_id', as: 'project' })
-    Project_Software.belongsTo(models.software, { foreignKey: 'software_id', as: 'software' })
+    Project_Software.belongsTo(models.project, { 
+      foreignKey: 'project_id', as: 'project',
+      onDelete: 'CASCADE'
+    })
+    Project_Software.belongsTo(models.software, { 
+      foreignKey: 'software_id', as: 'software',
+      onDelete: 'CASCADE'
+    })
   }
   return Project_Software;
 };
