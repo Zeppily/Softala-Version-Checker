@@ -53,13 +53,9 @@ export default function AddEolForm(props) {
                     alert("New Eol added");
             } else {
                     alert(`Something went wrong.  Status code: ${res.status}`)
-            }
-             
+            }    
         })
-       
         .catch(err => alert(`There was an error with adding a new EOL: ${err}`))
-
-         
     }
 
     return (
