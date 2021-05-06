@@ -43,6 +43,8 @@ DB_USER=<username>
 DB_PSWD=<password>
 DB_URL=database
 PY_URL=py_app
+
+Change config.json to server ip/hostname where the stack is posted @ Frontend/version-checker-frontend/src/config.json
 ```
 6. Run Docker Compose
 ```
