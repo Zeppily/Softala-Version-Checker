@@ -18,6 +18,8 @@ services:
     build:
       context: ./py_scantool
       dockerfile: ./Dockerfile
+    volumes:
+      - ~/.ssh:/root/.ssh 
     ports:
       - "5000:5000"
 
@@ -40,8 +42,6 @@ services:
       dockerfile: ./Dockerfile
     env_file: 
       - backend.env
-    volumes:
-      - ~/.ssh:/root/.ssh 
     ports:
       - "8000:8000"
 volumes:
