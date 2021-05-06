@@ -50,12 +50,12 @@ const updateSoftware = async(software, updateSoftware) => {
 
 const getLatestSoftware = async() => {
     let softwares = await database.software.findAll({attributes: ['name'], raw: true});
-    let software_list = softwares.map(software => software.name)
+    let software_list = softwares.map(software => software.name)    
     let new_software_version_info;
     try {
         await axios
-            .post(`http://localhost:8888/version/`, {
-                software_list,
+            .post(`http://${process.env.PY_URL}:5000/version/`, {
+                software_list, 
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -66,6 +66,10 @@ const getLatestSoftware = async() => {
             .catch(error => {
                 console.error(error)
             });
+        new_software_version_info.forEach(software => {
+            updateSoftware(software.name, software)
+        })
+
         return new_software_version_info;
     } catch (error) {
         console.error(error)

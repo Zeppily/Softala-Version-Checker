@@ -18,13 +18,17 @@ export default function AddEolForm(props) {
     })
     
     const submitData = async (e) =>{  
-        await addEol(neweol)
+        if(neweol.software_name && neweol.version && neweol.eol_date) {
+            await addEol(neweol)
             props.handleRefreshClick(e)
             setNewEol({
                 software_name: "",
                 version: "",
                 eol_date: "",   
-            })                
+            })
+        } else {
+            alert("You must provide software name, version and EOL date."); 
+        }                
     }
 
    const handleClickOpen = () => {
