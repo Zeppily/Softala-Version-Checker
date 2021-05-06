@@ -81,7 +81,7 @@ const getLatestSoftware = async(req, res) => {
     try {
         const latestSoftware = await SoftwareService.getLatestSoftware();
         if(latestSoftware) {
-            util.setSuccess(200, `This is the info`, latestSoftware);
+            util.setSuccess(200, `The software has been updated: `, latestSoftware);
         } else {
             util.setSuccess(404, 'some error');
         }
