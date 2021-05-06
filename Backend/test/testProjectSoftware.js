@@ -19,7 +19,8 @@ describe('Test projectSoftware endpoints and table', function() {
             "host": "www.example.com",
             "name": "testProject2",
             "username": "user",
-            "password": "pass"
+            "password": "pass",
+            "uptime": 25
         }
     
         it("returns status code 201 and message 'Project Added'", function (done) {
@@ -71,7 +72,7 @@ describe('Test projectSoftware endpoints and table', function() {
         });
     });
 
-    describe('Get data from software table', function() {
+    describe('Get data from project_software table', function() {
 
         it('returns status 200', function(done) {
             chai.request(server)
@@ -122,10 +123,23 @@ describe('Test projectSoftware endpoints and table', function() {
         
         it("returns status code 200 and message 'Project Deleted'", function (done) {
             chai.request(server)
-                    .delete(`/api/projects/${updateId}`)
+                    .delete(`/api/projects/testProject2`)
                     .end((err, res) => {
                         expect(res.statusCode).to.equal(200)
                         expect(res.body.message).to.equal('Project deleted')
+                        done();
+                    });
+        })   
+    })
+
+    describe('Delete the software from the software table', function () {
+        
+        it("returns status code 200 and message 'Project Deleted'", function (done) {
+            chai.request(server)
+                    .delete(`/api/softwares/testSoftware`)
+                    .end((err, res) => {
+                        expect(res.statusCode).to.equal(200)
+                        expect(res.body.message).to.equal('Software deleted')
                         done();
                     });
         })   

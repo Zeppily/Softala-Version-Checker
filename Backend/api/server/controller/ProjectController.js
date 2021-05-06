@@ -37,17 +37,17 @@ const addProject = async(req, res) => {
 
 const updatedProject = async(req, res) => {
     const alteredProject = req.body;
-    const { id } = req.params;
-    if (!Number(id)) {
-        util.setError(400, 'Please input a valid id');
+    const { project } = req.params;
+    if (!req.body.host || !req.body.name || !req.body.username) {
+        util.setError(400, 'Please provide complete details');
         return util.send(res);
     }
     try {
-        const updateProject = await ProjectService.updateProject(id, alteredProject);
+        const updateProject = await ProjectService.updateProject(project, alteredProject);
         if(!updateProject) {
-            util.setError(404, `Cannot find project with the id: ${id}`);
+            util.setError(404, `Cannot find ${project} project`);
         } else {
-            util.setSuccess(200, 'Project updated', updateProject);
+            util.setSuccess(200, `The project has been updated`, updateProject);
         }
         return util.send(res);
     } catch (error) {
@@ -57,20 +57,20 @@ const updatedProject = async(req, res) => {
 }
 
 const deleteProject = async(req, res) => {
-    const { id } = req.params;
+    const { project } = req.params;
 
-    if (!Number(id)) {
-        util.setError(400, 'Please provide a numeric value for id');
-        return util.send(res);
-    }
+    // if (!Number(id)) {
+    //     util.setError(400, 'Please provide a numeric value for id');
+    //     return util.send(res);
+    // }
 
     try {
-        const projectToDelete = await ProjectService.deleteProject(id);
+        const projectToDelete = await ProjectService.deleteProject(project);
 
         if (projectToDelete) {
             util.setSuccess(200, 'Project deleted');
         } else {
-            util.setError(404, `Project with the id ${id} cannot be found`);
+            util.setError(404, `${project} project cannot be found`);
         }
         return util.send(res);
     } catch (error) {

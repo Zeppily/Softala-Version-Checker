@@ -9,66 +9,46 @@ import config from '../config.json';
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 
-export default function AddServerForm(props) {
+export default function EditServerForm(props) {
+    //console.log(props);
     const [open, setOpen] = React.useState(false);
     const [newserver, setNewserver] = React.useState({
-       host: "",
-       name: "",
+       host: props.host,
+       name: props.name,
        username: "",
-       password: "",
-              
+       
     })
 
-    const [confirmpassword, setConfirmpassword] = React.useState("");// password confirmation, is not sent to database
+   
 
     const handleClickOpen = () => {
         setOpen(true);
     }
 
-    // password hide / visible
-    const [values, setValues] = React.useState({
-        password: "",
-        confirmpassword: "",         // password confirmation, is not sent to database
-        showPassword: false,
-      });
-       const handleClickShowPassword = () => {
-        setValues({ ...values, showPassword: !values.showPassword });
-      };
-      const handlePasswordChange = (prop) => (event) => {
-        setValues({ ...values, [prop]: event.target.value });
-      }; 
-    // password hide / visible
-
-
+    
     const submitData = () => {
-            if (newserver.password !== confirmpassword){      // password comparison happens here
-                alert("Passwords don't match");
-            } else {
+            
                 let trimhost = newserver.host.trim()
                 let trimname = newserver.name.trim()
                 let trimusername = newserver.username.trim()
                 
                 if(trimhost && trimname && trimusername){
-                    let trimmedserver = {host: trimhost, name: trimname, username: trimusername, password: newserver.password}
+                    let trimmedserver = {host: trimhost, name: trimname, username: trimusername}
                     addServer(trimmedserver);
                     setNewserver({
                         host: "",
                         name: "",
                         username: "",
-                        password: ""
+                        
                     })
                     setOpen(false);
-                    setConfirmpassword("");
-
                     
                 }else{
                     alert("You must provide Host, Projectname and Username.");
                 } 
-                
+            } 
 
-    } 
-
-    }
+    
 
     const handleCancelClose = () => {
         setOpen(false);
@@ -79,34 +59,34 @@ export default function AddServerForm(props) {
     }
 
     const addServer = (newserver) => {
-        fetch(`${config.url}/api/projects`,
+        fetch(`${config.url}/api/projects/${props.name}`,
         {
-            method: "POST",
+            method: "PUT",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(newserver)
         })
         .then(res => {
             if (res.status == 200 || res.status == 201) {
-                alert("New Server added");
+                alert("Server updated successfully");
                 setOpen(false)
-                window.location.reload(false); // page refresh
+                window.location.reload(false); 
             } else {
                 alert(`Something went wrong.  Status code: ${res.status}`)
             }
-            
+             
         })
-        .catch(err => alert(`There was an error with adding a new server: ${err}`))
+        .catch(err => alert(`There was an error with updating a server: ${err}`))
 
-        props.handleNewServerAdded(newserver.name)
+        
     }
 
     return (
         <div>
             <Button variant="contained" color="primary" onClick={handleClickOpen}>
-                Add new server
+                Update
             </Button>
             <Dialog open={open} onClose={handleCancelClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Add new server 
+                <DialogTitle id="form-dialog-title">Update 
                     <Typography component="p" variant="caption">(Fields marked with * are required)</Typography>
                 </DialogTitle>
                 <DialogContent style={{width:500}}>
@@ -132,7 +112,7 @@ export default function AddServerForm(props) {
                         fullWidth 
                     /> 
 
-                    <InputLabel htmlFor="username" style={{marginTop: 20}}>Username*</InputLabel>
+                   <InputLabel htmlFor="username" style={{marginTop: 20}}>Username*</InputLabel>                 
                     <Input
                         onChange={e => inputChanged(e)}
                         value={newserver.username}
@@ -142,30 +122,7 @@ export default function AddServerForm(props) {
                         margin="dense"
                         fullWidth
                     /> 
-                    
-                    <InputLabel htmlFor="password" style={{marginTop: 20}}>Password*</InputLabel>
-                    <Input
-                        type={values.showPassword ? "text" : "password"}
-                        onChange={e => inputChanged(e)}
-                        value={newserver.password}
-                        id="password"
-                        label="Password"
-                        name="password"
-                        margin="dense"
-                        fullWidth
-                    /> 
-
-                    <InputLabel htmlFor="ConfirmPass" style={{marginTop: 20}}>Confirm password*</InputLabel>
-                    <Input
-                        type={values.showPassword ? "text" : "password"}
-                        onChange={e => setConfirmpassword(e.target.value)}
-                        value={confirmpassword}
-                        id="ConfirmPass"
-                        label="Confirmpassword"
-                        name="confirmpassword"
-                        margin="dense"
-                        fullWidth
-                    /> 
+               
                     
                 </DialogContent>
                 <DialogActions>

@@ -5,7 +5,7 @@ const router = Router();
 
 router.get('/', ProjectController.getAllProjects);
 router.post('/', ProjectController.addProject);
-router.put('/:id', ProjectController.updatedProject);
-router.delete('/:id', ProjectController.deleteProject);
+router.put('/:project', ProjectController.updatedProject);
+router.delete('/:project', ProjectController.deleteProject);
 
 export default router;

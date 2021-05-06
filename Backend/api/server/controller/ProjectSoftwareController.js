@@ -1,5 +1,7 @@
 import EOLService from '../services/EOLService';
 import ProjectSoftwareService from '../services/ProjectSoftwareService';
+import ProjectService from '../services/ProjectService';
+import SlackService from '../services/SlackService';
 import Util from '../utils/Utils';
 
 const util = new Util();
@@ -106,7 +108,6 @@ const deleteProjectSoftware = async(req, res) => {
         // }
     try {
         const projectSoftwareToDelete = await ProjectSoftwareService.deleteProjectSoftware(deletedProjectSoftware);
-        console.log(`this is the result in the controller ${projectSoftwareToDelete}`)
         if (projectSoftwareToDelete) {
             util.setSuccess(200, 'Software deleted from project');
         } else {
@@ -125,11 +126,14 @@ const startScan = async(req, res) => {
     try {
         const startScan = await ProjectSoftwareService.startScan(projectNames);
         const scanEols = await EOLService.scanEOLs();
+        const getUptime = await ProjectService.getUptime(projectNames);
         if (startScan) {
-            util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}`);
+            util.setSuccess(200, `Great Success! Except these servers failed: ${JSON.stringify(startScan)} \n${scanEols}\n ${getUptime}`);
         } else {
             util.setError(404, 'Scan was unsuccessful');
         }
+
+        await SlackService.slackBot()
         
         return util.send(res);
     } catch (error) {
