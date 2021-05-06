@@ -2,3 +2,4 @@
 ./Backend/sequelize_version/.env
 *.env
 *.vscode/
+.env

@@ -3,33 +3,39 @@ import json
 import re
 import datetime
 
-JSON_URL = "https://spreadsheets.google.com/feeds/list/1sufF_TnsBvdVRQq8j77SsFr_0q_6yDtCkMAJWcM2kQ4/od6/public/basic?alt=json"
-date = datetime.datetime.now()
-str_date = str(date.month) + "/" + str(date.day) + "/" + str(date.year)
+#TODO: Split logic
 
-software_list = ["MySQL Database", "PostgreSQL",
-                 "Node.js", "Python", "Ruby", "Debian Linux", "Ubuntu", "npm"]
+def scrap_eol():
+    eolList = {"softwareList": []}
 
-with urllib.request.urlopen(JSON_URL) as url:
-    data = json.loads(url.read().decode())
+    JSON_URL = "https://spreadsheets.google.com/feeds/list/1sufF_TnsBvdVRQq8j77SsFr_0q_6yDtCkMAJWcM2kQ4/od6/public/basic?alt=json"
 
 
-c = data['feed']['entry']
-for d in c:
-    text = d['content']['$t']
+    with urllib.request.urlopen(JSON_URL) as url:
+        data = json.loads(url.read().decode())
 
-    s = re.search('software: (.+?),', text)
-    v = re.search('version: (.+?),', text)
-    e = re.search('eoldate: (.+?),', text)
 
-    if s:
-        software = s.group(1)
-    if v:
-        version = v.group(1)
-    if e:
-        eol = e.group(1)
+    c = data['feed']['entry']
+    for d in c:
+        text = d['content']['$t']
 
-    if software in software_list and eol[-2:] >= str_date[-2:]:
-        print(f"software = {software}, version = {version}, eol = {eol}")
-    else:
-        pass
+        s = re.search('software: (.+?),', text)
+        v = re.search('version: (.+?),', text)
+        e = re.search('eoldate: (.+?),', text)
+
+        if s:
+            software = s.group(1)
+        if v:
+            version = v.group(1)
+        if e:
+            eol = e.group(1)
+
+        if software and eol:
+            try:
+                eol_date = datetime.datetime.strptime(eol, "%m/%d/%Y").strftime("%Y-%m-%d")
+                eolList["softwareList"].append({"software_name": re.sub(r'[^ A-Za-z0-9]', "", software.lower()), "version": version, "eol_date": eol_date })
+            except:
+                pass
+
+    return eolList
+
