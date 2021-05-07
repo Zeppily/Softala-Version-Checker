@@ -44,10 +44,8 @@ services:
       - backend.env
     ports:
       - "8000:8000"
-volumes:
-  database-data: # named volumes can be managed easier using docker-compose
 
-  # Ubuntu Container for Apt Policy
+      # Ubuntu Container for Apt Policy
   policy_client:
     container_name: policy_client
     image: ubuntu:rolling
@@ -56,3 +54,6 @@ volumes:
       dockerfile: ./Dockerfile
     ports:
       - "5001:5001"
+
+volumes:
+  database-data: # named volumes can be managed easier using docker-compose
