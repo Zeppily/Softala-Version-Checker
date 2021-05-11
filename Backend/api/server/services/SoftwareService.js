@@ -66,9 +66,11 @@ const getLatestSoftware = async() => {
             .catch(error => {
                 console.error(error)
             });
-        new_software_version_info.forEach(software => {
-            updateSoftware(software.name, software)
-        })
+        if(new_software_version_info) {
+            new_software_version_info.forEach(software => {
+                updateSoftware(software.name, software)
+            })
+        }
 
         return new_software_version_info;
     } catch (error) {
