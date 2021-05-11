@@ -53,7 +53,7 @@ services:
       context: ./latest_version_scanner
       dockerfile: ./Dockerfile
     ports:
-      - "5001:5001"
+      - "5001:5000"
 
 volumes:
   database-data: # named volumes can be managed easier using docker-compose
