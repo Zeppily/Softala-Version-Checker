@@ -19,10 +19,16 @@ def version_scan():
             ['apt-cache', 'policy', item]).decode("utf-8"))
 
         match = re.search(r'Candidate: (\S+)', output)
-        version = str(re.split(r'[^0-9.-]', match.group(1))[0])
+
         if (match):
-            formatted_response = {"name": item,
-                                  "latest_version": version}
-            version_info.append(formatted_response)
+            version = str(re.split(r'[^0-9.-]', match.group(1))[0])
+            if(version):
+                if ':' in match.group(1):
+                    version = str(re.split(r'[^0-9.-]', match.group(1))[1])
+
+                formatted_response = {"name": item,
+                                      "latest_version": version}
+                version_info.append(formatted_response)
 
     return json.dumps(version_info)
+
