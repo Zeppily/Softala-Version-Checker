@@ -54,7 +54,7 @@ const getLatestSoftware = async() => {
     let new_software_version_info;
     try {
         await axios
-            .post(`http://policy_client/version/`, {
+            .post(`http://policy_client:5000/version/`, {
                 software_list, 
                 headers: {
                     'Content-Type': 'application/json'
