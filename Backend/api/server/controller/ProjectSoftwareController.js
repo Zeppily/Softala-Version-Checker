@@ -2,6 +2,7 @@ import EOLService from '../services/EOLService';
 import ProjectSoftwareService from '../services/ProjectSoftwareService';
 import ProjectService from '../services/ProjectService';
 import SlackService from '../services/SlackService';
+import SoftwareService from '../services/SoftwareService';
 import Util from '../utils/Utils';
 
 const util = new Util();
