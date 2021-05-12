@@ -10,6 +10,7 @@ import ProjectSoftwareService from './server/services/ProjectSoftwareService';
 import ProjectService from './server/services/ProjectService';
 import cron from 'node-cron';
 import database from './server/src/models';
+import ProjectSoftwareController from './server/controller/ProjectSoftwareController'
 
 config.config();
 const app = express();
