@@ -13,7 +13,7 @@ module.exports = {
       },
       eol_date: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       },
     });
   },

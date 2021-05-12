@@ -134,7 +134,7 @@ const startScan = async(req, res) => {
         }
 
         await SlackService.slackBot()
-        
+        await SoftwareService.getLatestSoftware();
         return util.send(res);
     } catch (error) {
         util.setError(400, error.message);

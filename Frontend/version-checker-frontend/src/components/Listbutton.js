@@ -63,7 +63,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
     //Calls the backend to start the whole scan process
     const initiateScan = (event) => {
       //projects should never be falsy but you can never be too sure
-      if (Array.isArray(projects)) {
+      if (Array.isArray(projects) && projects.length > 0) {
         const projectnames = projects.map(project => project.name);
         const projectnamesObj = {name: projectnames};
         setLoading(true);

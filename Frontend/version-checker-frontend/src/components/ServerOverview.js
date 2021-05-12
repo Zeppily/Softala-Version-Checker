@@ -104,7 +104,7 @@ class ServerOverview extends Component {
           </Grid>
         </Grid>
        
-        <div className={classes.root} style={{ marginTop: 50 }}>
+        <div className={classes.root} style={{ marginTop: 50, marginBottom: 450 }}>
           <div>
           <Grid container style={{marginBottom:10}}>
           <Grid item xs={4}>
