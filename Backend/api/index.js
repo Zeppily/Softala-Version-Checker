@@ -29,25 +29,26 @@ app.use((req, res, next) => {
 // For running at 1am change the * * * * * to 0 1 * * * 
 
 cron.schedule('0 1 * * *', async () => {
-   console.log('running a task every minute');
-   let credentials = {};
+   console.log('running a task at 1am');
    try {
         await database.project.findAll({
-            attributes: ['host', 'username', 'password'],
-            where: {
-                // Only way I was able to get this working is to add the name there.
-                name: "Raahe"
-            },
+            attributes: ['name'],
             raw: true
         })
         .then(result => {
-            result.forEach(function (element) {
-                element.port = 22
+            let projects = []
+            result.forEach(res => {
+                projects.push(res.name)
             })
-            credentials = result;
-            ProjectSoftwareService.callAxios(credentials)
+            let req = {
+                'body': {
+                    'name': projects
+                }
+            }
+            ProjectSoftwareController.startScan(req)
         })
     } catch (error) {
+        // console.log(error)
         throw error;
     }
    }, {
