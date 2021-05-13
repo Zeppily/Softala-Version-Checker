@@ -7,8 +7,6 @@ services:
     build:
       context: ./Frontend/version-checker-frontend
       dockerfile: ./Dockerfile
-    env_file:
-      - frontend.env
     ports:
       - "3000:3000"
 
