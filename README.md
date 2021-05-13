@@ -34,7 +34,7 @@ See: https://slack.com/intl/en-fi/help/articles/115005265063-Incoming-webhooks-f
 
 ## Scheduler
 
-Currently there is a scheduler to automate the pross on a desired time.  
+Currently there is a scheduler to automate the process on a desired time.  
 This feature is currently hard coded and can be modified in the code.  
 See Softala-Version-Checker/Backend/api/index.js 
 
