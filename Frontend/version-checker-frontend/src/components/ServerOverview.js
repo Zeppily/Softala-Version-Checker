@@ -64,22 +64,37 @@ class ServerOverview extends Component {
   render() {
     const { selectedServername, handleRefreshClick, serverData,
       serversIsFetching, serversLastUpdated } = this.props
-
-    //get total number of servers
-    var totalServers = serverData.length;
-
+    
+    if(!serverData) {
+      return (
+        <div>
+        <Container maxWidth="lg" className={classes.container}>
+          <div style={{ marginTop: 100 }}>
+            <h1>SERVER OVERVIEW</h1>
+            <h3>No Server information available</h3>
+            <p>Please add a new server</p>
+            <AddServerForm handleNewServerAdded={this.handleNewServerAdded} />
+          </div>           
+        </Container> 
+        <Footer/>
+       </div>
+      )
+    }
     // loops through servers that have failed
+
     let i =0;
-    serverData.forEach(e => {
-      if(e.scansuccessful != true){
-      i++
-      }})
+    const notPassingServers = i;  
 
-    const notPassingServers = i;
-
-
-    // Sorts server names aplhabetically
     if (Array.isArray(serverData)) {
+      //get total number of servers
+      var totalServers = serverData.length;
+      
+      serverData.forEach(e => {
+        if(e.scansuccessful != true){
+        i++
+        }})
+
+      // Sorts server names aplhabetically    
       serverData.sort((a, b) => a.name.localeCompare(b.name))
     }
 
