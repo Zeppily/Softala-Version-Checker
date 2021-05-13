@@ -13,6 +13,10 @@
 [Geoffrey](https://github.com/Zeppily)  
 [Teemu](https://github.com/swd1tn002)  
 
+## Credit
+The EOLs are from an open source third party which provides the information about software versions and their end of life dates.  
+https://www.upcomingeol.com/more-data
+
 ## Description  
 
 Version Checker is a full stack solution that will SSH to specified SSH servers to check locally installed softwares their version.  
@@ -21,6 +25,18 @@ It will compare the installed software and run it against a 3rd party EOL list t
 - Updatable  
 - Unsupported count
 - Total counts
+
+## Slack Bot
+
+When conducting a scan the back end can post the results of the scan in a designated slack channel through the webhook.  
+The slack url should be specified in the backend.env.  
+See: https://slack.com/intl/en-fi/help/articles/115005265063-Incoming-webhooks-for-Slack
+
+## Scheduler
+
+Currently there is a scheduler to automate the pross on a desired time.  
+This feature is currently hard coded and can be modified in the code.  
+See Softala-Version-Checker/Backend/api/index.js 
 
 ## Running the application ( Docker)
 1. Clone Repo  
@@ -31,7 +47,8 @@ git clone https://github.com/Zeppily/Softala-Version-Checker.git
 ```
 cd Softwala-Version-Checker/
 ```
-4. Create .env files in root directory for your desired credentials
+4. Create .env files in root directory for your desired credentials  
+You can modify the template files to your requirements and rename them approperiately.
 ```
 database.env should contain:
 POSTGRES_USER=<username>
@@ -43,8 +60,10 @@ DB_USER=<username>
 DB_PSWD=<password>
 DB_URL=database
 PY_URL=py_app
+SLACK_URL=<webhookURL>
 
-Change config.json to server ip/hostname where the stack is posted @ Frontend/version-checker-frontend/src/config.json
+Change config.json to server ip/hostname where the stack is posted  
+@ Frontend/version-checker-frontend/src/config.json
 ```
 6. Run Docker Compose
 ```
