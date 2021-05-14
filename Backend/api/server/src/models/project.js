@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true
     },
     username: {
       type: DataTypes.STRING,
@@ -20,6 +21,15 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    uptime: {
+      type: DataTypes.STRING
+    },
+    scansuccessful: {
+      type: DataTypes.BOOLEAN
+    },
+    timestamp: {
+      type: DataTypes.STRING
+    }
   }, {
     createdAt: false,
     updatedAt: false,
@@ -28,7 +38,10 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Project.associate = models => {
-    Project.belongsToMany(models.software, { foreignKey: 'software_id', as: 'software', through: models.project_software })
+    Project.belongsToMany(models.software, { 
+      foreignKey: 'software_id', as: 'software', 
+      through: models.project_software
+    })
   }
 
   return Project;

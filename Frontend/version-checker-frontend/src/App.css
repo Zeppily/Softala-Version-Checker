@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+/* FOOTER */
+.main-footer {
+  color: white;
+  background-color: #3f50b5;
+  padding-top: 2em;
+  padding-bottom: 2em;
+  bottom: 0;
+  width: 100%;
+  margin-top: 150px;
+  margin-bottom: 0px;
+  min-height: 100;
+  position: relative;
+  
+}
+
+.container {
+  color: white;
+  text-align: center;
+  
+  position:relative
+
+}

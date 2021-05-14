@@ -5,9 +5,9 @@ name: Install and test py_scantool
 
 on:
   push:
-    branches: [ "*" ]
+    branches: [ py_scantool ]
   pull_request:
-    branches: [ "*" ]
+    branches: [ py_scantool ]
 
 jobs:
   build:

@@ -1,28 +1,28 @@
 version: "3.9"
 
 services:
-# Front end
+  # Front end
   frontend:
     image: node:14
     build:
       context: ./Frontend/version-checker-frontend
       dockerfile: ./Dockerfile
-    env_file: 
-      - frontend.env
     ports:
       - "3000:3000"
 
-# Python Flask Container
+  # Python Flask Container
   py_app:
     image: python:3.8-slim-buster
     build:
       context: ./py_scantool
       dockerfile: ./Dockerfile
+    volumes:
+      - ~/.ssh:/root/.ssh
     ports:
       - "5000:5000"
 
-# Database
-# Change volume to host file for production
+  # Database
+  # Change volume to host file for production
   database:
     image: postgres:12.6
     env_file:
@@ -31,16 +31,27 @@ services:
       - database-data:/var/lib/postgresql/data/
     ports:
       - "14330:5432"
-  
-# Backend Server
+
+  # Backend Server
   backend:
     image: node:latest
     build:
       context: ./Backend
       dockerfile: ./Dockerfile
-    env_file: 
+    env_file:
       - backend.env
     ports:
       - "8000:8000"
+
+      # Ubuntu Container for Apt Policy
+  policy_client:
+    container_name: policy_client
+    image: ubuntu:rolling
+    build:
+      context: ./latest_version_scanner
+      dockerfile: ./Dockerfile
+    ports:
+      - "5001:5000"
+
 volumes:
   database-data: # named volumes can be managed easier using docker-compose

@@ -3,6 +3,7 @@ module.exports = {
     return queryInterface.createTable('project_software', {
       project_id: {
         type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
         references: {
           model: 'project',
           key: 'project_id'
@@ -11,6 +12,7 @@ module.exports = {
       },
       software_id: {
         type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
         references: {
           model: 'software',
           key: 'software_id'

@@ -38,7 +38,7 @@ describe('Test software endpoints and table', function() {
             }
 
             chai.request(server)
-                .put(`/api/softwares/${updateId}`)
+                .put(`/api/softwares/test`)
                 .send(software)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(200);
@@ -68,7 +68,7 @@ describe('Test software endpoints and table', function() {
 
         it('Expects status 200', function (done) {
             chai.request(server)
-                .delete(`/api/softwares/${updateId}`)
+                .delete(`/api/softwares/updatedTest`)
                 .send(software)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(200);
@@ -89,7 +89,6 @@ describe('Test software endpoints and table', function() {
                 .send(software)
                 .end((err, res) => {
                     expect(res.statusCode).to.equal(400)
-                    updateId = res.text
                     done();
                 });
         });
@@ -104,10 +103,10 @@ describe('Test software endpoints and table', function() {
 
         it('Expects status 400', function(done) {
             chai.request(server)
-                .put('/api/softwares/' + updateId)
+                .put('/api/softwares/testUpdated')
                 .send(software)
                 .end((err, res) => {
-                    expect(res.statusCode).to.equal(400)
+                    expect(res.statusCode).to.equal(404)
                     done();
                 });
         });

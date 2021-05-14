@@ -1,22 +1,41 @@
+# Flask App
 ![Python Tests](https://github.com/Zeppily/Softala-Version-Checker/actions/workflows/python-app.yml/badge.svg)
 
-# Python get started:
+## Description
 
-Dependencies:
-- Paramiko
-- Flask
-- pytest
+The python side of the application is a flask app which will simply SSH into 1 or more specified servers through a POST request.
+The app can retrieve a list of all the installed software on linux host.
 
-# Example Post Request:
+Filtering out most of the unwanted software we utilize "apt-mark showmanual" command to filter out most of the automatically installed softwares from the "dpkg -l" command.  
+
+Furthermore, you can check the defined servers run times and retrieve a list of a 3rd party End of Life dates from their respective endpoints.
+
+## Running the flask app outside of Docker:
+
+1. Install dependencies
 ```
- Must include credentials list, even for 1 server object.
+pip3 install --no-cache-dir -r requirements.txt
+```
+2.  Set Flask app
+```
+export FLASK_APP=api.py
+```
+3. Run Flask
+```
+python 3 -m flask run
+```
+
+## API RoadMap
+
+| Feature              | Endpoint                   | Status          |
+|----------------------|----------------------------|-----------------|
+| Start Scan           | POST /start                | :white_check_mark: |
+| Scrape EOL           | GET /eols                  | :white_check_mark: |
+| Server uptime        | POST /uptime               | :white_check_mark: |
+
+## Example Post Request to /start and /uptime:
+```
 {"credentials": [
-    {
-        "host": "0.0.0.0",
-        "port": "22",
-        "username": "username",
-        "password": ""
-    },
     {
         "host": "0.0.0.0",
         "port": "22",
@@ -31,7 +50,6 @@ Dependencies:
     }
 ]}
 ```
-# Example JSON Array return:
-```
-[{'serverIp': '0.0.0.0', 'depList': [{'depName': 'default-mysql-server', 'depVer': '1.0.2'}, {'depName': 'dh-python', 'depVer': '2.20170125'}, {'depName': 'libpython-stdlib:amd64', 'depVer': '2.7.13-2'}, {'depName': 'libpython2.7-minimal:amd64', 'depVer': '2.7.13-2+deb9u4'}, {'depName': 'libpython2.7-stdlib:amd64', 'depVer': '2.7.13-2+deb9u4'}, {'depName': 'libpython3-stdlib:amd64', 'depVer': '3.5.3-1'}, {'depName': 'libpython3.5-minimal:amd64', 'depVer': '3.5.3-1+deb9u3'}, {'depName': 'libpython3.5-stdlib:amd64', 'depVer': '3.5.3-1+deb9u3'}, {'depName': 'mariadb-client-10.1', 'depVer': '10.1.47-0+deb9u1'}, {'depName': 'mariadb-client-core-10.1', 'depVer': '10.1.47-0+deb9u1'}, {'depName': 'mariadb-common', 'depVer': '10.1.47-0+deb9u1'}, {'depName': 'mariadb-server-10.1', 'depVer': '10.1.47-0+deb9u1'}, {'depName': 'mariadb-server-core-10.1', 'depVer': '10.1.47-0+deb9u1'}, {'depName': 'mysql-common', 'depVer': '5.8+1.0.2'}, {'depName': 'mysql-server', 'depVer': '5.5.9999+default'}, {'depName': 'nodejs', 'depVer': '10.23.1-1nodesource1'}, {'depName': 'postgresql', 'depVer': '9.6+181+deb9u3'}, {'depName': 'postgresql-9.6', 'depVer': '9.6.20-0+deb9u1'}, {'depName': 'postgresql-client-9.6', 'depVer': '9.6.20-0+deb9u1'}, {'depName': 'postgresql-client-common', 'depVer': '181+deb9u3'}, {'depName': 'postgresql-common', 'depVer': '181+deb9u3'}, {'depName': 'postgresql-contrib', 'depVer': '9.6+181+deb9u3'}, {'depName': 'postgresql-contrib-9.6', 'depVer': '9.6.20-0+deb9u1'}, {'depName': 'python', 'depVer': '2.7.13-2'}, {'depName': 'python-apt', 'depVer': '1.4.2'}, {'depName': 'python-apt-common', 'depVer': '1.4.2'}, {'depName': 'python-minimal', 'depVer': '2.7.13-2'}, {'depName': 'python2.7', 'depVer': '2.7.13-2+deb9u4'}, {'depName': 'python2.7-minimal', 'depVer': '2.7.13-2+deb9u4'}, {'depName': 'python3', 'depVer': '3.5.3-1'}, {'depName': 'python3-blinker', 'depVer': '1.3.dfsg2-1'}, {'depName': 'python3-cffi-backend', 'depVer': '1.9.1-2'}, {'depName': 'python3-chardet', 'depVer': '2.3.0-2'}, {'depName': 'python3-configobj', 'depVer': '5.0.6-2'}, {'depName': 'python3-cryptography', 'depVer': '1.7.1-3+deb9u2'}, {'depName': 'python3-idna', 'depVer': '2.2-1'}, {'depName': 'python3-jinja2', 'depVer': '2.8-1'}, {'depName': 'python3-json-pointer', 'depVer': '1.10-1'}, {'depName': 'python3-jsonpatch', 'depVer': '1.19-4'}, {'depName': 'python3-jwt', 'depVer': '1.4.2-1+deb9u1'}, {'depName': 'python3-markupsafe', 'depVer': '0.23-3'}, {'depName': 'python3-minimal', 'depVer': '3.5.3-1'}, {'depName': 'python3-oauthlib', 'depVer': '2.0.1-1'}, {'depName': 'python3-pkg-resources', 'depVer': '33.1.1-1'}, {'depName': 'python3-prettytable', 'depVer': '0.7.2-3'}, {'depName': 'python3-pyasn1', 'depVer': '0.1.9-2'}, {'depName': 'python3-requests', 'depVer': '2.12.4-1'}, {'depName': 'python3-setuptools', 'depVer': '33.1.1-1'}, {'depName': 'python3-six', 'depVer': '1.10.0-3'}, {'depName': 'python3-urllib3', 'depVer': '1.19.1-1'}, {'depName': 'python3-yaml', 'depVer': '3.12-1'}, {'depName': 'python3.5', 'depVer': '3.5.3-1+deb9u3'}, {'depName': 'python3.5-minimal', 'depVer': '3.5.3-1+deb9u3'}]}, {'serverIp': '0.0.0.0', 'depList': [{'depName': 'libpython3-stdlib:amd64', 'depVer': '3.8.2-0ubuntu2'}, {'depName': 'libpython3.8:amd64', 'depVer': '3.8.5-1~20.04'}, {'depName': 'libpython3.8-minimal:amd64', 'depVer': '3.8.5-1~20.04'}, {'depName': 'libpython3.8-stdlib:amd64', 'depVer': '3.8.5-1~20.04'}, {'depName': 'postgresql', 'depVer': '12+214ubuntu0.1'}, {'depName': 'postgresql-12', 'depVer': '12.5-0ubuntu0.20.04.1'}, {'depName': 'postgresql-client-12', 'depVer': '12.5-0ubuntu0.20.04.1'}, {'depName': 'postgresql-client-common', 'depVer': '214ubuntu0.1'}, {'depName': 'postgresql-common', 'depVer': '214ubuntu0.1'}, {'depName': 'postgresql-contrib', 'depVer': '12+214ubuntu0.1'}, {'depName': 'python-apt-common', 'depVer': '2.0.0ubuntu0.20.04.2'}, {'depName': 'python3', 'depVer': '3.8.2-0ubuntu2'}, {'depName': 'python3-apt', 'depVer': '2.0.0ubuntu0.20.04.2'}, {'depName': 'python3-attr', 'depVer': '19.3.0-2'}, {'depName': 'python3-blinker', 'depVer': '1.4+dfsg1-0.3ubuntu1'}, {'depName': 'python3-certifi', 'depVer': '2019.11.28-1'}, {'depName': 'python3-cffi-backend', 'depVer': '1.14.0-1build1'}, {'depName': 'python3-chardet', 'depVer': '3.0.4-4build1'}, {'depName': 'python3-commandnotfound', 'depVer': '20.04.4'}, {'depName': 'python3-configobj', 'depVer': '5.0.6-4'}, {'depName': 'python3-cryptography', 'depVer': '2.8-3ubuntu0.1'}, {'depName': 'python3-dbus', 'depVer': '1.2.16-1build1'}, {'depName': 'python3-distro', 'depVer': '1.4.0-1'}, {'depName': 'python3-distro-info', 'depVer': '0.23ubuntu1'}, {'depName': 'python3-distupgrade', 'depVer': '1:20.04.29'}, {'depName': 'python3-distutils', 'depVer': '3.8.5-1~20.04.1'}, {'depName': 'python3-gdbm:amd64', 'depVer': '3.8.5-1~20.04.1'}, {'depName': 'python3-gi', 'depVer': '3.36.0-1'}, {'depName': 'python3-idna', 'depVer': '2.8-1'}, {'depName': 'python3-importlib-metadata', 'depVer': '1.5.0-1'}, {'depName': 'python3-jinja2', 'depVer': '2.10.1-2'}, {'depName': 'python3-json-pointer', 'depVer': '2.0-0ubuntu1'}, {'depName': 'python3-jsonpatch', 'depVer': '1.23-3'}, {'depName': 'python3-jsonschema', 'depVer': '3.2.0-0ubuntu2'}, {'depName': 'python3-jwt', 'depVer': '1.7.1-2ubuntu2'}, {'depName': 'python3-lib2to3', 'depVer': '3.8.5-1~20.04.1'}, {'depName': 'python3-markupsafe', 'depVer': '1.1.0-1build2'}, {'depName': 'python3-minimal', 'depVer': '3.8.2-0ubuntu2'}, {'depName': 'python3-more-itertools', 'depVer': '4.2.0-1build1'}, {'depName': 'python3-nacl', 'depVer': '1.3.0-5'}, {'depName': 'python3-netifaces', 'depVer': '0.10.4-1ubuntu4'}, {'depName': 'python3-oauthlib', 'depVer': '3.1.0-1ubuntu2'}, {'depName': 'python3-pkg-resources', 'depVer': '45.2.0-1'}, {'depName': 'python3-pymacaroons', 'depVer': '0.13.0-3'}, {'depName': 'python3-pyrsistent:amd64', 'depVer': '0.15.5-1build1'}, {'depName': 'python3-requests', 'depVer': '2.22.0-2ubuntu1'}, {'depName': 'python3-requests-unixsocket', 'depVer': '0.2.0-2'}, {'depName': 'python3-serial', 'depVer': '3.4-5.1'}, {'depName': 'python3-setuptools', 'depVer': '45.2.0-1'}, {'depName': 'python3-six', 'depVer': '1.14.0-2'}, {'depName': 'python3-software-properties', 'depVer': '0.98.9.3'}, {'depName': 'python3-update-manager', 'depVer': '1:20.04.10.1'}, {'depName': 'python3-urllib3', 'depVer': '1.25.8-2ubuntu0.1'}, {'depName': 'python3-yaml', 'depVer': '5.3.1-1'}, {'depName': 'python3-zipp', 'depVer': '1.0.0-1'}, {'depName': 'python3.8', 'depVer': '3.8.5-1~20.04'}, {'depName': 'python3.8-minimal', 'depVer': '3.8.5-1~20.04'}]}, {'serverIp': '0.0.0.0', 'depList': [{'depName': 'libmysqlclient-dev', 'depVer': '5.7.32-0ubuntu0.18.04.1'}, {'depName': 'libmysqlclient20:amd64', 'depVer': '5.7.32-0ubuntu0.18.04.1'}, {'depName': 'libpython3-stdlib:amd64', 'depVer': '3.6.7-1~18.04'}, {'depName': 'libpython3.6:amd64', 'depVer': '3.6.9-1~18.04ubuntu1.3'}, {'depName': 'libpython3.6-minimal:amd64', 'depVer': '3.6.9-1~18.04ubuntu1.3'}, {'depName': 'libpython3.6-stdlib:amd64', 'depVer': '3.6.9-1~18.04ubuntu1.3'}, {'depName': 'mysql-client-5.7', 'depVer': '5.7.32-0ubuntu0.18.04.1'}, {'depName': 'mysql-client-core-5.7', 'depVer': '5.7.32-0ubuntu0.18.04.1'}, {'depName': 'mysql-common', 'depVer': '5.8+1.0.4'}, {'depName': 'mysql-server', 'depVer': '5.7.32-0ubuntu0.18.04.1'}, {'depName': 'mysql-server-5.7', 'depVer': '5.7.32-0ubuntu0.18.04.1'}, {'depName': 'mysql-server-core-5.7', 'depVer': '5.7.32-0ubuntu0.18.04.1'}, {'depName': 'nodejs', 'depVer': '8.10.0~dfsg-2ubuntu0.4'}, {'depName': 'python-apt-common', 'depVer': '1.6.5ubuntu0.4'}, {'depName': 'python3', 'depVer': '3.6.7-1~18.04'}, {'depName': 'python3-apt', 'depVer': '1.6.5ubuntu0.4'}, {'depName': 'python3-asn1crypto', 'depVer': '0.24.0-1'}, {'depName': 'python3-blinker', 'depVer': '1.4+dfsg1-0.1'}, {'depName': 'python3-certifi', 'depVer': '2018.1.18-2'}, {'depName': 'python3-cffi-backend', 'depVer': '1.11.5-1'}, {'depName': 'python3-chardet', 'depVer': '3.0.4-1'}, {'depName': 'python3-configobj', 'depVer': '5.0.6-2'}, {'depName': 'python3-cryptography', 'depVer': '2.1.4-1ubuntu1.4'}, {'depName': 'python3-dbus', 'depVer': '1.2.6-1'}, {'depName': 'python3-distro-info', 'depVer': '0.18ubuntu0.18.04.1'}, {'depName': 'python3-distupgrade', 'depVer': '1:18.04.41'}, {'depName': 'python3-distutils', 'depVer': '3.6.9-1~18.04'}, {'depName': 'python3-gdbm:amd64', 'depVer': '3.6.9-1~18.04'}, {'depName': 'python3-gi', 'depVer': '3.26.1-2ubuntu1'}, {'depName': 'python3-idna', 'depVer': '2.6-1'}, {'depName': 'python3-jinja2', 'depVer': '2.10-1ubuntu0.18.04.1'}, {'depName': 'python3-json-pointer', 'depVer': '1.10-1'}, {'depName': 'python3-jsonpatch', 'depVer': '1.19+really1.16-1fakesync1'}, {'depName': 'python3-jsonschema', 'depVer': '2.6.0-2'}, {'depName': 'python3-jwt', 'depVer': '1.5.3+ds1-1'}, {'depName': 'python3-lib2to3', 'depVer': '3.6.9-1~18.04'}, {'depName': 'python3-markupsafe', 'depVer': '1.0-1build1'}, {'depName': 'python3-minimal', 'depVer': '3.6.7-1~18.04'}, {'depName': 'python3-oauthlib', 'depVer': '2.0.6-1'}, {'depName': 'python3-pkg-resources', 'depVer': '39.0.1-2'}, {'depName': 'python3-requests', 'depVer': '2.18.4-2ubuntu0.1'}, {'depName': 'python3-serial', 'depVer': '3.4-2'}, {'depName': 'python3-six', 'depVer': '1.11.0-2'}, {'depName': 'python3-software-properties', 'depVer': '0.96.24.32.14'}, {'depName': 'python3-update-manager', 'depVer': '1:18.04.11.13'}, {'depName': 'python3-urllib3', 'depVer': '1.22-1ubuntu0.18.04.2'}, {'depName': 'python3-yaml', 'depVer': '3.12-1build2'}, {'depName': 'python3.6', 'depVer': '3.6.9-1~18.04ubuntu1.3'}, {'depName': 'python3.6-minimal', 'depVer': '3.6.9-1~18.04ubuntu1.3'}]}]
-```
+
+## Notes
+- All the credentials and information in the POST requests are required. However password is nullable if you have ssh keys generated for the target servers on your machine or shared into the container.

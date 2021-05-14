@@ -10,11 +10,11 @@ def client():
         yield client
 
 
-def test_get_request_should_not_be_allowed(client):
+def test_get_request_should_not_be_allowed_on_start_endpoint(client):
     response = client.get("http://127.0.0.1:5000/start/")
     assert b"405 Method Not Allowed" in response.data
 
 
-def test_empty_post_request_should_give_error(client):
+def test_empty_post_request_should_give_error_on_start_endpoint(client):
     response = client.post("http://127.0.0.1:5000/start/", data="")
     assert b"bad request!" in response.data

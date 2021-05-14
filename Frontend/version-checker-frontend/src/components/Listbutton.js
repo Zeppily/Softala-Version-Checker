@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types'
 import config from '../config.json';
 import { Typography } from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
   const ITEM_HEIGHT = 48;
   
@@ -15,8 +16,9 @@ import { Typography } from "@material-ui/core";
     const open = Boolean(anchorEl);
     //Gets the default value set for Redux for useState
     const [currentProject, setCurrentProject] = useState(props.obj.selectedServername);
+    
     const [loading, setLoading] = useState(false)
-    const [projects, setProjects] = useState([]);
+    const [projects, setProjects] = useState(props.obj.serverData);
     const [conditional, setConditional] = useState(true);
 
     const checkData = (dataToCheck) => {
@@ -48,49 +50,63 @@ import { Typography } from "@material-ui/core";
 
     //Gets project names for the dropdown menu
     useEffect(() => {
-        fetch(`${config.url}/api/projects`)
-          .then((response) => response.json())
-          .then((data) => setProjects(data.data))
-          .catch((error) => console.error(error))
+        setProjects(props.obj.serverData) 
+        if (props.obj.serverData) {
+          handleProjectChange(props.obj.serverData[0].name)
+        }
 
-        checkData(projects)
-          
-      }, []);
+    }, []);
+
+
 
     
     //Calls the backend to start the whole scan process
     const initiateScan = (event) => {
-      const projectnames = projects.map(project => project.name);
-      const projectnamesObj = {name: projectnames};
-      setLoading(true);
-      fetch(`${config.url}/api/startscan`,
-      {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(projectnamesObj)
-      })
-      .then(response => response.json())
-      .then((data) => alert(data.message))
-      .then(_ => {
-        props.obj.handleRefreshClick(event);
+      //projects should never be falsy but you can never be too sure
+      if (Array.isArray(projects) && projects.length > 0) {
+        const projectnames = projects.map(project => project.name);
+        const projectnamesObj = {name: projectnames};
+        setLoading(true);
+        fetch(`${config.url}/api/startscan`,
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(projectnamesObj)
+        })
+        .then(response => response.json())
+        .then((data) => alert(data.message))
+        .then(_ => {
+          props.obj.handleRefreshClick(event);
+          setLoading(false)
+        })
+        .catch(err => console.error(err))
+      } else {
+        setLoading(true)
+        alert("Array of servers to be scanned was empty. Scan not successful")
         setLoading(false)
-      })
-      .catch(err => console.error(err))
+      }
     };
 
-    console.log("conditional", conditional)
-
+    //Sorts data into alphabetical order if the projects is an array
+    if (Array.isArray(projects)) {
+      projects.sort((a, b) => a.name.localeCompare(b.name))
+    }
+    
     return (
       <div>
-        <Button
+        <Button 
           aria-controls="customized-menu"
           aria-haspopup="true"
           variant="contained"
           color="primary"
           onClick={handleClick}
-          style={{marginLeft: 30}}
+         //style={{marginBottom: 10}}
+          style={{marginRight: 40}}
+          endIcon={<ExpandMoreIcon />}
         >
+          
           {currentProject}
+          
         </Button>
         
         { conditional ?
@@ -134,7 +150,7 @@ import { Typography } from "@material-ui/core";
             }}
           >
             {projects.map((option) => (
-              <MenuItem key={option.name} onClick={() => handleProjectChange(option.name)}>
+              <MenuItem key={option.host} onClick={() => handleProjectChange(option.name)}>
                 {option.name}
               </MenuItem>
             ))}

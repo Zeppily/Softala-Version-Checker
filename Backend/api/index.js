@@ -1,11 +1,16 @@
 import config from 'dotenv';
 import express from 'express';
-import bodyParser from 'body-parser';
+import bodyParser, { raw } from 'body-parser';
 import projectRoutes from './server/routes/ProjectRoutes';
 import eolRoutes from './server/routes/EOLRoutes';
 import softwareRoutes from './server/routes/SoftwareRoutes';
 import porjectSoftwareRoutes from './server/routes/ProjectSoftwareRoutes';
 import startScanRoutes from './server/routes/StartScanRoutes';
+import ProjectSoftwareService from './server/services/ProjectSoftwareService';
+import ProjectService from './server/services/ProjectService';
+import cron from 'node-cron';
+import database from './server/src/models';
+import ProjectSoftwareController from './server/controller/ProjectSoftwareController'
 
 config.config();
 const app = express();
@@ -20,9 +25,44 @@ app.use((req, res, next) => {
 }
 )
 
-app.use(bodyParser.json());
+// Schduling the python scanner to run every day at 1am
+// For developement purposes this runs every minute
+// For running at 1am change the * * * * * to 0 1 * * * 
 
-app.use(bodyParser.urlencoded({ extended: false }));
+cron.schedule('0 1 * * *', async () => {
+   console.log('running a task at 1am');
+   try {
+        await database.project.findAll({
+            attributes: ['name'],
+            raw: true
+        })
+        .then(result => {
+            let projects = []
+            result.forEach(res => {
+                projects.push(res.name)
+            })
+            let req = {
+                'body': {
+                    'name': projects
+                }
+            }
+            ProjectSoftwareController.startScan(req)
+        })
+    } catch (error) {
+        // console.log(error)
+        throw error;
+    }
+   }, {
+   scheduled: true,
+   timezone: "Europe/Helsinki"
+   }
+);
+
+
+app.use(bodyParser.json());
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 8000;
 

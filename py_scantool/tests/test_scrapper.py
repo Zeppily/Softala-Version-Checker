@@ -1,5 +1,7 @@
 import jsonscrape
 
+# Scraps software from EOL JSON file
+# Expected: software list containing information about python
 def test_jsonscrap():
     result = jsonscrape.scrap_eol()["softwareList"]
 

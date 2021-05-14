@@ -5,7 +5,8 @@ const router = Router();
 
 router.get('/', SoftwareController.getAllSoftwares);
 router.post('/', SoftwareController.addSoftware);
-router.put('/:software_id', SoftwareController.updatedSoftware);
-router.delete('/:software_id', SoftwareController.deleteSoftware);
+router.put('/:software', SoftwareController.updatedSoftware);
+router.delete('/:software', SoftwareController.deleteSoftware);
+router.get('/version', SoftwareController.getLatestSoftware);
 
 export default router;
