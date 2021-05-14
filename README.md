@@ -81,3 +81,8 @@ npx sequelize-cli db:migrate
 - Passwords are optionally stored, you can create SSH keys for the target servers on the server hosting the stack beforehand.  
 - Make sure SSH keys generated are not specified to a user.
 - In the front-end dates are entered YYYY-MM-DD
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
